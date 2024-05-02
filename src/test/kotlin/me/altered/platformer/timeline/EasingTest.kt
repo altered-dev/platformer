@@ -1,6 +1,5 @@
 package me.altered.platformer.timeline
 
-import org.joml.Vector2f
 import kotlin.test.Test
 
 class EasingTest {

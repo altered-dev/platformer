@@ -1,13 +1,20 @@
 package me.altered.platformer.scene
 
-import kotlin.properties.PropertyDelegateProvider
-import kotlin.properties.ReadWriteProperty
-
-fun <T : Node?> child(node: T): PropertyDelegateProvider<Node, ReadWriteProperty<Node, T>> = ChildNode(node)
+import kotlin.reflect.KProperty
 
 fun prettyPrint(node: Node) = prettyPrint(node, 0)
 
 private fun prettyPrint(node: Node, indent: Int) {
     println("  ".repeat(indent) + "- " + node.name)
-    node.children.forEach { prettyPrint(it, indent + 1) }
+    (node as? ParentNode)?.children?.forEach { prettyPrint(it, indent + 1) }
+}
+
+operator fun <T : Node> T.provideDelegate(thisRef: ParentNode, prop: KProperty<*>): T {
+    parent = thisRef
+    return this
+}
+
+operator fun <T : Node> T.getValue(thisRef: ParentNode, prop: KProperty<*>): T {
+    parent = thisRef
+    return this
 }

@@ -20,6 +20,7 @@ import me.altered.platformer.skija.clear
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 
+// FIXME: refactor main loop
 fun main() = glfw {
     val width = 800
     val height = 600
@@ -66,6 +67,7 @@ fun main() = glfw {
     val timeU = 1000.0f / targetUps
     val timeR = if (targetFps > 0) 1000.0f / targetFps else 0.0f
     var updateTime = initialTime
+    var frameTime = initialTime
     var deltaUpdate = 0.0f
     var deltaFps = 0.0f
 
@@ -77,12 +79,14 @@ fun main() = glfw {
         deltaFps += (now - initialTime) / timeR
 
         if (deltaUpdate >= 1) {
-            SceneManager.update((now - updateTime) * 0.001f)
+            SceneManager.physicsUpdate((now - updateTime) * 0.001f)
             updateTime = now
             deltaUpdate--
         }
 
         if (targetFps <= 0 || deltaFps >= 1) {
+            SceneManager.update((now - frameTime) * 0.001f)
+            frameTime = now
             canvas.clear(Color.white)
             SceneManager.draw(canvas)
             context.flush()

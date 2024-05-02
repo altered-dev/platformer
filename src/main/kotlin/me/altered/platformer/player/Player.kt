@@ -29,7 +29,7 @@ class Player(
         color4f = Color.black
     }
 
-    override fun update(delta: Float) {
+    override fun physicsUpdate(delta: Float) {
         direction.y += gravity * delta
         position +=  direction * (200.0f * delta)
         rotation += direction.x.sign * 180.0f * delta

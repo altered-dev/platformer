@@ -18,6 +18,10 @@ object SceneManager {
         currentScene._update(delta)
     }
 
+    fun physicsUpdate(delta: Float) {
+        currentScene._physicsUpdate(delta)
+    }
+
     fun input(event: InputEvent) {
         currentScene._input(event)
     }

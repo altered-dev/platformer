@@ -10,22 +10,23 @@ import me.altered.platformer.glfw.input.pressed
 import me.altered.platformer.glfw.input.released
 import me.altered.platformer.`object`.Object
 import me.altered.platformer.player.Player
-import me.altered.platformer.scene.Node
-import me.altered.platformer.scene.child
+import me.altered.platformer.scene.ParentNode
+import me.altered.platformer.scene.getValue
+import me.altered.platformer.scene.provideDelegate
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
 import me.altered.platformer.timeline.Timeline
 import org.joml.Vector2f
 
-class MainScene : Node() {
+class MainScene : ParentNode() {
 
     override val name = "main"
 
     private val timeline = Timeline()
     private var timeDirection = 0.0f
 
-    private val player by child(Player(Vector2f(100.0f, 300.0f)))
-    private val obj by child(Object(timeline, "omg"))
+    private val player by Player(Vector2f(100.0f, 300.0f))
+    private val obj by Object(timeline, "omg")
 
     private val font = FontMgr.getDefault().matchFamilyStyle("NT Somic", FontStyle.NORMAL)?.let { Font(it, 13.0f) }
     private val paint = buildPaint { color4f = Color.black }
