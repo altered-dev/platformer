@@ -5,7 +5,7 @@ import me.altered.platformer.glfw.input.InputEvent
 
 object SceneManager {
 
-    private var currentScene: Node = EmptyScene
+    private var currentScene: Node = EmptyNode
 
     fun setScene(scene: Node) {
         currentScene._destroy()
@@ -32,6 +32,6 @@ object SceneManager {
 
     fun destroyScene() {
         currentScene._destroy()
-        currentScene = EmptyScene
+        currentScene = EmptyNode
     }
 }

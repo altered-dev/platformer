@@ -1,6 +1,6 @@
 package me.altered.platformer.scene
 
-internal object EmptyScene : Node() {
+internal object EmptyNode : Node() {
 
     override val name = "empty"
 }

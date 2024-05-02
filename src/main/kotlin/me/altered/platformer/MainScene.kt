@@ -39,12 +39,13 @@ class MainScene : ParentNode() {
         canvas.drawString("time: ${timeline.time}", 10.0f, 40.0f, font, paint)
     }
 
-    override fun input(event: InputEvent) {
+    override fun input(event: InputEvent): Boolean {
         when {
             event pressed Key.RIGHT -> timeDirection += 1
             event released Key.RIGHT -> timeDirection -= 1
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
         }
+        return false
     }
 }

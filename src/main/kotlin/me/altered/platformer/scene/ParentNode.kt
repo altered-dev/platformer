@@ -38,9 +38,9 @@ abstract class ParentNode(parent: ParentNode? = null) : Node(parent) {
         children.forEach { it._draw(canvas) }
     }
 
-    override fun _input(event: InputEvent) {
-        input(event)
-        children.forEach { it._input(event) }
+    override fun _input(event: InputEvent): Boolean {
+        if (children.any { it._input(event) }) return true
+        return input(event)
     }
 
     override fun _destroy() {

@@ -49,7 +49,7 @@ class Player(
         }
     }
 
-    override fun input(event: InputEvent) {
+    override fun input(event: InputEvent): Boolean {
         when {
             event pressed Key.A -> direction.x--
             event released Key.A -> direction.x++
@@ -57,5 +57,6 @@ class Player(
             event released Key.D -> direction.x--
             event pressed Key.SPACE -> direction.y = -3.0f
         }
+        return false
     }
 }
