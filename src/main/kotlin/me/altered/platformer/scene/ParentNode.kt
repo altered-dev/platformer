@@ -21,6 +21,13 @@ abstract class ParentNode(parent: ParentNode? = null) : Node(parent) {
         _children -= child
     }
 
+    override val root: ParentNode
+        get() = findRoot()
+
+    tailrec fun findRoot(): ParentNode {
+        return parent?.findRoot() ?: this
+    }
+
     override fun _ready() {
         children.forEach { it._ready() }
         ready()

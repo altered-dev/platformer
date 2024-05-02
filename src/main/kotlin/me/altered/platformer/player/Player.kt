@@ -20,7 +20,7 @@ class Player(
     var rotation: Float = 0f,
 ) : Node() {
 
-    override val name = "Player"
+    override val name = "player"
 
     private val direction = Vector2f()
     private val gravity = 9.8f

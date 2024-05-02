@@ -6,7 +6,7 @@ import me.altered.platformer.glfw.input.InputEvent
 abstract class Node(parent: ParentNode? = null) {
 
     open val name: String
-        get() = "Node"
+        get() = this::class.simpleName ?: "<anonymous>"
 
     internal var _parent: ParentNode? = parent
     open var parent: ParentNode?
@@ -16,6 +16,9 @@ abstract class Node(parent: ParentNode? = null) {
             _parent = value
             value?._children?.add(this)
         }
+
+    open val root: ParentNode?
+        get() = parent?.findRoot()
 
     internal open fun _ready() = ready()
 
@@ -32,7 +35,6 @@ abstract class Node(parent: ParentNode? = null) {
     internal open fun _input(event: InputEvent) = input(event)
 
     internal open fun _destroy() = destroy()
-
 
     /**
      * Called when the node enters the tree.
@@ -88,5 +90,5 @@ abstract class Node(parent: ParentNode? = null) {
      */
     protected open fun destroy() = Unit
 
-    override fun toString(): String = name
+    override fun toString(): String = "[${this::class.simpleName}] $name"
 }

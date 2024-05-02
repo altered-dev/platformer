@@ -65,6 +65,4 @@ sealed interface Expression<T> {
 
         abstract fun animate(from: T, to: T, time: Float, easing: Easing): T
     }
-
-    // TODO: sum and other math
 }
