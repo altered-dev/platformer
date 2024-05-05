@@ -12,7 +12,6 @@ repositories {
 dependencies {
     implementation(platform(libs.lwjgl.bom))
     lwjgl(libs.bundles.lwjgl.withNatives)
-    implementation(libs.bundles.lwjgl.noNatives)
     implementation(libs.bundles.skija)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.joml)
@@ -47,7 +46,7 @@ fun getClassifier(name: String, arch: String) = when {
         arch.startsWith("riscv") -> "natives-linux-riscv64"
         else -> "natives-linux"
     }
-    name.startsWith("Max OS X") ||
+    name.startsWith("Mac OS X") ||
     name.startsWith("Darwin") -> when {
         arch.startsWith("aarch64") -> "natives-macos-arm64"
         else -> "natives-macos"

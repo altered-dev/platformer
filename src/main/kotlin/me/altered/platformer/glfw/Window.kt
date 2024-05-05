@@ -1,8 +1,10 @@
 package me.altered.platformer.glfw
 
-import me.altered.platformer.util.glfwEvent
+import org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR
+import org.lwjgl.glfw.GLFW.glfwCreateStandardCursor
 import org.lwjgl.glfw.GLFW.glfwDestroyWindow
 import org.lwjgl.glfw.GLFW.glfwGetFramebufferSize
+import org.lwjgl.glfw.GLFW.glfwGetWindowContentScale
 import org.lwjgl.glfw.GLFW.glfwGetWindowPos
 import org.lwjgl.glfw.GLFW.glfwGetWindowSize
 import org.lwjgl.glfw.GLFW.glfwHideWindow
@@ -10,19 +12,13 @@ import org.lwjgl.glfw.GLFW.glfwIconifyWindow
 import org.lwjgl.glfw.GLFW.glfwMakeContextCurrent
 import org.lwjgl.glfw.GLFW.glfwPollEvents
 import org.lwjgl.glfw.GLFW.glfwRestoreWindow
-import org.lwjgl.glfw.GLFW.glfwSetCharCallback
+import org.lwjgl.glfw.GLFW.glfwSetCursor
 import org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback
 import org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback
-import org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback
 import org.lwjgl.glfw.GLFW.glfwSetKeyCallback
 import org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback
 import org.lwjgl.glfw.GLFW.glfwSetScrollCallback
-import org.lwjgl.glfw.GLFW.glfwSetWindowCloseCallback
-import org.lwjgl.glfw.GLFW.glfwSetWindowFocusCallback
-import org.lwjgl.glfw.GLFW.glfwSetWindowIconifyCallback
 import org.lwjgl.glfw.GLFW.glfwSetWindowPos
-import org.lwjgl.glfw.GLFW.glfwSetWindowPosCallback
-import org.lwjgl.glfw.GLFW.glfwSetWindowRefreshCallback
 import org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose
 import org.lwjgl.glfw.GLFW.glfwSetWindowSize
 import org.lwjgl.glfw.GLFW.glfwSetWindowSizeCallback
@@ -65,6 +61,14 @@ class Window(private val handle: Long) {
             w[0] to h[0]
         }
 
+    val contentScale: Pair<Float, Float>
+        get() = memoryStack {
+            val x = callocFloat(1)
+            val y = callocFloat(1)
+            glfwGetWindowContentScale(handle, x, y)
+            x[0] to y[0]
+        }
+
     // TODO: to property
     fun setTitle(title: String) = glfwSetWindowTitle(handle, title)
 
@@ -79,17 +83,23 @@ class Window(private val handle: Long) {
     fun pollEvents() = glfwPollEvents()
     fun waitEvents() = glfwWaitEvents()
 
-    val onMove = glfwEvent<Int, Int> { glfwSetWindowPosCallback(handle, it) }
-    val onResize = glfwEvent<Int, Int> { glfwSetWindowSizeCallback(handle, it) }
-    val onClose = glfwEvent { glfwSetWindowCloseCallback(handle, it) }
-    val onRefresh = glfwEvent { glfwSetWindowRefreshCallback(handle, it) }
-    val onFocus = glfwEvent<Boolean> { glfwSetWindowFocusCallback(handle, it) }
-    val onIconify = glfwEvent<Boolean> { glfwSetWindowIconifyCallback(handle, it) }
-    val onFramebufferResize = glfwEvent<Int, Int> { glfwSetFramebufferSizeCallback(handle, it) }
-    val onKey = glfwEvent<Int, Int, Int, Int> { glfwSetKeyCallback(handle, it) }
-    val onChar = glfwEvent<Int> { glfwSetCharCallback(handle, it) }
-    val onMouseButton = glfwEvent<Int, Int, Int> { glfwSetMouseButtonCallback(handle, it) }
-    val onCursorMove = glfwEvent<Double, Double> { glfwSetCursorPosCallback(handle, it) }
-    val onCursorEnter = glfwEvent<Boolean> { glfwSetCursorEnterCallback(handle, it) }
-    val onScroll = glfwEvent<Double, Double> { glfwSetScrollCallback(handle, it) }
+    var inputHandler: InputHandler? = null
+        set(value) {
+            field = value
+            glfwSetKeyCallback(handle, value?.let {{ _, k, s, a, m -> it.onKey(k, s, a, m) }})
+            glfwSetMouseButtonCallback(handle, value?.let {{ _, b, a, m -> it.onMouseButton(b, a, m) }})
+            glfwSetCursorPosCallback(handle, value?.let {{ _, x, y -> it.onCursorMove(x, y) }})
+            glfwSetCursorEnterCallback(handle, value?.let {{ _, e -> it.onCursorEnter(e) }})
+            glfwSetScrollCallback(handle, value?.let {{ _, x, y -> it.onScroll(x, y) }})
+        }
+
+    var onResize: ((Int, Int) -> Unit)? = null
+
+    init {
+        // temporary hack to have both listeners
+        glfwSetWindowSizeCallback(handle) { _, w, h ->
+            onResize?.invoke(w, h)
+            inputHandler?.onResize(w, h)
+        }
+    }
 }

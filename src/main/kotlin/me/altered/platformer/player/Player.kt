@@ -9,7 +9,7 @@ import me.altered.platformer.glfw.input.released
 import me.altered.platformer.math.plusAssign
 import me.altered.platformer.math.times
 import me.altered.platformer.skija.translate
-import me.altered.platformer.scene.Node
+import me.altered.platformer.node.Node
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
 import org.joml.Vector2f

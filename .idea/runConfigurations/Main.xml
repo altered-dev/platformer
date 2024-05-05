@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Main" type="JetRunConfigurationType" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="me.altered.platformer.Main" />
+    <module name="platformer.main" />
+    <option name="PROGRAM_PARAMETERS" value="-w=1280 -h=720 -t=lmaowhynot -v --enable-stats" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

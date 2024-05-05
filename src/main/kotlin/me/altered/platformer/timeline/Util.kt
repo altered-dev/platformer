@@ -16,7 +16,7 @@ fun <T> const(value: T) = Expression.Constant(value)
 fun <T> expression(block: () -> T) = Expression.Function(block)
 
 fun lerp(from: Float, to: Float, t: Float, easing: Easing = Easing.linear): Float {
-    return from + easing.ease(t) * (to - from)
+    return from + easing.easeSafe(t) * (to - from)
 }
 
 fun lerp(
@@ -25,7 +25,7 @@ fun lerp(
     t: Float,
     easing: Easing = Easing.linear,
     dest: Vector2f = Vector2f(),
-): Vector2f = from.lerp(to, easing.ease(t), dest)
+): Vector2f = from.lerp(to, easing.easeSafe(t), dest)
 
 fun alerp(from: Float, to: Float, value: Float): Float {
     return (value - from) / (to - from)

@@ -10,7 +10,6 @@ lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
 lwjgl = { group = "org.lwjgl", name = "lwjgl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
-lwjgl-vulkan = { group = "org.lwjgl", name = "lwjgl-vulkan" }
 
 skija-windows-x64 = { group = "io.github.humbleui", name = "skija-windows-x64", version.ref = "skija" }
 skija-linux-x64 = { group = "io.github.humbleui", name = "skija-linux-x64", version.ref = "skija" }
@@ -26,5 +25,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
 [bundles]
 lwjgl-withNatives = [ "lwjgl", "lwjgl-glfw", "lwjgl-opengl" ]
-lwjgl-noNatives = [ "lwjgl-vulkan" ]
 skija = [ "skija-windows-x64", "skija-linux-x64", "skija-macos-x64", "skija-macos-arm64" ]

@@ -1,4 +1,4 @@
-package me.altered.platformer.scene
+package me.altered.platformer.node
 
 import io.github.humbleui.skija.Canvas
 import me.altered.platformer.glfw.input.InputEvent

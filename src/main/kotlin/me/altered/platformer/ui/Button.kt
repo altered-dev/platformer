@@ -8,12 +8,11 @@ import io.github.humbleui.types.Rect
 import me.altered.platformer.glfw.input.Action
 import me.altered.platformer.glfw.input.InputEvent
 import me.altered.platformer.glfw.input.MouseButton
-import me.altered.platformer.scene.Node
+import me.altered.platformer.node.Node
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
 import me.altered.platformer.skija.color
 import me.altered.platformer.skija.contains
-import org.joml.Vector2f
 
 class Button(
     private val rect: Rect = Rect.makeWH(0.0f, 0.0f),
@@ -39,8 +38,7 @@ class Button(
     override fun input(event: InputEvent): Boolean {
         return when (event) {
             is InputEvent.CursorMove -> {
-                val pos = Vector2f(event.x.toFloat(), event.y.toFloat())
-                if (pos in rect) {
+                if (rect.contains(event.x, event.y)) {
                     if (state != State.IDLE) return true
                     state = State.HOVERED
                     paint.color4f = color(0xFF99FFCC)

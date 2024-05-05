@@ -1,4 +1,4 @@
-package me.altered.platformer.scene
+package me.altered.platformer.node
 
 internal object EmptyNode : Node() {
 

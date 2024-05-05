@@ -13,9 +13,11 @@ sealed interface InputEvent {
 
     data class MouseButton(val button: GlfwMouseButton, override val action: Action, val mods: KeyMod) : WithAction
 
-    data class CursorMove(val x: Double, val y: Double) : InputEvent
+    data class CursorMove(val x: Float, val y: Float) : InputEvent
 
-    data class Scroll(val dx: Double, val dy: Double) : InputEvent
+    data class Scroll(val dx: Float, val dy: Float) : InputEvent
 
     data class CursorEnter(val entered: Boolean) : InputEvent
+
+    data class WindowResize(val width: Float, val height: Float) : InputEvent
 }

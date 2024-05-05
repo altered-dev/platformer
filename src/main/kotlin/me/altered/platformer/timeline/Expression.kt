@@ -45,22 +45,27 @@ sealed interface Expression<T> {
             require(keyframes.isNotEmpty()) { "An animated property must have at least one keyframe." }
         }
 
+        private var lastTime: Float? = null
+        private var lastValue: T? = null
+
         // TODO: unJVM the map
         private val keyframes = TreeMap(keyframes.toMap())
 
         override val value: T get() {
+            if (timeline.time == lastTime) return lastValue as T
+            lastTime = timeline.time
             require(keyframes.isNotEmpty()) { "An animated property must have at least one keyframe." }
-            if (keyframes.size == 1) return keyframes.values.single().value.value
+            if (keyframes.size == 1) return keyframes.values.single().value.value.also { lastValue = it }
 
             // TODO: possibly optimise this to only traverse the tree once
             val (from, lower) = keyframes.floorEntry(timeline.time)
-                ?: return keyframes.firstEntry().value.value.value
+                ?: return keyframes.firstEntry().value.value.value.also { lastValue = it }
             val (to, higher) = keyframes.ceilingEntry(timeline.time)
-                ?: return keyframes.lastEntry().value.value.value
+                ?: return keyframes.lastEntry().value.value.value.also { lastValue = it }
 
             if (from == to) return lower.value.value
 
-            return animate(lower.value.value, higher.value.value, alerp(from, to, timeline.time), higher.easing)
+            return animate(lower.value.value, higher.value.value, alerp(from, to, timeline.time), higher.easing).also { lastValue = it }
         }
 
         abstract fun animate(from: T, to: T, time: Float, easing: Easing): T

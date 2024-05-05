@@ -19,6 +19,6 @@ inline fun buildPath(block: Path.() -> Unit): Path = Path().apply(block)
 
 fun Rect.offset(vec: Vector2f) = offset(vec.x, vec.y)
 
-operator fun Rect.contains(vec: Vector2f): Boolean {
-    return vec.x in left..right && vec.y in top..bottom
+fun Rect.contains(x: Float, y: Float): Boolean {
+    return x in left..right && y in top..bottom
 }

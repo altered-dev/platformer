@@ -1,123 +1,147 @@
-@file:JvmName("Main")
-
 package me.altered.platformer
 
 import io.github.humbleui.skija.BackendRenderTarget
+import io.github.humbleui.skija.Canvas
 import io.github.humbleui.skija.ColorSpace
 import io.github.humbleui.skija.DirectContext
 import io.github.humbleui.skija.FramebufferFormat
 import io.github.humbleui.skija.Surface
 import io.github.humbleui.skija.SurfaceColorFormat
 import io.github.humbleui.skija.SurfaceOrigin
+import io.github.humbleui.skija.impl.Stats
+import me.altered.platformer.glfw.Window
 import me.altered.platformer.glfw.createWindow
-import me.altered.platformer.glfw.enumValueOf
-import me.altered.platformer.glfw.glfw
-import me.altered.platformer.glfw.input.InputEvent
-import me.altered.platformer.glfw.input.KeyMod
-import me.altered.platformer.scene.SceneManager
+import me.altered.platformer.node.SceneManager
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.clear
+import org.lwjgl.glfw.GLFW.glfwInit
+import org.lwjgl.glfw.GLFW.glfwTerminate
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 
-// FIXME: refactor main loop
-fun main() = glfw {
-    val width = 800
-    val height = 600
-    val targetFps = 165
-    val targetUps = 60
+object Main {
 
-    val window = createWindow(width, height, "average platformer experience") {
-        visible = false
-        resizable = true
+    private lateinit var window: Window
+
+    private val context by lazy { DirectContext.makeGL() }
+    private lateinit var target: BackendRenderTarget
+    private lateinit var surface: Surface
+    private lateinit var canvas: Canvas
+
+    private var targetFps = 0
+    private var targetUps = 0
+
+    /**
+     * @param args
+     * - `--width` / `-w`: window width (default: 800)
+     * - `--height` / `-h`: window height (default: 600)
+     * - `--title` / `-t`: window title (default: "")
+     * - `--fps` / `-f`: target frames per second (default: uncapped)
+     * - `--ups`/ `-u`: target updates per second (default: 60)
+     * - `--vsync` / `-v`: enable v-sync
+     * - `--enable-stats`: count skija native calls
+     */
+    @JvmStatic
+    fun main(args: Array<String>) {
+        Stats.enabled = args.getBoolean("enable-stats")
+        targetFps = args.getInt("fps", "f", 0)
+        targetUps = args.getInt("ups", "u", 60)
+
+        try {
+            check(glfwInit()) { "Failed to initialize GLFW." }
+            initWindow(args)
+            GL.createCapabilities()
+            initSkia()
+            SceneManager.setScene(MainScene(window))
+            loop()
+            SceneManager.destroyScene()
+            window.destroy()
+        } finally {
+            glfwTerminate()
+        }
     }
-    checkNotNull(window) { "Failed to create GLFW window." }
-    window.makeContextCurrent()
-    window.setSwapInterval(1)
-    window.show()
 
-    GL.createCapabilities()
+    private fun initWindow(args: Array<String>) {
+        window = createWindow(
+            width = args.getInt("width", "w", 800),
+            height = args.getInt("height", "h", 600),
+            title = args.getString("title", "t", ""),
+        ) {
+            visible = false
+            resizable = true
+        } ?: error("Failed to create GLFW window.")
 
-    val context = DirectContext.makeGL()
-    var target = makeTarget(width, height)
-    var surface = makeSurface(context, target)
-    var canvas = surface.canvas
+        window.makeContextCurrent()
+        window.setSwapInterval(if (args.getBoolean("vsync", "v")) 1 else 0)
+        window.show()
+        window.inputHandler = SceneManager
+        window.onResize = { _, _ -> initSkia() }
+    }
 
-    window.onResize += { w, h ->
-        target.close()
-        surface.close()
-        target = makeTarget(w, h)
+    private fun initSkia() {
+        val (width, height) = window.framebufferSize
+        val (scaleX, scaleY) = window.contentScale
+
+        target = makeTarget(width, height)
         surface = makeSurface(context, target)
-        canvas = surface.canvas
+        canvas = surface.canvas.scale(scaleX, scaleY)
     }
 
-    window.onKey += { key, scancode, action, mods ->
-        SceneManager.input(InputEvent.Key(enumValueOf(key), scancode, enumValueOf(action), KeyMod(mods)))
-    }
-    window.onMouseButton += { button, action, mods ->
-        SceneManager.input(InputEvent.MouseButton(enumValueOf(button), enumValueOf(action), KeyMod(mods)))
-    }
-    window.onCursorMove += { x, y -> SceneManager.input(InputEvent.CursorMove(x, y)) }
-    window.onCursorEnter += { entered -> SceneManager.input(InputEvent.CursorEnter(entered)) }
-    window.onScroll += { dx, dy -> SceneManager.input(InputEvent.Scroll(dx, dy)) }
+    private fun loop() {
+        var initialTime = System.currentTimeMillis()
+        val timeU = 1000.0f / targetUps
+        val timeR = if (targetFps > 0) 1000.0f / targetFps else 0.0f
+        var updateTime = initialTime
+        var frameTime = initialTime
+        var deltaUpdate = 0.0f
+        var deltaFps = 0.0f
 
-    SceneManager.setScene(MainScene())
+        while (!window.shouldClose) {
+            window.pollEvents()
 
-    var initialTime = System.currentTimeMillis()
-    val timeU = 1000.0f / targetUps
-    val timeR = if (targetFps > 0) 1000.0f / targetFps else 0.0f
-    var updateTime = initialTime
-    var frameTime = initialTime
-    var deltaUpdate = 0.0f
-    var deltaFps = 0.0f
+            val now = System.currentTimeMillis()
+            deltaUpdate += (now - initialTime) / timeU
+            deltaFps += (now - initialTime) / timeR
 
-    while (!window.shouldClose) {
-        window.pollEvents()
+            if (deltaUpdate >= 1) {
+                SceneManager.physicsUpdate((now - updateTime) * 0.001f)
+                updateTime = now
+                deltaUpdate--
+            }
 
-        val now = System.currentTimeMillis()
-        deltaUpdate += (now - initialTime) / timeU
-        deltaFps += (now - initialTime) / timeR
+            if (targetFps <= 0 || deltaFps >= 1) {
+                SceneManager.update((now - frameTime) * 0.001f)
+                frameTime = now
+                canvas.clear(Color.white)
+                SceneManager.draw(canvas)
+                context.flush()
+                deltaFps--
+            }
 
-        if (deltaUpdate >= 1) {
-            SceneManager.physicsUpdate((now - updateTime) * 0.001f)
-            updateTime = now
-            deltaUpdate--
+            initialTime = now
+            window.swapBuffers()
         }
-
-        if (targetFps <= 0 || deltaFps >= 1) {
-            SceneManager.update((now - frameTime) * 0.001f)
-            frameTime = now
-            canvas.clear(Color.white)
-            SceneManager.draw(canvas)
-            context.flush()
-            deltaFps--
-        }
-
-        initialTime = now
-        window.swapBuffers()
     }
 
-    SceneManager.destroyScene()
-}
+    private fun makeTarget(width: Int, height: Int): BackendRenderTarget {
+        // TODO: detect rendering platform
+        return BackendRenderTarget.makeGL(
+            /* width = */ width,
+            /* height = */ height,
+            /* sampleCnt = */ 0,
+            /* stencilBits = */ 8,
+            /* fbId = */ GL11.glGetInteger(0x8CA6),
+            /* fbFormat = */ FramebufferFormat.GR_GL_RGBA8,
+        )
+    }
 
-private fun makeTarget(width: Int, height: Int): BackendRenderTarget {
-    // TODO: detect rendering platform
-    return BackendRenderTarget.makeGL(
-        /* width = */ width,
-        /* height = */ height,
-        /* sampleCnt = */ 0,
-        /* stencilBits = */ 8,
-        /* fbId = */ GL11.glGetInteger(0x8CA6),
-        /* fbFormat = */ FramebufferFormat.GR_GL_RGBA8,
-    )
-}
-
-private fun makeSurface(context: DirectContext, target: BackendRenderTarget): Surface {
-    return Surface.wrapBackendRenderTarget(
-        /* context = */ context,
-        /* rt = */ target,
-        /* origin = */ SurfaceOrigin.BOTTOM_LEFT,
-        /* colorFormat = */ SurfaceColorFormat.RGBA_8888,
-        /* colorSpace = */ ColorSpace.getSRGB(),
-    )
+    private fun makeSurface(context: DirectContext, target: BackendRenderTarget): Surface {
+        return Surface.wrapBackendRenderTarget(
+            /* context = */ context,
+            /* rt = */ target,
+            /* origin = */ SurfaceOrigin.BOTTOM_LEFT,
+            /* colorFormat = */ SurfaceColorFormat.RGBA_8888,
+            /* colorSpace = */ ColorSpace.getSRGB(),
+        )
+    }
 }

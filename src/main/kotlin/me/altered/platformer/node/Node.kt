@@ -1,12 +1,18 @@
-package me.altered.platformer.scene
+package me.altered.platformer.node
 
 import io.github.humbleui.skija.Canvas
+import me.altered.platformer.glfw.Window
 import me.altered.platformer.glfw.input.InputEvent
 
 abstract class Node(parent: ParentNode? = null) {
 
     open val name: String
         get() = this::class.simpleName ?: "<anonymous>"
+
+    init {
+        @Suppress("LeakingThis")
+        parent?._children?.add(this)
+    }
 
     internal var _parent: ParentNode? = parent
     open var parent: ParentNode?
@@ -19,6 +25,9 @@ abstract class Node(parent: ParentNode? = null) {
 
     open val root: ParentNode?
         get() = parent?.findRoot()
+
+    protected open val window: Window?
+        get() = parent?.window
 
     internal open fun _ready() = ready()
 
