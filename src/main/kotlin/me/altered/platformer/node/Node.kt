@@ -1,7 +1,7 @@
 package me.altered.platformer.node
 
 import io.github.humbleui.skija.Canvas
-import me.altered.platformer.glfw.Window
+import me.altered.platformer.glfw.window.Window
 import me.altered.platformer.glfw.input.InputEvent
 
 abstract class Node(parent: ParentNode? = null) {

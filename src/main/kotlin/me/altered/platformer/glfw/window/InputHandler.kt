@@ -1,4 +1,4 @@
-package me.altered.platformer.glfw
+package me.altered.platformer.glfw.window
 
 interface InputHandler {
 

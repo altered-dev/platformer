@@ -1,7 +1,7 @@
 package me.altered.platformer.node
 
 import io.github.humbleui.skija.Canvas
-import me.altered.platformer.glfw.InputHandler
+import me.altered.platformer.glfw.window.InputHandler
 import me.altered.platformer.glfw.enumValueOf
 import me.altered.platformer.glfw.input.InputEvent
 import me.altered.platformer.glfw.input.KeyMod

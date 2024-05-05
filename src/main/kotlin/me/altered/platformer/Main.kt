@@ -9,8 +9,8 @@ import io.github.humbleui.skija.Surface
 import io.github.humbleui.skija.SurfaceColorFormat
 import io.github.humbleui.skija.SurfaceOrigin
 import io.github.humbleui.skija.impl.Stats
-import me.altered.platformer.glfw.Window
-import me.altered.platformer.glfw.createWindow
+import me.altered.platformer.glfw.window.Window
+import me.altered.platformer.glfw.window.createWindow
 import me.altered.platformer.node.SceneManager
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.clear
@@ -24,8 +24,6 @@ object Main {
     private lateinit var window: Window
 
     private val context by lazy { DirectContext.makeGL() }
-    private lateinit var target: BackendRenderTarget
-    private lateinit var surface: Surface
     private lateinit var canvas: Canvas
 
     private var targetFps = 0
@@ -82,8 +80,8 @@ object Main {
         val (width, height) = window.framebufferSize
         val (scaleX, scaleY) = window.contentScale
 
-        target = makeTarget(width, height)
-        surface = makeSurface(context, target)
+        val target = makeTarget(width, height)
+        val surface = makeSurface(context, target)
         canvas = surface.canvas.scale(scaleX, scaleY)
     }
 

@@ -6,12 +6,13 @@ import io.github.humbleui.skija.FontMgr
 import io.github.humbleui.skija.FontStyle
 import io.github.humbleui.skija.impl.Stats
 import io.github.humbleui.types.Rect
-import me.altered.platformer.glfw.Window
+import me.altered.platformer.glfw.window.Window
 import me.altered.platformer.glfw.input.InputEvent
 import me.altered.platformer.glfw.input.Key
 import me.altered.platformer.glfw.input.pressed
 import me.altered.platformer.glfw.input.released
 import me.altered.platformer.glfw.input.scrolled
+import me.altered.platformer.glfw.window.Window.Attributes.focused
 import me.altered.platformer.`object`.Object
 import me.altered.platformer.player.Player
 import me.altered.platformer.node.ParentNode
@@ -77,7 +78,7 @@ class MainScene(
         canvas.drawString("time: ${timeline.time}", 10.0f, 40.0f, font, paint)
         canvas.drawString("fps: $fps", 10.0f, 60.0f, font, paint)
         canvas.drawString("native calls: ${Stats.nativeCalls}", 10.0f, 80.0f, font, paint)
-        canvas.drawString("allocated: ${Stats.allocated}", 10.0f, 100.0f, font, paint)
+        canvas.drawString("focused: ${window.focused}", 10.0f, 100.0f, font, paint)
     }
 
     override fun input(event: InputEvent): Boolean {
