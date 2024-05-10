@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    application
 }
 
 group = "me.altered"
@@ -26,6 +27,8 @@ fun DependencyHandler.lwjgl(dependencyProvider: Provider<ExternalModuleDependenc
     val classifier = getClassifier(
         name = System.getProperty("os.name")!!,
         arch = System.getProperty("os.arch")!!,
+//        name = "Linux",
+//        arch = "",
     )
     implementation(dependencyProvider)
     dependencyProvider.get().forEach { dependency ->

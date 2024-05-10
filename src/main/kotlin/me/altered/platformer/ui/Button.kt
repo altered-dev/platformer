@@ -8,7 +8,9 @@ import io.github.humbleui.types.Rect
 import me.altered.platformer.glfw.input.Action
 import me.altered.platformer.glfw.input.InputEvent
 import me.altered.platformer.glfw.input.MouseButton
+import me.altered.platformer.io.font
 import me.altered.platformer.node.Node
+import me.altered.platformer.node.SceneManager.defer
 import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
 import me.altered.platformer.skija.color
@@ -62,7 +64,7 @@ class Button(
                 state == State.PRESSED && event.action == Action.RELEASE -> {
                     state = State.HOVERED
                     paint.color4f = color(0xFF99FFCC)
-                    onClick()
+                    defer { onClick() }
                     true
                 }
 
@@ -76,6 +78,6 @@ class Button(
 
     companion object {
 
-        private val font = Font(FontMgr.getDefault().matchFamilyStyle("Inter", FontStyle.NORMAL), 13.0f)
+        private val font = font("fonts/Inter-Regular.ttf", 13.0f)
     }
 }

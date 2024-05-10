@@ -63,7 +63,7 @@ sealed interface Expression<T> {
             val (to, higher) = keyframes.ceilingEntry(timeline.time)
                 ?: return keyframes.lastEntry().value.value.value.also { lastValue = it }
 
-            if (from == to) return lower.value.value
+            if (from == to) return lower.value.value.also { lastValue = it }
 
             return animate(lower.value.value, higher.value.value, alerp(from, to, timeline.time), higher.easing).also { lastValue = it }
         }

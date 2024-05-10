@@ -8,34 +8,78 @@ import me.altered.platformer.glfw.input.KeyMod
 
 object SceneManager : InputHandler {
 
-    private var currentScene: Node = EmptyNode
+    var scene: Node = EmptyNode
+        set(value) {
+            destroy(field)
+            field = value
+            ready(value)
+            prettyPrint(value)
+        }
 
-    fun setScene(scene: Node) {
-        currentScene._destroy()
-        currentScene = scene
-        scene._ready()
-        prettyPrint(scene)
+    private val deferred = mutableListOf<() -> Unit>()
+
+    fun Node.defer(block: () -> Unit) {
+        deferred += block
     }
 
-    fun update(delta: Float) {
-        currentScene._update(delta)
+    fun ready() = ready(scene)
+
+    private fun ready(node: Node) {
+        if (node is ParentNode) node.children.forEach {
+            ready(it)
+        }
+        node.ready()
     }
 
-    fun physicsUpdate(delta: Float) {
-        currentScene._physicsUpdate(delta)
+    fun update(delta: Float) = update(delta, scene)
+
+    private fun update(delta: Float, node: Node) {
+        node.update(delta)
+        if (node is ParentNode) node.children.forEach {
+            update(delta, it)
+        }
     }
 
-    fun input(event: InputEvent) {
-        currentScene._input(event)
+    fun physicsUpdate(delta: Float) = physicsUpdate(delta, scene)
+
+    private fun physicsUpdate(delta: Float, node: Node) {
+        node.physicsUpdate(delta)
+        if (node is ParentNode) node.children.forEach {
+            physicsUpdate(delta, it)
+        }
     }
 
-    fun draw(canvas: Canvas) {
-        currentScene._draw(canvas)
+    fun input(event: InputEvent) = input(event, scene)
+
+
+    private fun input(event: InputEvent, node: Node): Boolean {
+        if (node is ParentNode && node.children.any { input(event, it) }) return true
+        return node.input(event)
     }
 
-    fun destroyScene() {
-        currentScene._destroy()
-        currentScene = EmptyNode
+    fun draw(canvas: Canvas) = draw(canvas, scene)
+
+    private fun draw(canvas: Canvas, node: Node) {
+        canvas.save()
+        node.draw(canvas)
+        canvas.restore()
+        if (node is ParentNode) node.children.forEach {
+            draw(canvas, it)
+        }
+    }
+
+    fun postUpdate() {
+        deferred.forEach { it() }
+        deferred.clear()
+    }
+
+    fun destroy() = destroy(scene)
+
+    private fun destroy(node: Node) {
+        if (node is ParentNode) node.children.forEach {
+            destroy(it)
+        }
+        node.destroy()
     }
 
     override fun onResize(width: Int, height: Int) {

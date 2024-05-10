@@ -1,5 +1,6 @@
 package me.altered.platformer.timeline
 
+import io.github.humbleui.skija.Color4f
 import org.joml.Vector2f
 import org.joml.Vector2fc
 
@@ -27,6 +28,13 @@ fun lerp(
     dest: Vector2f = Vector2f(),
 ): Vector2f = from.lerp(to, easing.easeSafe(t), dest)
 
+fun lerp(
+    from: Color4f,
+    to: Color4f,
+    t: Float,
+    easing: Easing = Easing.linear,
+): Color4f = from.makeLerp(to, easing.easeSafe(t))
+
 fun alerp(from: Float, to: Float, value: Float): Float {
     return (value - from) / (to - from)
 }
@@ -34,6 +42,8 @@ fun alerp(from: Float, to: Float, value: Float): Float {
 // endregion
 
 // region keyframes
+
+infix fun <T> T.at(time: Float) = time to Keyframe(const(this))
 
 infix fun <T> Expression<T>.at(time: Float) = time to Keyframe(this)
 

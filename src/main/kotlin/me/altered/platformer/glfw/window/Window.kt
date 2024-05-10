@@ -2,6 +2,9 @@ package me.altered.platformer.glfw.window
 
 import me.altered.platformer.glfw.IntEnum
 import me.altered.platformer.glfw.enumValueOf
+import me.altered.platformer.glfw.input.Cursor
+import me.altered.platformer.glfw.input.Key
+import me.altered.platformer.glfw.input.MouseButton
 import me.altered.platformer.glfw.memoryStack
 import org.lwjgl.glfw.GLFW.GLFW_AUTO_ICONIFY
 import org.lwjgl.glfw.GLFW.GLFW_CLIENT_API
@@ -25,13 +28,17 @@ import org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED
 import org.lwjgl.glfw.GLFW.GLFW_MOUSE_PASSTHROUGH
 import org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT
 import org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE
+import org.lwjgl.glfw.GLFW.GLFW_PRESS
 import org.lwjgl.glfw.GLFW.GLFW_RESIZABLE
 import org.lwjgl.glfw.GLFW.GLFW_TRANSPARENT_FRAMEBUFFER
 import org.lwjgl.glfw.GLFW.GLFW_TRUE
 import org.lwjgl.glfw.GLFW.GLFW_VISIBLE
+import org.lwjgl.glfw.GLFW.glfwCreateStandardCursor
 import org.lwjgl.glfw.GLFW.glfwDestroyWindow
 import org.lwjgl.glfw.GLFW.glfwFocusWindow
 import org.lwjgl.glfw.GLFW.glfwGetFramebufferSize
+import org.lwjgl.glfw.GLFW.glfwGetKey
+import org.lwjgl.glfw.GLFW.glfwGetMouseButton
 import org.lwjgl.glfw.GLFW.glfwGetWindowAttrib
 import org.lwjgl.glfw.GLFW.glfwGetWindowContentScale
 import org.lwjgl.glfw.GLFW.glfwGetWindowPos
@@ -41,6 +48,7 @@ import org.lwjgl.glfw.GLFW.glfwIconifyWindow
 import org.lwjgl.glfw.GLFW.glfwMakeContextCurrent
 import org.lwjgl.glfw.GLFW.glfwPollEvents
 import org.lwjgl.glfw.GLFW.glfwRestoreWindow
+import org.lwjgl.glfw.GLFW.glfwSetCursor
 import org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback
 import org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback
 import org.lwjgl.glfw.GLFW.glfwSetKeyCallback
@@ -114,6 +122,10 @@ class Window(private val handle: Long) {
     fun setSwapInterval(interval: Int) = glfwSwapInterval(interval)
     fun pollEvents() = glfwPollEvents()
     fun waitEvents() = glfwWaitEvents()
+    fun setCursor(cursor: Cursor) = glfwSetCursor(handle, glfwCreateStandardCursor(cursor.code))
+
+    fun keyPressed(key: Key) = glfwGetKey(handle, key.code) == GLFW_PRESS
+    fun mouseButtonPressed(button: MouseButton) = glfwGetMouseButton(handle, button.code) == GLFW_PRESS
 
     var inputHandler: InputHandler? = null
         set(value) {

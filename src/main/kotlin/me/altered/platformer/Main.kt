@@ -50,9 +50,9 @@ object Main {
             initWindow(args)
             GL.createCapabilities()
             initSkia()
-            SceneManager.setScene(MainScene(window))
+            SceneManager.scene = MainScene(window)
             loop()
-            SceneManager.destroyScene()
+            SceneManager.destroy()
             window.destroy()
         } finally {
             glfwTerminate()
@@ -116,6 +116,7 @@ object Main {
                 deltaFps--
             }
 
+            SceneManager.postUpdate()
             initialTime = now
             window.swapBuffers()
         }

@@ -1,8 +1,5 @@
 package me.altered.platformer.node
 
-import io.github.humbleui.skija.Canvas
-import me.altered.platformer.glfw.input.InputEvent
-
 abstract class ParentNode(parent: ParentNode? = null) : Node(parent) {
 
     internal val _children = mutableSetOf<Node>()
@@ -26,32 +23,5 @@ abstract class ParentNode(parent: ParentNode? = null) : Node(parent) {
 
     tailrec fun findRoot(): ParentNode {
         return parent?.findRoot() ?: this
-    }
-
-    override fun _ready() {
-        children.forEach { it._ready() }
-        ready()
-    }
-
-    override fun _physicsUpdate(delta: Float) {
-        physicsUpdate(delta)
-        children.forEach { it._physicsUpdate(delta) }
-    }
-
-    override fun _draw(canvas: Canvas) {
-        canvas.save()
-        draw(canvas)
-        canvas.restore()
-        children.forEach { it._draw(canvas) }
-    }
-
-    override fun _input(event: InputEvent): Boolean {
-        if (children.any { it._input(event) }) return true
-        return input(event)
-    }
-
-    override fun _destroy() {
-        children.forEach { it._destroy() }
-        destroy()
     }
 }

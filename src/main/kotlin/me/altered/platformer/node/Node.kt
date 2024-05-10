@@ -29,28 +29,12 @@ abstract class Node(parent: ParentNode? = null) {
     protected open val window: Window?
         get() = parent?.window
 
-    internal open fun _ready() = ready()
-
-    internal open fun _update(delta: Float) = update(delta)
-
-    internal open fun _physicsUpdate(delta: Float) = physicsUpdate(delta)
-
-    internal open fun _draw(canvas: Canvas) {
-        canvas.save()
-        draw(canvas)
-        canvas.restore()
-    }
-
-    internal open fun _input(event: InputEvent) = input(event)
-
-    internal open fun _destroy() = destroy()
-
     /**
      * Called when the node enters the tree.
      *
      * A parent node is ready after all its children are ready.
      */
-    protected open fun ready() = Unit
+    open fun ready() = Unit
 
     /**
      * Called every frame.
@@ -59,7 +43,7 @@ abstract class Node(parent: ParentNode? = null) {
      *
      * @param delta time in seconds since the last frame.
      */
-    protected open fun update(delta: Float) = Unit
+    open fun update(delta: Float) = Unit
 
     /**
      * Called every physics tick.
@@ -68,7 +52,7 @@ abstract class Node(parent: ParentNode? = null) {
      *
      * @param delta time in seconds since the last physics tick.
      */
-    protected open fun physicsUpdate(delta: Float) = Unit
+    open fun physicsUpdate(delta: Float) = Unit
 
     /**
      * Called every time the node needs redrawing.
@@ -77,7 +61,7 @@ abstract class Node(parent: ParentNode? = null) {
      *
      * @param canvas the canvas the node will be drawn onto.
      */
-    protected open fun draw(canvas: Canvas) = Unit
+    open fun draw(canvas: Canvas) = Unit
 
     /**
      * Called every time an input event occurs.
@@ -90,14 +74,14 @@ abstract class Node(parent: ParentNode? = null) {
      * - `true` if the event was handled and is not desired to be handled by other nodes.
      * - `false` if the event was handled or is desired to be handled by other nodes.
      */
-    protected open fun input(event: InputEvent) = false
+    open fun input(event: InputEvent) = false
 
     /**
      * Called when the node exits the tree.
      *
      * A parent node is destroyed after its children.
      */
-    protected open fun destroy() = Unit
+    open fun destroy() = Unit
 
     override fun toString(): String = "[${this::class.simpleName}] $name"
 }
