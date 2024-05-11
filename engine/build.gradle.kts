@@ -5,10 +5,10 @@ plugins {
 dependencies {
     commonMainApi(libs.skiko)
     commonMainApi(libs.kotlinx.coroutines)
+    commonMainApi(project(":koml"))
     commonTestImplementation(kotlin("test"))
 
     jvmMainApi(platform(libs.lwjgl.bom))
-    jvmMainApi(libs.joml)
     jvmMainApi(libs.bundles.skiko.jvm)
     lwjgl(libs.bundles.lwjgl.withNatives)
 

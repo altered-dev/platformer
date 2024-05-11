@@ -50,6 +50,9 @@ kotlin {
             dependsOn(desktopMain)
         }
 
+        val macosX64Main by getting { dependsOn(macosMain.get()) }
+        val macosArm64Main by getting { dependsOn(macosMain.get()) }
+
         val mobileMain by creating {
             kotlin.srcDir("mobile")
             dependsOn(commonMain.get())
@@ -64,6 +67,9 @@ kotlin {
             kotlin.srcDir("ios")
             dependsOn(mobileMain)
         }
+
+        val iosX64Main by getting { dependsOn(iosMain.get()) }
+        val iosArm64Main by getting { dependsOn(iosMain.get()) }
     }
 
     compilerOptions {

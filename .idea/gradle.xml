@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/engine" />
             <option value="$PROJECT_DIR$/jvmApp" />
+            <option value="$PROJECT_DIR$/koml" />
           </set>
         </option>
       </GradleProjectSettings>
