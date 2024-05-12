@@ -7,6 +7,7 @@ import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.LEFT
 import me.altered.platformer.engine.input.MouseButton
 import me.altered.platformer.engine.io.font
+import me.altered.platformer.engine.io.resource
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.SceneManager.defer
 import me.altered.platformer.skija.buildPaint
@@ -76,6 +77,6 @@ class Button(
 
     companion object {
 
-        private val font = font("fonts/Inter-Regular.ttf", 13.0f)
+        private val font = font(resource("fonts/Inter-Regular.ttf"), 13.0f)
     }
 }

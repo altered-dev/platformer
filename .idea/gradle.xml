@@ -16,14 +16,17 @@
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
+        <option name="gradleJvm" value="17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/app/ios" />
+            <option value="$PROJECT_DIR$/app/jvm" />
+            <option value="$PROJECT_DIR$/app/macos" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/engine" />
-            <option value="$PROJECT_DIR$/jvmApp" />
             <option value="$PROJECT_DIR$/koml" />
           </set>
         </option>

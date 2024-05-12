@@ -66,9 +66,10 @@ sealed interface Expression<T> {
 
             if (from == to) return lower.value.value.also { lastValue = it }
 
-            return animate(lower.value.value, higher.value.value, alerp(from, to, timeline.time), higher.easing).also { lastValue = it }
+            val t = higher.easing.easeSafe(alerp(from, to, timeline.time))
+            return animate(lower.value.value, higher.value.value, t).also { lastValue = it }
         }
 
-        abstract fun animate(from: T, to: T, time: Float, easing: Easing): T
+        abstract fun animate(from: T, to: T, t: Float): T
     }
 }

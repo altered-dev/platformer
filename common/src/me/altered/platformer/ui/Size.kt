@@ -1,5 +1,7 @@
 package me.altered.platformer.ui
 
+import kotlin.jvm.JvmInline
+
 sealed interface Size {
 
     @JvmInline

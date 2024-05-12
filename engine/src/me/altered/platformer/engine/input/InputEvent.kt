@@ -18,7 +18,7 @@ sealed interface InputEvent {
 
     data class CursorMove(val x: Float, val y: Float) : InputEvent
 
-    data class Scroll(val dx: Float, val dy: Float) : InputEvent
+    data class Scroll(val dx: Float, val dy: Float, val modifier: Modifier) : InputEvent
 
     data class CursorEnter(val entered: Boolean) : InputEvent
 

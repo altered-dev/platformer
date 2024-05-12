@@ -10,7 +10,7 @@ private const val PI = kotlin.math.PI.toFloat()
 
 private const val C1 = 1.70158f
 private const val C2 = C1 * 1.525f
-private const val C3 = 2.70158f
+private const val C3 = C1 + 1.0f
 
 /**
  * A set of smoothing functions for animation interpolation.
@@ -27,6 +27,8 @@ fun interface Easing {
      * The values in between are not guaranteed to be between 0 and 1.
      */
     fun ease(value: Float): Float
+
+    fun easeSafe(value: Float): Float = ease(value.coerceIn(0.0f, 1.0f))
 
     companion object {
 

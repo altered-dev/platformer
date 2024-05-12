@@ -3,13 +3,17 @@ plugins {
 }
 rootProject.name = "platformer"
 
-include("common")
-include("engine")
-include("jvmApp")
-
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
     }
 }
+
+include("common")
+include("engine")
 include("koml")
+include("app")
+include("app:jvm")
+include("app:macos")
+include("app:ios")
+findProject(":app:ios")?.name = "ios"

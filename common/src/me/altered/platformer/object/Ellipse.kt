@@ -1,12 +1,13 @@
 package me.altered.platformer.`object`
 
 import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Color
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
+import me.altered.platformer.skija.color
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import kotlin.math.withSign
@@ -17,8 +18,8 @@ class Ellipse(
     var width: Expression<Float>,
     var height: Expression<Float>,
     var rotation: Expression<Float>,
-    var fill: Expression<Color4f> = const(Color.transparent),
-    var stroke: Expression<Color4f> = const(Color.transparent),
+    var fill: Expression<Color4f> = const(color(Color.TRANSPARENT)),
+    var stroke: Expression<Color4f> = const(color(Color.TRANSPARENT)),
     var strokeWidth: Expression<Float> = const(0.0f),
 ) : Node("ellipse") {
 

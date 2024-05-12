@@ -36,13 +36,9 @@ class EditorScene : ParentNode("editor") {
         color = Color(0x40000000)
     }
 
-    private val textPaint = buildPaint {
-        color = Color.BLACK
-    }
-
     // TODO: to camera class
-    private var offsetX = 0.0f
-    private var offsetY = 0.0f
+    private var offsetX = Float.NaN
+    private var offsetY = Float.NaN
     private var scale = 1.0f
     private var mousePosX = 0.0f
     private var mousePosY = 0.0f
@@ -71,12 +67,6 @@ class EditorScene : ParentNode("editor") {
         onClick = { mode = Mode.RECTANGLE },
     )
 
-    override fun ready() {
-//        val (w, h) = window.size
-//        offsetX = w * 0.5f
-//        offsetY = h * 0.5f
-    }
-
     override fun input(event: InputEvent) {
         when {
             event pressed MouseButton.MIDDLE -> {
@@ -87,13 +77,17 @@ class EditorScene : ParentNode("editor") {
                 middleDragging = false
                 true
             }
-            event.scrolled() -> {
-                if (event.dy > 0) {
-                    scale *= 1.1f
-                } else {
-                    scale /= 1.1f
+            event.scrolled(Modifier.CONTROL) -> {
+                println(event.dy)
+                when {
+                    event.dy > 0 -> scale *= 1.1f
+                    event.dy < 0 -> scale /= 1.1f
                 }
                 false
+            }
+            event.scrolled() -> {
+                offsetX += event.dx
+                offsetY -= event.dy
             }
             event pressed Modifier.CONTROL + Key.N0 -> {
                 scale = 1.0f
@@ -124,6 +118,11 @@ class EditorScene : ParentNode("editor") {
     }
 
     override fun draw(canvas: Canvas, width: Float, height: Float) {
+        if (offsetX.isNaN()) {
+            offsetX = width * 0.5f
+            offsetY = height * 0.5f
+        }
+
         val width = width / scale
         val height = height / scale
 

@@ -10,6 +10,8 @@ import org.jetbrains.skia.Rect
 
 operator fun Color.invoke(hex: Long): Int = hex.toInt()
 
+fun color(hex: Number): Color4f = Color4f(hex.toInt())
+
 fun Canvas.clear(color4f: Color4f) = clear(color4f.toColor())
 
 fun Canvas.translate(vec: Vector2f) = translate(vec.x, vec.y)

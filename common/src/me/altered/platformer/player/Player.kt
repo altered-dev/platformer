@@ -9,8 +9,8 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.skija.translate
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.skija.Color
 import me.altered.platformer.skija.buildPaint
+import org.jetbrains.skia.Color
 import kotlin.math.sign
 
 class Player(
@@ -22,7 +22,7 @@ class Player(
     private val gravity = 9.8f
 
     private val paint = buildPaint {
-        color4f = Color.black
+        color = Color.BLACK
     }
 
     override fun physicsUpdate(delta: Float) {

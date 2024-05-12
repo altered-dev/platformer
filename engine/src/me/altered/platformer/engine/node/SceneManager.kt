@@ -1,8 +1,10 @@
 package me.altered.platformer.engine.node
 
 import me.altered.platformer.engine.input.InputEvent
+import me.altered.platformer.engine.input.InputHandler
 import me.altered.platformer.engine.util.currentTimeMillis
 import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Color
 import org.jetbrains.skiko.SkikoRenderDelegate
 
 /**
@@ -10,7 +12,7 @@ import org.jetbrains.skiko.SkikoRenderDelegate
  *
  * TODO: also unsingleton this
  */
-object SceneManager : SkikoRenderDelegate {
+object SceneManager : SkikoRenderDelegate, InputHandler {
 
     var scene: Node = EmptyNode
         set(value) {
@@ -47,6 +49,7 @@ object SceneManager : SkikoRenderDelegate {
         if (targetFps <= 0 || deltaFps >= 1) {
             update((now - frameTime) * 0.001f)
             frameTime = now
+            canvas.clear(Color.WHITE)
             draw(canvas, width.toFloat(), height.toFloat())
             deltaFps--
         }
@@ -102,7 +105,7 @@ object SceneManager : SkikoRenderDelegate {
         }
     }
 
-    fun input(event: InputEvent) = input(event, scene)
+    override fun input(event: InputEvent) = input(event, scene)
 
     private fun input(event: InputEvent, node: Node) {
         if (node is ParentNode) {

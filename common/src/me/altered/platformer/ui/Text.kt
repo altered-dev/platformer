@@ -2,6 +2,7 @@ package me.altered.platformer.ui
 
 import org.jetbrains.skia.Canvas
 import me.altered.platformer.engine.io.font
+import me.altered.platformer.engine.io.resource
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.skija.buildPaint
 
@@ -22,6 +23,6 @@ class Text(
 
     companion object {
 
-        private val font = font("fonts/Inter-Regular.ttf", 13.0f)
+        private val font = font(resource("fonts/Inter-Regular.ttf"), 13.0f)
     }
 }

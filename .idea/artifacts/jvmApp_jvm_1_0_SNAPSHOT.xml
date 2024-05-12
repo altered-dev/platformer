@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="jvmApp-jvm-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/jvmApp/build/libs</output-path>
-    <root id="archive" name="jvmApp-jvm-1.0-SNAPSHOT.jar">
-      <element id="module-output" name="platformer.jvmApp.jvmMain" />
-    </root>
-  </artifact>
-</component>

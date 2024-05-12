@@ -34,7 +34,7 @@ class TreeMap<K : Comparable<K>, V>() : AbstractMutableMap<K, V>() {
         }
 
     constructor(from: Map<K, V>) : this() {
-
+        from.forEach { put(it.key, it.value) }
     }
 
     override fun put(key: K, value: V): V? {
