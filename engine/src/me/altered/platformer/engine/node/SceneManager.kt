@@ -3,8 +3,10 @@ package me.altered.platformer.engine.node
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
 import me.altered.platformer.engine.util.currentTimeMillis
+import me.altered.platformer.engine.util.scale
+import me.altered.platformer.engine.util.translate
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color
+import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate
 
 /**
@@ -21,6 +23,9 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
             ready(value)
             prettyPrint(value)
         }
+
+    // TODO: to args
+    var isDebug = true
 
     private val deferred = mutableListOf<() -> Unit>()
 
@@ -49,8 +54,8 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
         if (targetFps <= 0 || deltaFps >= 1) {
             update((now - frameTime) * 0.001f)
             frameTime = now
-            canvas.clear(Color.WHITE)
-            draw(canvas, width.toFloat(), height.toFloat())
+            canvas.clear(0xFFFFFFFF.toInt())
+            draw(canvas, Rect.makeWH(width.toFloat(), height.toFloat()))
             deltaFps--
         }
 
@@ -65,9 +70,7 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
     fun ready() = ready(scene)
 
     private fun ready(node: Node) {
-        if (node is ParentNode) {
-            node.children.forEach { ready(it) }
-        }
+        node.children.forEach { ready(it) }
         node.ready()
     }
 
@@ -75,18 +78,14 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
 
     private fun update(delta: Float, node: Node) {
         node.update(delta)
-        if (node is ParentNode) {
-            node.children.forEach { update(delta, it) }
-        }
+        node.children.forEach { update(delta, it) }
     }
 
     fun physicsUpdate(delta: Float) = physicsUpdate(delta, scene)
 
     private fun physicsUpdate(delta: Float, node: Node) {
         node.physicsUpdate(delta)
-        if (node is ParentNode) {
-            node.children.forEach { physicsUpdate(delta, it) }
-        }
+        node.children.forEach { physicsUpdate(delta, it) }
     }
 
     private fun postUpdate() {
@@ -94,32 +93,50 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
         deferred.clear()
     }
 
-    fun draw(canvas: Canvas, width: Float, height: Float) = draw(canvas, width, height, scene)
+    fun draw(canvas: Canvas, bounds: Rect) = draw(canvas, bounds, scene)
 
-    private fun draw(canvas: Canvas, width: Float, height: Float, node: Node) {
+    private fun draw(canvas: Canvas, bounds: Rect, node: Node) {
         canvas.save()
-        node.draw(canvas, width, height)
-        canvas.restore()
-        if (node is ParentNode) {
-            node.children.forEach { draw(canvas, width, height, it) }
+        val bounds = when (node) {
+            is Node2D -> {
+                canvas
+                    .translate(node.position)
+                    .rotate(node.rotation)
+                    .scale(node.scale)
+                bounds
+            }
+
+            is UiNode -> {
+                val bounds = node.measure(bounds)
+                canvas.translate(bounds.left, bounds.top)
+                Rect.makeWH(bounds.width, bounds.height)
+            }
+
+            else -> bounds
         }
+
+        canvas.save()
+        node.draw(canvas, bounds)
+        if (isDebug) {
+            node.debugDraw(canvas, bounds)
+        }
+        canvas.restore()
+
+        node.children.forEach { draw(canvas, bounds, it) }
+        canvas.restore()
     }
 
     override fun input(event: InputEvent) = input(event, scene)
 
     private fun input(event: InputEvent, node: Node) {
-        if (node is ParentNode) {
-            node.children.forEach { input(event, it) }
-        }
+        node.children.forEach { input(event, it) }
         node.input(event)
     }
 
     fun destroy() = destroy(scene)
 
     private fun destroy(node: Node) {
-        if (node is ParentNode) {
-            node.children.forEach { destroy(it) }
-        }
+        node.children.forEach { destroy(it) }
         node.destroy()
     }
 }

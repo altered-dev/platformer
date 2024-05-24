@@ -1,6 +1,6 @@
 package me.altered.platformer.`object`
 
-import me.altered.platformer.engine.node.ParentNode
+import me.altered.platformer.engine.node.Node
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 
@@ -10,7 +10,7 @@ class Group(
     var scaleX: Expression<Float> = const(1.0f),
     var scaleY: Expression<Float> = const(1.0f),
     var rotation: Expression<Float> = const(0.0f),
-) : ParentNode("group") {
+) : Node("group") {
 
 //    override fun _draw(canvas: Canvas) {
 //        // FIXME: i totally need to redo this hack

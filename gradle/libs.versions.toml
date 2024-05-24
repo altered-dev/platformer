@@ -5,6 +5,10 @@ skiko = "0.8.4"
 lwjgl = "3.3.3"
 coroutines = "1.8.0"
 joml = "1.10.5"
+junit = "4.13.2"
+runner = "1.0.2"
+espresso-core = "3.0.2"
+appcompat-v7 = "28.0.0"
 
 [libraries]
 lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
@@ -36,6 +40,10 @@ skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-run
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 
 joml = { group = "org.joml", name = "joml", version.ref = "joml" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+runner = { group = "com.android.support.test", name = "runner", version.ref = "runner" }
+espresso-core = { group = "com.android.support.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+appcompat-v7 = { group = "com.android.support", name = "appcompat-v7", version.ref = "appcompat-v7" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -4,6 +4,10 @@ plugins {
     platformer.`app-conventions`
 }
 
+dependencies {
+    commonMainImplementation(project(":common"))
+}
+
 fun KotlinNativeTarget.macosHost() {
     binaries {
         executable {
@@ -25,9 +29,6 @@ kotlin {
         commonMain {
             kotlin.srcDir("src")
             resources.srcDir("res")
-            dependencies {
-                implementation(project(":common"))
-            }
         }
     }
 }

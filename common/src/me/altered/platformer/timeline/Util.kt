@@ -18,6 +18,6 @@ infix fun <T> T.at(time: Float) = time to Keyframe(const(this))
 
 infix fun <T> Expression<T>.at(time: Float) = time to Keyframe(this)
 
-infix fun <T> Pair<Float, Keyframe<T>>.with(easing: Easing) = first to Keyframe(second.value, easing)
+infix fun <T> Pair<Float, Keyframe<T>>.with(easing: Easing) = first to second.copy(easing = easing)
 
 // endregion

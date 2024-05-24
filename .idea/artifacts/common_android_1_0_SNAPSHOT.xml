@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="common-android-1.0-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/common/build/libs</output-path>
+    <root id="archive" name="common-android-1.0-SNAPSHOT.jar">
+      <element id="module-output" name="platformer.common.androidMain" />
+    </root>
+  </artifact>
+</component>

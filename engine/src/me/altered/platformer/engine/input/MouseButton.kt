@@ -11,5 +11,5 @@ expect enum class MouseButton {
 }
 
 val MouseButton.Companion.LEFT get() = MouseButton.N1
-val MouseButton.Companion.RIGHT get() = MouseButton.N2
-val MouseButton.Companion.MIDDLE get() = MouseButton.N3
+val MouseButton.Companion.MIDDLE get() = MouseButton.N2
+val MouseButton.Companion.RIGHT get() = MouseButton.N3

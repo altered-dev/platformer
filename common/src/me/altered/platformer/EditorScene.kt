@@ -13,27 +13,25 @@ import me.altered.platformer.engine.input.plus
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
-import me.altered.platformer.engine.node.ParentNode
-import me.altered.platformer.engine.node.getValue
-import me.altered.platformer.engine.node.provideDelegate
-import me.altered.platformer.skija.buildPaint
-import me.altered.platformer.skija.invoke
+import me.altered.platformer.engine.node.Node
+import me.altered.platformer.engine.util.paint
 import me.altered.platformer.ui.Button
 import me.altered.platformer.ui.Text
-import org.jetbrains.skia.Color
+import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.engine.util.color
 
-class EditorScene : ParentNode("editor") {
+class EditorScene : Node("editor") {
 
-    private val originPaint = buildPaint {
+    private val originPaint = paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
-        color = Color.BLACK
+        color4f = Colors.black
     }
 
-    private val gridPaint = buildPaint {
+    private val gridPaint = paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
-        color = Color(0x40000000)
+        color4f = color(0x40000000)
     }
 
     // TODO: to camera class
@@ -45,6 +43,8 @@ class EditorScene : ParentNode("editor") {
     private var leftDragging = false
     private var middleDragging = false
 
+    private var fps = 0.0f
+
     enum class Mode { CURSOR, RECTANGLE }
     private var mode = Mode.CURSOR
         set(value) {
@@ -55,17 +55,20 @@ class EditorScene : ParentNode("editor") {
 //            }
         }
 
-    private val cursorButton by Button(
+    private val cursorButton = +Button(
         rect = Rect.makeXYWH(16.0f, 16.0f, 96.0f, 24.0f),
         name = "cursor",
         onClick = { mode = Mode.CURSOR },
     )
 
-    private val rectangleButton by Button(
+    private val rectangleButton = +Button(
         rect = Rect.makeXYWH(16.0f, 56.0f, 96.0f, 24.0f),
         name = "rectangle",
         onClick = { mode = Mode.RECTANGLE },
     )
+
+    private val scaleText = +Text({ "scale: $scale" }, 16.0f, 128.0f, Colors.red)
+    private val fpsText = +Text({ "fps: $fps" }, 16.0f, 144.0f, Colors.red)
 
     override fun input(event: InputEvent) {
         when {
@@ -78,10 +81,9 @@ class EditorScene : ParentNode("editor") {
                 true
             }
             event.scrolled(Modifier.CONTROL) -> {
-                println(event.dy)
                 when {
-                    event.dy > 0 -> scale *= 1.1f
-                    event.dy < 0 -> scale /= 1.1f
+                    event.dy < 0 -> scale *= 1.1f
+                    event.dy > 0 -> scale /= 1.1f
                 }
                 false
             }
@@ -106,25 +108,19 @@ class EditorScene : ParentNode("editor") {
         }
     }
 
-    private var fps = 0.0f
-
-    private val scaleText by Text("scale: $scale", 16.0f, 128.0f, Color.RED)
-    private val fpsText by Text("fps: $fps", 16.0f, 144.0f, Color.RED)
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
-        scaleText.name = "scale: $scale"
-        fpsText.name = "fps: $fps"
     }
 
-    override fun draw(canvas: Canvas, width: Float, height: Float) {
+    override fun draw(canvas: Canvas, bounds: Rect) {
         if (offsetX.isNaN()) {
-            offsetX = width * 0.5f
-            offsetY = height * 0.5f
+            offsetX = bounds.width * 0.5f
+            offsetY = bounds.height * 0.5f
         }
 
-        val width = width / scale
-        val height = height / scale
+        val width = bounds.width / scale
+        val height = bounds.height / scale
 
         canvas
             .translate(0.5f, 0.5f)

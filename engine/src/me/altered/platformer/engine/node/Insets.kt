@@ -1,4 +1,4 @@
-package me.altered.platformer.ui
+package me.altered.platformer.engine.node
 
 data class Insets(
     val left: Float,
@@ -17,11 +17,11 @@ data class Insets(
 val none: Insets
     get() = Insets(0.0f, 0.0f, 0.0f, 0.0f)
 
-fun all(size: Size.Fixed) = Insets(size.value, size.value, size.value, size.value)
+fun all(size: Float) = Insets(size, size, size, size)
 
-fun vertical(size: Size.Fixed) = Insets(0.0f, size.value, 0.0f, size.value)
+fun vertical(size: Float) = Insets(0.0f, size, 0.0f, size)
 
-fun horizontal(size: Size.Fixed) = Insets(size.value, 0.0f, size.value, 0.0f)
+fun horizontal(size: Float) = Insets(size, 0.0f, size, 0.0f)
 
 fun each(
     left: Float = 0.0f,

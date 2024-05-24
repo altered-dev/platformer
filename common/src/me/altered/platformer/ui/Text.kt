@@ -4,20 +4,27 @@ import org.jetbrains.skia.Canvas
 import me.altered.platformer.engine.io.font
 import me.altered.platformer.engine.io.resource
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.skija.buildPaint
+import me.altered.platformer.engine.util.paint
+import org.jetbrains.skia.Color4f
+import org.jetbrains.skia.Rect
 
 class Text(
-    override var name: String,
+    var text: () -> String,
     var x: Float,
     var y: Float,
-    var color: Int,
-) : Node(name) {
+    var color: Color4f,
+) : Node(text()) {
 
-    private val paint = buildPaint {
-        color = this@Text.color
+    override val name: String
+        get() = text()
+
+    private val paint = paint {
+        color4f = this@Text.color
     }
 
-    override fun draw(canvas: Canvas, width: Float, height: Float): Unit = canvas.run {
+    constructor(text: String, x: Float, y: Float, color: Color4f) : this({ text }, x, y, color)
+
+    override fun draw(canvas: Canvas, bounds: Rect): Unit = canvas.run {
         drawString(name, x, y, font, paint)
     }
 

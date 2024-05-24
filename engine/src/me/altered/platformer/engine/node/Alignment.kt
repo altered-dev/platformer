@@ -1,4 +1,4 @@
-package me.altered.platformer.ui
+package me.altered.platformer.engine.node
 
 enum class Alignment {
     START, CENTER, END,

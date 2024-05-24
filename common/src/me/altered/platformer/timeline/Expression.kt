@@ -1,6 +1,6 @@
 package me.altered.platformer.timeline
 
-import me.altered.platformer.engine.util.TreeMap
+import me.altered.platformer.util.KeyframeList
 import kotlin.jvm.JvmInline
 
 /**
@@ -15,7 +15,10 @@ sealed interface Expression<T> {
      * An expression defined by a number that never changes.
      */
     @JvmInline
-    value class Constant<T>(override val value: T) : Expression<T>
+    value class Constant<T>(override val value: T) : Expression<T> {
+
+        override fun toString() = value.toString()
+    }
 
     /**
      * An expression defined by a lambda function. Unused in editor.
@@ -39,37 +42,28 @@ sealed interface Expression<T> {
      */
     sealed class Animated<T>(
         private val timeline: Timeline,
-        vararg keyframes: Pair<Float, Keyframe<T>>,
+        private val keyframes: KeyframeList<T>,
     ) : Expression<T> {
 
-        init {
-            require(keyframes.isNotEmpty()) { "An animated property must have at least one keyframe." }
-        }
-
-        private var lastTime: Float? = null
+        private var lastTime = Float.NaN
         private var lastValue: T? = null
-
-        // TODO: unJVM the map
-        private val keyframes = TreeMap(keyframes.toMap())
+        private var node = this.keyframes.find(timeline.time)
 
         override val value: T get() {
             if (timeline.time == lastTime) return lastValue as T
             lastTime = timeline.time
-            require(keyframes.isNotEmpty()) { "An animated property must have at least one keyframe." }
-            if (keyframes.size == 1) return keyframes.single().value.value.value.also { lastValue = it }
+            node = node.shift(timeline.time)
 
-            // TODO: possibly optimise this to only traverse the tree once
-            val (from, lower) = keyframes.floorEntry(timeline.time)
-                ?: return keyframes.firstEntry!!.value.value.value.also { lastValue = it }
-            val (to, higher) = keyframes.ceilingEntry(timeline.time)
-                ?: return keyframes.lastEntry!!.value.value.value.also { lastValue = it }
-
-            if (from == to) return lower.value.value.also { lastValue = it }
+            val (to, higher) = node
+            if (to <= timeline.time) return higher.value.value.also { lastValue = it }
+            val (from, lower) = node.prev ?: return higher.value.value.also { lastValue = it }
 
             val t = higher.easing.easeSafe(alerp(from, to, timeline.time))
             return animate(lower.value.value, higher.value.value, t).also { lastValue = it }
         }
 
         abstract fun animate(from: T, to: T, t: Float): T
+
+        override fun toString() = keyframes.toString()
     }
 }

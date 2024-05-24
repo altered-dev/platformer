@@ -1,4 +1,4 @@
-package me.altered.platformer.ui
+package me.altered.platformer.engine.node
 
 import kotlin.jvm.JvmInline
 

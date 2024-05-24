@@ -10,10 +10,10 @@ import me.altered.platformer.engine.io.font
 import me.altered.platformer.engine.io.resource
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.SceneManager.defer
-import me.altered.platformer.skija.buildPaint
-import me.altered.platformer.skija.invoke
-import me.altered.platformer.skija.contains
-import org.jetbrains.skia.Color
+import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.color
+import me.altered.platformer.engine.util.contains
 
 class Button(
     private val rect: Rect = Rect.makeWH(0.0f, 0.0f),
@@ -23,15 +23,15 @@ class Button(
 
     private var state = State.IDLE
 
-    private val paint = buildPaint {
-        color = Color(0xFF80FFBF)
+    private val paint = paint {
+        color4f = color(0xFF80FFBF)
     }
 
-    private val textPaint = buildPaint {
-        color = Color.BLACK
+    private val textPaint = paint {
+        color4f = Colors.black
     }
 
-    override fun draw(canvas: Canvas, width: Float, height: Float): Unit = canvas.run {
+    override fun draw(canvas: Canvas, bounds: Rect): Unit = canvas.run {
         drawRect(rect, paint)
         drawString(name, rect.left + 16.0f, rect.top + 16.0f, font, textPaint)
     }
@@ -42,12 +42,12 @@ class Button(
                 if (rect.contains(event.x, event.y)) {
                     if (state != State.IDLE) return // true
                     state = State.HOVERED
-                    paint.color = Color(0xFF99FFCC)
+                    paint.color4f = color(0xFF99FFCC)
                     true
                 } else {
                     if (state == State.IDLE) return // false
                     state = State.IDLE
-                    paint.color = Color(0xFF80FFBF)
+                    paint.color4f = color(0xFF80FFBF)
                     false
                 }
             }
@@ -56,13 +56,13 @@ class Button(
 
                 state == State.HOVERED && event.action == Action.PRESS -> {
                     state = State.PRESSED
-                    paint.color = Color(0xFF73E5AC)
+                    paint.color4f = color(0xFF73E5AC)
                     true
                 }
 
                 state == State.PRESSED && event.action == Action.RELEASE -> {
                     state = State.HOVERED
-                    paint.color = Color(0xFF99FFCC)
+                    paint.color4f = color(0xFF99FFCC)
                     defer { onClick() }
                     true
                 }

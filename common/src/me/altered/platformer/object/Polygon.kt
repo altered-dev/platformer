@@ -1,15 +1,15 @@
 package me.altered.platformer.`object`
 
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.skija.buildPaint
-import me.altered.platformer.skija.buildPath
-import me.altered.platformer.skija.color
+import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.path
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
+import me.altered.platformer.engine.util.Colors
+import org.jetbrains.skia.Rect
 
 class Polygon(
     // TODO: calculate based on points
@@ -17,27 +17,27 @@ class Polygon(
     var y: Expression<Float>,
     var rotation: Expression<Float>,
     vararg var points: Expression<Float>,
-    var fill: Expression<Color4f> = const(color(Color.TRANSPARENT)),
-    var stroke: Expression<Color4f> = const(color(Color.TRANSPARENT)),
+    var fill: Expression<Color4f> = const(Colors.transparent),
+    var stroke: Expression<Color4f> = const(Colors.transparent),
     var strokeWidth: Expression<Float> = const(0.0f),
 ) : Node("polygon") {
 
-    private val fillPaint = buildPaint {
+    private val fillPaint = paint {
         isAntiAlias = true
         mode = PaintMode.FILL
     }
 
-    private val strokePaint = buildPaint {
+    private val strokePaint = paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
     }
 
-    override fun draw(canvas: Canvas, width: Float, height: Float) {
+    override fun draw(canvas: Canvas, bounds: Rect) {
         fillPaint.color4f = fill.value
         strokePaint.color4f = stroke.value
         strokePaint.strokeWidth = strokeWidth.value
         val poly = FloatArray(points.size) { points[it].value }
-        val path = buildPath { addPoly(poly, true) }
+        val path = path { addPoly(poly, true) }
         canvas
             .translate(x.value, y.value)
             .rotate(rotation.value)
