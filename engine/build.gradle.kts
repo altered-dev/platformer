@@ -8,7 +8,6 @@ dependencies {
     commonMainApi(project(":koml"))
     commonTestImplementation(kotlin("test"))
 
-    jvmMainApi(platform(libs.lwjgl.bom))
     jvmMainApi(libs.bundles.skiko.jvm)
 
     iosArm64MainApi(libs.skiko.ios.arm64)

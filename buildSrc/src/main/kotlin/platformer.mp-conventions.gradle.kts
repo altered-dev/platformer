@@ -21,10 +21,10 @@ kotlin {
 
     // Mobile platforms
 
-    jvm("android") {
-        withJava()
-        attributes.attribute(Attribute.of("ui", String::class.java), "android")
-    }
+//    jvm("android") {
+//        withJava()
+//        attributes.attribute(Attribute.of("ui", String::class.java), "android")
+//    }
 
     iosX64()
 
@@ -59,10 +59,10 @@ kotlin {
             dependsOn(commonMain.get())
         }
 
-        androidMain {
-            kotlin.srcDir("android")
-            dependsOn(mobileMain)
-        }
+//        androidMain {
+//            kotlin.srcDir("android")
+//            dependsOn(mobileMain)
+//        }
 
         iosMain {
             kotlin.srcDir("ios")

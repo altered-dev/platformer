@@ -34,6 +34,7 @@ skiko-ios-x64 = { group = "org.jetbrains.skiko", name = "skiko-iosx64", version.
 skiko-ios-arm64 = { group = "org.jetbrains.skiko", name = "skiko-iosarm64", version.ref = "skiko" }
 skiko-macos-x64 = { group = "org.jetbrains.skiko", name = "skiko-macosx64", version.ref = "skiko" }
 skiko-macos-arm64 = { group = "org.jetbrains.skiko", name = "skiko-macosarm64", version.ref = "skiko" }
+skiko-android = { group = "org.jetbrains.skiko", name = "skiko-android", version.ref = "skiko" }
 skiko-android-x64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-x64", version.ref = "skiko" }
 skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-arm64", version.ref = "skiko" }
 
