@@ -1,0 +1,15 @@
+product: ios/app
+
+apply:
+  - ../../platformer.module-template.yaml
+
+dependencies:
+  - ../../shared
+#  - $libs.skiko.ios.arm64
+#  - $libs.skiko.ios.x64
+
+dependencies@iosArm64:
+  - $libs.skiko.ios.arm64
+
+dependencies@iosX64:
+  - $libs.skiko.ios.x64

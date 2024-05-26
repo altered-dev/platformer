@@ -1,0 +1,13 @@
+product:
+  type: lib
+  platforms: [jvm, android, macosArm64, macosX64, iosArm64, iosSimulatorArm64, iosX64]
+
+apply:
+  - ../platformer.module-template.yaml
+
+aliases:
+  - desktop: [jvm, macos]
+  - mobile: [android, ios]
+
+dependencies:
+  - ../engine: exported

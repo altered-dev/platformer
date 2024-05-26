@@ -1,3 +1,0 @@
-plugins {
-    platformer.`mp-conventions`
-}

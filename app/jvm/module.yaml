@@ -1,0 +1,13 @@
+product: jvm/app
+
+apply:
+  - ../../platformer.module-template.yaml
+
+dependencies:
+  - ../../shared
+  - $libs.skiko.jvm
+  - $libs.skiko.jvm.linux.arm64: runtime-only
+  - $libs.skiko.jvm.linux.x64: runtime-only
+  - $libs.skiko.jvm.macos.arm64: runtime-only
+  - $libs.skiko.jvm.macos.x64: runtime-only
+  - $libs.skiko.jvm.windows: runtime-only

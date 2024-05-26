@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="engine-jvm">
+    <output-path>$PROJECT_DIR$/engine/build/libs</output-path>
+    <root id="archive" name="engine-jvm.jar">
+      <element id="module-output" name="platformer.engine.jvmMain" />
+    </root>
+  </artifact>
+</component>
