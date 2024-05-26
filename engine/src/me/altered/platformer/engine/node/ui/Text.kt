@@ -12,14 +12,13 @@ import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.paint
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Font
-import org.jetbrains.skia.FontMgr
 import org.jetbrains.skia.Rect
+import org.jetbrains.skia.TextBlob
 import org.jetbrains.skia.TextBlobBuilder
-import org.jetbrains.skia.TextLine
 import org.jetbrains.skia.Typeface
 
 class Text(
-    var text: String,
+    text: String,
     parent: Node? = null,
     width: Size = wrap,
     height: Size = wrap,
@@ -29,17 +28,33 @@ class Text(
     padding: Insets = none,
 ) : UiNode(text, parent, width, height, halign, valign, margin, padding) {
 
+    var text = text
+        set(value) {
+            field = value
+            blob = value.toTextBlob()!!
+        }
+
     override val name: String
         get() = text
 
+    private var blob: TextBlob = text.toTextBlob()!!
+
     override fun draw(canvas: Canvas, bounds: Rect) {
-        canvas.drawString(text, 0.0f, bounds.height, font, paint)
+        canvas.drawTextBlob(blob, 0.0f, font.size, paint)
+    }
+
+    private fun String.toTextBlob(): TextBlob? {
+        val builder = TextBlobBuilder()
+        split('\n').forEachIndexed { index, line ->
+            builder.appendRun(font, line, 0.0f, LINE_HEIGHT * index)
+        }
+        return builder.build()
     }
 
     override fun measure(bounds: Rect): Rect {
         val margin = margin
         val padding = (parent as? UiNode)?.padding ?: none
-        val textSize = font.measureText(text, paint)
+        val textSize = blob.bounds
 
         val w = when (val width = width) {
             is Size.Fixed -> width.value
@@ -68,8 +83,12 @@ class Text(
 
     companion object {
 
+        private const val FONT_SIZE = 13.0f
+        private const val LINE_SPACING = 8.0f
+        private const val LINE_HEIGHT = FONT_SIZE + LINE_SPACING
+
         // TODO: customize style
-        private val font = Font(Typeface.makeDefault(), 13.0f)
+        private val font = Font(Typeface.makeDefault(), FONT_SIZE)
 
         private val paint = paint { color4f = Colors.black }
     }

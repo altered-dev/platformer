@@ -2,4 +2,4 @@ settings:
   kotlin:
     languageVersion: 2.0
     freeCompilerArgs:
-      - "-Xexpect-actual-classes"
+      - -Xexpect-actual-classes

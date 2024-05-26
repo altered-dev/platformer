@@ -23,7 +23,7 @@ fun main() {
     SwingUtilities.invokeLater {
         val window = JFrame("hello world").apply {
             defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-            preferredSize = Dimension(800, 600)
+            preferredSize = Dimension(1280, 720)
             location = Point(500, 500)
         }
         skiaLayer.attachTo(window.contentPane)

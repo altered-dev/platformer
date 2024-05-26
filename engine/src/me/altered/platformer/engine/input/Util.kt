@@ -77,7 +77,12 @@ fun InputEvent.cursorMoved(): Boolean {
     return this is InputEvent.CursorMove
 }
 
-fun InputEvent.scrolled(modifier: Modifier = Modifier.NONE): Boolean {
+fun InputEvent.scrolled(): Boolean {
+    contract { returns(true) implies (this@scrolled is InputEvent.Scroll) }
+    return this is InputEvent.Scroll
+}
+
+infix fun InputEvent.scrolled(modifier: Modifier): Boolean {
     contract { returns(true) implies (this@scrolled is InputEvent.Scroll) }
     return this is InputEvent.Scroll && this.modifier has modifier
 }

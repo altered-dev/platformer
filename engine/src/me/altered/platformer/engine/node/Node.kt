@@ -38,10 +38,20 @@ open class Node(
         _children += child
     }
 
+    fun addChildren(children: Iterable<Node>) {
+        _children.addAll(children)
+    }
+
     fun removeChild(child: Node) {
         if (child._parent !== this) return
         child._parent = null
         _children -= child
+    }
+
+    inline fun removeChildren(predicate: (Node) -> Boolean) {
+        children.forEach { child ->
+            if (predicate(child)) removeChild(child)
+        }
     }
 
     operator fun <N : Node> N.unaryPlus(): N {
@@ -50,11 +60,7 @@ open class Node(
     }
 
     open val root: Node
-        get() = findRoot()
-
-    private tailrec fun findRoot(): Node {
-        return (parent ?: return this).findRoot()
-    }
+        get() = parent?.root ?: this
 
     open fun debugDraw(canvas: Canvas, bounds: Rect) = Unit
 
@@ -76,9 +82,10 @@ open class Node(
 
         @JvmStatic
         protected val debugPaint = paint {
+            isAntiAlias = true
             mode = PaintMode.STROKE
             strokeWidth = 2.0f
-            color4f = Colors.red
+            color4f = Colors.red.withA(0.5f)
         }
     }
 }
