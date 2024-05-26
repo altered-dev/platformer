@@ -9,9 +9,11 @@ import me.altered.platformer.engine.util.path
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.timeline.Timeline
 import org.jetbrains.skia.Rect
 
 class Polygon(
+    val timeline: Timeline,
     // TODO: calculate based on points
     var x: Expression<Float>,
     var y: Expression<Float>,
@@ -33,14 +35,15 @@ class Polygon(
     }
 
     override fun draw(canvas: Canvas, bounds: Rect) {
-        fillPaint.color4f = fill.value
-        strokePaint.color4f = stroke.value
-        strokePaint.strokeWidth = strokeWidth.value
-        val poly = FloatArray(points.size) { points[it].value }
+        val time = timeline.time
+        fillPaint.color4f = fill.eval(time)
+        strokePaint.color4f = stroke.eval(time)
+        strokePaint.strokeWidth = strokeWidth.eval(time)
+        val poly = FloatArray(points.size) { points[it].eval(time) }
         val path = path { addPoly(poly, true) }
         canvas
-            .translate(x.value, y.value)
-            .rotate(rotation.value)
+            .translate(x.eval(time), y.eval(time))
+            .rotate(rotation.eval(time))
             .drawPath(path, fillPaint)
             .drawPath(path, strokePaint)
     }

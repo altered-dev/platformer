@@ -5,20 +5,24 @@ import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
-import me.altered.platformer.engine.node.Alignment
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.Node2D
-import me.altered.platformer.engine.node.SceneManager
-import me.altered.platformer.engine.node.UiNode
 import me.altered.platformer.engine.node.all
+import me.altered.platformer.engine.node.each
 import me.altered.platformer.engine.node.px
-import me.altered.platformer.engine.node.vertical
+import me.altered.platformer.engine.node.ui.Button
+import me.altered.platformer.engine.node.ui.Text
 import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.`object`.Rectangle
 import me.altered.platformer.player.Player
+import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.Timeline
-import me.altered.platformer.ui.Button
-import me.altered.platformer.ui.Text
-import org.jetbrains.skia.Rect
+import me.altered.platformer.timeline.animated
+import me.altered.platformer.timeline.at
+import me.altered.platformer.timeline.const
+import me.altered.platformer.timeline.with
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 
 class MainScene : Node("main") {
 
@@ -30,46 +34,36 @@ class MainScene : Node("main") {
 
     private val player = +Player(position = Vector2f(100.0f, 300.0f))
 
+    private val time = +Text("time: ${timeline.time}", margin = each(left = 16.0f, top = 32.0f))
+    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
+
     private val button = +Button(
-        rect = Rect.makeXYWH(50.0f, 100.0f, 128.0f, 36.0f),
-        name = "Go to editor",
-        onClick = { SceneManager.scene = EditorScene() },
+        text = "Open editor",
+        width = 128.px,
+        height = 32.px,
+        margin = all(128.0f),
     )
 
-    private val time = +Text({ "time: ${timeline.time}" }, 10.0f, 40.0f, Colors.black)
-    private val fpsText = +Text({ "fps: $fps" }, 10.0f, 60.0f, Colors.black)
-
-    private val other: Node2D
-    private val node2d = +Node2D(
-        name = "node2d",
-        position = Vector2f(500.0f, 200.0f),
-    ).apply {
-        other = +Node2D(
-            name = "other",
-            position = Vector2f(100.0f, 100.0f),
-        )
-    }
-
-    private val uiNode = +UiNode(
-        name = "uinode",
-        height = 256.px,
-        margin = all(30.0f),
-    ).apply {
-        +UiNode(
-            name = "yay",
-            width = 128.px,
-            halign = Alignment.CENTER,
-            margin = vertical(30.0f),
-        )
-    }
+    private val rectangle = +Rectangle(
+        timeline = timeline,
+        x = animated(
+            100.0f at 0.0f,
+            200.0f at 1.0f with Easing.cubicInOut,
+            300.0f at 2.0f with Easing.expoInOut,
+            400.0f at 3.0f with { min(it, 1.0f - it) },
+        ),
+        y = const(100.0f),
+        width = const(10.0f),
+        height = const(10.0f),
+        rotation = const(0.0f),
+        fill = const(Colors.black),
+    )
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
         timeline.time += timeDirection * delta
-        node2d.rotation += 45.0f * delta
-        other.position.x -= 10.0f * delta
-        node2d.scale.x += timeDirection * delta
-        uiNode.margin = all(uiNode.margin.left + timeDirection * 10.0f * delta)
+        time.text = "time: ${timeline.time}"
+        fpsText.text = "Ffps: $fps"
     }
 
     override fun input(event: InputEvent) {

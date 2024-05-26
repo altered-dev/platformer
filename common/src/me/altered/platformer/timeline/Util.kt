@@ -4,8 +4,6 @@ package me.altered.platformer.timeline
 
 fun <T> const(value: T) = Expression.Constant(value)
 
-fun <T> expression(block: () -> T) = Expression.Function(block)
-
 fun alerp(from: Float, to: Float, value: Float): Float {
     return (value - from) / (to - from)
 }

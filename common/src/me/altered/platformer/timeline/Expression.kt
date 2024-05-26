@@ -7,59 +7,58 @@ import kotlin.jvm.JvmInline
  * A computable value to be used as a property of an object in a level.
  * TODO: serialize
  */
-sealed interface Expression<T> {
+fun interface Expression<T> {
 
-    val value: T
+    fun eval(time: Float): T
 
     /**
      * An expression defined by a number that never changes.
      */
     @JvmInline
-    value class Constant<T>(override val value: T) : Expression<T> {
+    value class Constant<T>(private val value: T) : Expression<T> {
+
+        override fun eval(time: Float): T = value
 
         override fun toString() = value.toString()
     }
 
-    /**
-     * An expression defined by a lambda function. Unused in editor.
-     */
-    @JvmInline
-    value class Function<T>(private val block: () -> T) : Expression<T> {
-
-        override val value: T get() = block()
+    sealed interface Transformed<T> : Expression<T> {
+        val original: Expression<T>
     }
 
     /**
      * An expression that transforms the results of two other expressions.
      */
-    sealed class Combined<T> : Expression<T> {
-        protected abstract val left: Expression<T>
-        protected abstract val right: Expression<T>
+    sealed interface Combined<T> : Expression<T> {
+        val left: Expression<T>
+        val right: Expression<T>
     }
 
     /**
      * An expression defined by a set of keyframes and interpolated with a timeline.
      */
     sealed class Animated<T>(
-        private val timeline: Timeline,
         private val keyframes: KeyframeList<T>,
     ) : Expression<T> {
 
         private var lastTime = Float.NaN
         private var lastValue: T? = null
-        private var node = this.keyframes.find(timeline.time)
+        private var node = this.keyframes.first
 
-        override val value: T get() {
-            if (timeline.time == lastTime) return lastValue as T
-            lastTime = timeline.time
-            node = node.shift(timeline.time)
+        final override fun eval(time: Float): T {
+            if (time == lastTime) return lastValue as T
+            lastTime = time
+            node = node.shift(time)
+            return compute(time).also { lastValue = it }
+        }
 
+        private fun compute(time: Float): T {
             val (to, higher) = node
-            if (to <= timeline.time) return higher.value.value.also { lastValue = it }
-            val (from, lower) = node.prev ?: return higher.value.value.also { lastValue = it }
+            if (to <= time) return higher.value.eval(time)
+            val (from, lower) = node.prev ?: return higher.value.eval(time)
 
-            val t = higher.easing.easeSafe(alerp(from, to, timeline.time))
-            return animate(lower.value.value, higher.value.value, t).also { lastValue = it }
+            val t = higher.easing.easeSafe(alerp(from, to, time))
+            return animate(lower.value.eval(time), higher.value.eval(time), t)
         }
 
         abstract fun animate(from: T, to: T, t: Float): T

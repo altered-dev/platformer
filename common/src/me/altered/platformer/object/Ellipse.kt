@@ -9,9 +9,11 @@ import me.altered.platformer.engine.util.paint
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.timeline.Timeline
 import kotlin.math.withSign
 
 class Ellipse(
+    val timeline: Timeline,
     var x: Expression<Float>,
     var y: Expression<Float>,
     var width: Expression<Float>,
@@ -33,15 +35,16 @@ class Ellipse(
     }
 
     override fun draw(canvas: Canvas, bounds: Rect) {
-        fillPaint.color4f = fill.value
-        strokePaint.color4f = stroke.value
-        strokePaint.strokeWidth = strokeWidth.value
-        val w = this.width.value * 0.5f
-        val h = this.height.value * 0.5f
+        val time = timeline.time
+        fillPaint.color4f = fill.eval(time)
+        strokePaint.color4f = stroke.eval(time)
+        strokePaint.strokeWidth = strokeWidth.eval(time)
+        val w = this.width.eval(time) * 0.5f
+        val h = this.height.eval(time) * 0.5f
         val rect = Rect.makeLTRB(w.withSign(-1), h.withSign(-1), w.withSign(1), h.withSign(1))
         canvas
-            .translate(x.value, y.value)
-            .rotate(rotation.value)
+            .translate(x.eval(time), y.eval(time))
+            .rotate(rotation.eval(time))
             .drawOval(rect, fillPaint)
             // TODO: stroke modes: outside, center, inside
             .drawOval(rect, strokePaint)

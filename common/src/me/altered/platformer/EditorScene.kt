@@ -15,8 +15,6 @@ import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.util.paint
-import me.altered.platformer.ui.Button
-import me.altered.platformer.ui.Text
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.color
 
@@ -55,20 +53,9 @@ class EditorScene : Node("editor") {
 //            }
         }
 
-    private val cursorButton = +Button(
-        rect = Rect.makeXYWH(16.0f, 16.0f, 96.0f, 24.0f),
-        name = "cursor",
-        onClick = { mode = Mode.CURSOR },
-    )
 
-    private val rectangleButton = +Button(
-        rect = Rect.makeXYWH(16.0f, 56.0f, 96.0f, 24.0f),
-        name = "rectangle",
-        onClick = { mode = Mode.RECTANGLE },
-    )
-
-    private val scaleText = +Text({ "scale: $scale" }, 16.0f, 128.0f, Colors.red)
-    private val fpsText = +Text({ "fps: $fps" }, 16.0f, 144.0f, Colors.red)
+//    private val scaleText = +Text({ "scale: $scale" }, 16.0f, 128.0f, Colors.red)
+//    private val fpsText = +Text({ "fps: $fps" }, 16.0f, 144.0f, Colors.red)
 
     override fun input(event: InputEvent) {
         when {
