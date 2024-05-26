@@ -2,7 +2,10 @@ package me.altered.platformer.util
 
 import me.altered.platformer.timeline.Keyframe
 
-class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
+class KeyframeList<E>(
+    // TODO: i really wish arrays and collections had common functions
+    keyframes: Array<out Pair<Float, Keyframe<E>>>,
+) {
 
     val first: Node<E>
     val last: Node<E>
@@ -12,7 +15,7 @@ class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
             0 -> error("Keyframe list must not be empty.")
             1 -> {
                 val (time, keyframe) = keyframes.single()
-                first = Node(null, null, time, keyframe)
+                first = Node(time, keyframe)
                 last = first
             }
             else -> {
@@ -20,10 +23,10 @@ class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
                 // TODO: also probably make a contract that all incoming keyframes should be sorted
                 val keyframes = keyframes.sortedBy { (t, _) -> t }
                 var current: Node<E> = keyframes.first()
-                    .let { (t, k) -> Node(null, null, t, k) }
+                    .let { (t, k) -> Node(t, k) }
                 first = current
                 for ((time, keyframe) in keyframes.drop(1)) {
-                    val next = Node(current, null, time, keyframe)
+                    val next = Node(time, keyframe, current)
                     current.next = next
                     current = next
                 }
@@ -32,12 +35,12 @@ class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
         }
     }
 
-    fun find(time: Float): Node<E> {
-        var current = first
-        while (current.next?.let { it.time >= time } == true) {
-            current = current.next!!
+    tailrec fun find(time: Float, from: Node<E> = first): Node<E> {
+        return if (from.next?.let { it.time >= time } == true) {
+            find(time, from.next!!)
+        } else {
+            from
         }
-        return current
     }
 
     override fun toString() = buildString {
@@ -53,10 +56,10 @@ class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
     }
 
     class Node<E>(
-        var prev: Node<E>?,
-        var next: Node<E>?,
         val time: Float,
         val keyframe: Keyframe<E>,
+        var prev: Node<E>? = null,
+        var next: Node<E>? = null,
     ) {
 
         fun shift(newTime: Float): Node<E> {
@@ -73,6 +76,6 @@ class KeyframeList<E>(keyframes: Array<out Pair<Float, Keyframe<E>>>) {
         operator fun component1() = time
         operator fun component2() = keyframe
 
-        override fun toString() = "$keyframe at $time"
+        override fun toString() = "${keyframe.value} at $time with ${keyframe.easing}"
     }
 }

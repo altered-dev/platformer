@@ -20,9 +20,7 @@ import me.altered.platformer.timeline.animated
 import me.altered.platformer.timeline.at
 import me.altered.platformer.timeline.const
 import me.altered.platformer.timeline.with
-import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.sin
 
 class MainScene : Node("main") {
 
