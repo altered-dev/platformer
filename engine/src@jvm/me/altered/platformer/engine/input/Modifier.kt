@@ -6,7 +6,7 @@ actual class Modifier(private val value: Int) {
 
     actual operator fun plus(other: Modifier) = Modifier(value or other.value)
 
-    actual infix fun has(other: Modifier) = other.value == 0 || value and other.value != 0
+    actual infix fun has(other: Modifier) = value and other.value == other.value
 
     actual companion object {
         actual val NONE = Modifier(0)

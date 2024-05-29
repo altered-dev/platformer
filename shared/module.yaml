@@ -11,3 +11,4 @@ aliases:
 
 dependencies:
   - ../engine: exported
+  - $libs.skiko: compile-only

@@ -17,24 +17,27 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.Node2D
 import me.altered.platformer.engine.node.SceneManager
 import me.altered.platformer.engine.node.SceneManager.defer
 import me.altered.platformer.engine.node.each
-import me.altered.platformer.engine.node.prettyString
 import me.altered.platformer.engine.node.ui.Text
+import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.color
+import me.altered.platformer.engine.util.contains
+import me.altered.platformer.engine.util.offset
+import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.scale
+import me.altered.platformer.engine.util.translate
 import me.altered.platformer.`object`.Ellipse
+import me.altered.platformer.`object`.ObjectNode
 import me.altered.platformer.`object`.Rectangle
-import me.altered.platformer.timeline.Timeline
+import me.altered.platformer.`object`.World
 import me.altered.platformer.timeline.const
 import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 
-class EditorScene(
-    private val timeline: Timeline = Timeline(),
-    objects: Set<Node> = emptySet(),
-) : Node("editor") {
+class EditorScene : Node("editor") {
 
     private var timeDirection = 0.0f
     private val mousePos = Vector2f()
@@ -47,20 +50,27 @@ class EditorScene(
     private var lastStart: Vector2f? = null
 
     private val actions = ArrayDeque<CommittedAction<*>>()
+    private val undoneActions = ArrayDeque<Action<*>>()
 
-    private val grid: Node2D
-    private val _objects: Node2D
-    private val world = +Node2D("world").apply {
-        grid = +Grid()
-        _objects = +Node2D("objects").apply {
-            addChildren(objects)
-        }
+    private val world = +World().apply {
+        showGrid = true
     }
+    private var hovered: ObjectNode? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            println("hovered: $hovered")
+        }
+    private var selected: ObjectNode? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            println("selected: $hovered")
+        }
 
-    private val time = +Text("time: ${timeline.time}", margin = each(left = 16.0f, top = 72.0f))
+    private val time = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 72.0f))
     private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 32.0f))
     private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
-    private val objectsText = +Text(prettyString(_objects), margin = each(left = 16.0f, top = 100.0f))
 
     override fun input(event: InputEvent) {
         when {
@@ -83,12 +93,13 @@ class EditorScene(
                 lastStart = null
                 leftDragging = false
                 val action = when (mode) {
-                    Mode.POINTER -> return
+                    Mode.POINTER -> Action.SelectObject(hovered, selected)
                     Mode.RECTANGLE -> Action.DrawRectangle(start, Vector2f(event.x, event.y))
                     Mode.ELLIPSE -> Action.DrawEllipse(start, Vector2f(event.x, event.y))
                 }
                 commit(action)
             }
+
             event pressed Key.ESCAPE -> {
                 lastStart = null
                 leftDragging = false
@@ -121,11 +132,17 @@ class EditorScene(
                     world.position.y += event.y - mousePos.y
                 }
                 mousePos.set(event.x, event.y)
+                hovered = world.objects.findLast { mousePos.screenToWorld() in it.bounds.offset(it.position) }
                 middleDragging
+            }
+            event pressed Modifier.CONTROL + Modifier.SHIFT + Key.Z -> {
+                if (undoneActions.isNotEmpty()) {
+                    commit(undoneActions.removeLast())
+                }
             }
             event pressed Modifier.CONTROL + Key.Z -> {
                 if (actions.isNotEmpty()) {
-                    cancel(actions.removeLast())
+                    undo(actions.removeLast())
                 }
             }
             event pressed Key.RIGHT -> timeDirection += 1
@@ -133,21 +150,39 @@ class EditorScene(
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
             event pressed Key.E -> {
-                val children = _objects.children
-                defer { SceneManager.scene = MainScene(timeline, children) }
+                defer { SceneManager.scene = MainScene() }
             }
         }
     }
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
-        timeline.time += timeDirection * delta
+        world.time += timeDirection * delta
         scaleText.text = "scale: ${world.scale}"
-        time.text = "time: ${timeline.time}"
+        time.text = "time: ${world.time}"
         fpsText.text = "fps: $fps"
     }
 
     override fun draw(canvas: Canvas, bounds: Rect) {
+        hovered?.let { hovered ->
+            canvas.save()
+            canvas
+                .translate(hovered.position)
+                .rotate(hovered.rotation)
+                .scale(hovered.scale)
+            canvas.drawRect(hovered.bounds, debugPaint)
+            canvas.restore()
+        }
+        selected?.let { hovered ->
+            canvas.save()
+            canvas
+                .translate(hovered.position)
+                .rotate(hovered.rotation)
+                .scale(hovered.scale)
+            canvas.drawRect(hovered.bounds, selectedPaint)
+            canvas.restore()
+        }
+
         if (leftDragging) {
             val start = lastStart ?: return
             when (mode) {
@@ -165,13 +200,14 @@ class EditorScene(
     private fun commit(action: Action<*>) {
         val product = produce(action)
         when (action) {
+            is Action.SelectObject -> {
+                selected = action.new
+            }
             is Action.DrawRectangle -> if (product is Rectangle) {
-                _objects.addChild(product)
-                objectsText.text = prettyString(_objects)
+                world.addObject(product)
             }
             is Action.DrawEllipse -> if (product is Ellipse) {
-                _objects.addChild(product)
-                objectsText.text = prettyString(_objects)
+                world.addObject(product)
             }
         }
         actions.addLast(CommittedAction(action, product))
@@ -179,18 +215,18 @@ class EditorScene(
 
     private fun <T> produce(action: Action<T>): T {
         return when (action) {
+            is Action.SelectObject -> Unit as T
             is Action.DrawRectangle -> {
                 val start = action.start.screenToWorld()
                 val end = action.end.screenToWorld()
                 val size = end - start
                 Rectangle(
-                    timeline = timeline,
-                    x = const(start.x + size.x * 0.5f),
-                    y = const(start.y + size.y * 0.5f),
-                    width = const(size.x),
-                    height = const(size.y),
-                    rotation = const(0.0f),
-                    fill = const(color(0xFF333333)),
+                    xExpr = const(start.x + size.x * 0.5f),
+                    yExpr = const(start.y + size.y * 0.5f),
+                    rotationExpr = const(0.0f),
+                    widthExpr = const(size.x),
+                    heightExpr = const(size.y),
+                    fillExpr = const(color(0xFF333333)),
                 ) as T
             }
             is Action.DrawEllipse -> {
@@ -198,34 +234,49 @@ class EditorScene(
                 val end = action.end.screenToWorld()
                 val size = end - start
                 Ellipse(
-                    timeline = timeline,
-                    x = const(start.x + size.x * 0.5f),
-                    y = const(start.y + size.y * 0.5f),
-                    width = const(size.x),
-                    height = const(size.y),
-                    rotation = const(0.0f),
-                    fill = const(color(0xFF333333)),
+                    xExpr = const(start.x + size.x * 0.5f),
+                    yExpr = const(start.y + size.y * 0.5f),
+                    widthExpr = const(size.x),
+                    heightExpr = const(size.y),
+                    rotationExpr = const(0.0f),
+                    fillExpr = const(color(0xFF333333)),
                 ) as T
             }
         }
     }
 
-    private fun cancel(action: CommittedAction<*>) {
+    private fun undo(action: CommittedAction<*>) {
         when (action.action) {
+            is Action.SelectObject -> {
+                selected = action.action.old
+            }
             is Action.DrawRectangle -> if (action.product is Rectangle) {
-                _objects.removeChild(action.product)
-                objectsText.text = prettyString(_objects)
+                world.removeObject(action.product)
             }
             is Action.DrawEllipse -> if (action.product is Ellipse) {
-                _objects.removeChild(action.product)
-                objectsText.text = prettyString(_objects)
+                world.removeObject(action.product)
             }
         }
+        undoneActions.addLast(action.action)
     }
 
     private fun Vector2fc.screenToWorld(): Vector2fc {
         return (this - world.position) / world.scale
     }
 
+    private fun Vector2fc.worldToScreen(): Vector2fc {
+        return this * world.scale + world.position
+    }
+
     enum class Mode { POINTER, RECTANGLE, ELLIPSE }
+
+    companion object {
+
+        private val selectedPaint = paint {
+            isAntiAlias = true
+            mode = PaintMode.STROKE
+            strokeWidth = 2.0f
+            color4f = Colors.blue.withA(0.5f)
+        }
+    }
 }

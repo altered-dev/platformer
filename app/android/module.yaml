@@ -3,7 +3,7 @@ product: android/app
 apply:
   - ../../platformer.module-template.yaml
 
-dependencies@android:
+dependencies:
   - ../../shared
   - $libs.skiko.android: compile-only
   - $libs.skiko.android.arm64: runtime-only

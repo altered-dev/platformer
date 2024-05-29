@@ -4,25 +4,33 @@ import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
-import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.util.paint
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.timeline.Timeline
 import kotlin.math.withSign
 
 class Ellipse(
-    val timeline: Timeline,
-    var x: Expression<Float>,
-    var y: Expression<Float>,
-    var width: Expression<Float>,
-    var height: Expression<Float>,
-    var rotation: Expression<Float>,
-    var fill: Expression<Color4f> = const(Colors.transparent),
-    var stroke: Expression<Color4f> = const(Colors.transparent),
-    var strokeWidth: Expression<Float> = const(0.0f),
-) : Node("ellipse") {
+    override var xExpr: Expression<Float>,
+    override var yExpr: Expression<Float>,
+    var widthExpr: Expression<Float>,
+    var heightExpr: Expression<Float>,
+    override var rotationExpr: Expression<Float>,
+    var fillExpr: Expression<Color4f> = const(Colors.transparent),
+    var strokeExpr: Expression<Color4f> = const(Colors.transparent),
+    var strokeWidthExpr: Expression<Float> = const(0.0f),
+) : ObjectNode("ellipse") {
+
+    // TODO: constraint to non-negative
+    var width: Float = 0.0f
+    var height: Float = 0.0f
+
+    override val bounds: Rect
+        get() {
+            val w = width * 0.5f
+            val h = height * 0.5f
+            return Rect.makeLTRB(w.withSign(-1), h.withSign(-1), w.withSign(1), h.withSign(1))
+        }
 
     private val fillPaint = paint {
         isAntiAlias = true
@@ -35,18 +43,19 @@ class Ellipse(
     }
 
     override fun draw(canvas: Canvas, bounds: Rect) {
-        val time = timeline.time
-        fillPaint.color4f = fill.eval(time)
-        strokePaint.color4f = stroke.eval(time)
-        strokePaint.strokeWidth = strokeWidth.eval(time)
-        val w = this.width.eval(time) * 0.5f
-        val h = this.height.eval(time) * 0.5f
-        val rect = Rect.makeLTRB(w.withSign(-1), h.withSign(-1), w.withSign(1), h.withSign(1))
+        val rect = this.bounds
         canvas
-            .translate(x.eval(time), y.eval(time))
-            .rotate(rotation.eval(time))
             .drawOval(rect, fillPaint)
             // TODO: stroke modes: outside, center, inside
             .drawOval(rect, strokePaint)
+    }
+
+    override fun eval(time: Float) {
+        super.eval(time)
+        width = widthExpr.eval(time)
+        height = heightExpr.eval(time)
+        fillPaint.color4f = fillExpr.eval(time)
+        strokePaint.color4f = strokeExpr.eval(time)
+        strokePaint.strokeWidth = strokeWidthExpr.eval(time)
     }
 }

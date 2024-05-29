@@ -30,22 +30,38 @@ open class Node(
     private val _children = mutableSetOf<Node>()
     val children: Set<Node> by ::_children
 
-    fun addChild(child: Node) {
+    fun addChild(child: Node): Boolean {
         // TODO: cyclic tree check
-        if (child === this) return
+        if (child === this) return false
         child._parent?._children?.remove(child)
         child._parent = this
-        _children += child
+        return _children.add(child)
     }
 
-    fun addChildren(children: Iterable<Node>) {
-        _children.addAll(children)
+    fun addChildren(children: Iterable<Node>): Boolean {
+        var result = false
+        children.forEach { child ->
+            if (addChild(child)) {
+                result = true
+            }
+        }
+        return result
     }
 
-    fun removeChild(child: Node) {
-        if (child._parent !== this) return
+    fun removeChild(child: Node): Boolean {
+        if (child._parent !== this) return false
         child._parent = null
-        _children -= child
+        return _children.remove(child)
+    }
+
+    fun removeChildren(children: Iterable<Node>): Boolean {
+        var result = false
+        children.forEach { child ->
+            if (removeChild(child)) {
+                result = true
+            }
+        }
+        return result
     }
 
     inline fun removeChildren(predicate: (Node) -> Boolean) {

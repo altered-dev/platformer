@@ -15,35 +15,11 @@ import me.altered.platformer.engine.node.each
 import me.altered.platformer.engine.node.px
 import me.altered.platformer.engine.node.ui.Button
 import me.altered.platformer.engine.node.ui.Text
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.`object`.Rectangle
 import me.altered.platformer.player.Player
-import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.Timeline
-import me.altered.platformer.timeline.animated
-import me.altered.platformer.timeline.at
-import me.altered.platformer.timeline.const
-import me.altered.platformer.timeline.with
-import kotlin.math.min
 
 class MainScene(
     private val timeline: Timeline = Timeline(),
-    objects: Set<Node> = setOf(
-        Rectangle(
-            timeline = timeline,
-            x = animated(
-                100.0f at 0.0f,
-                200.0f at 1.0f with Easing.cubicInOut,
-                300.0f at 2.0f with Easing.expoInOut,
-                400.0f at 3.0f with { min(it, 1.0f - it) },
-            ),
-            y = const(100.0f),
-            width = const(10.0f),
-            height = const(10.0f),
-            rotation = const(0.0f),
-            fill = const(Colors.black),
-        )
-    ),
 ) : Node("main") {
 
     private var timeDirection = 0.0f
@@ -54,7 +30,6 @@ class MainScene(
 
     private val world = +Node2D("world").apply {
         _objects = +Node2D("objects").apply {
-            addChildren(objects)
         }
         player = +Player(position = Vector2f(100.0f, 300.0f))
     }
@@ -83,8 +58,7 @@ class MainScene(
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
             event pressed Key.E -> {
-                val children = _objects.children
-                defer { SceneManager.scene = EditorScene(timeline, children) }
+                defer { SceneManager.scene = EditorScene() }
             }
         }
     }
