@@ -1,6 +1,7 @@
 package me.altered.platformer.engine.util
 
 import me.altered.koml.Vector2fc
+import me.altered.platformer.engine.node.Node2D
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Paint
@@ -11,11 +12,15 @@ fun color(hex: Number): Color4f = Color4f(hex.toInt())
 
 fun color(r: Float, g: Float, b: Float, a: Float = 1.0f) = Color4f(r, g, b, a)
 
+fun emptyRect(): Rect = Rect(0.0f, 0.0f, 0.0f, 0.0f)
+
 fun Canvas.clear(color4f: Color4f) = clear(color4f.toColor())
 
 fun Canvas.translate(vec: Vector2fc) = translate(vec.x, vec.y)
 
 fun Canvas.scale(vec: Vector2fc) = scale(vec.x, vec.y)
+
+fun Canvas.transform(node: Node2D) = translate(node.position).rotate(node.rotation).scale(node.scale)
 
 inline fun paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
 

@@ -2,6 +2,7 @@ package me.altered.platformer.`object`
 
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.util.observable
 
 class World(
     time: Float = 0.0f,
@@ -11,27 +12,19 @@ class World(
     private val _objects = objects.toMutableList()
     val objects: List<ObjectNode> by ::_objects
 
-    var time: Float = time
-        set(value) {
-            if (value == field) return
-            field = value
-            updateObjects(value)
-        }
+    var time by observable(time, ::updateObjects)
 
     init {
         updateObjects(time)
     }
 
-    var showGrid: Boolean = false
-        set(value) {
-            if (value == field) return
-            field = value
-            if (value) {
-                addChild(grid)
-            } else {
-                removeChild(grid)
-            }
+    var showGrid by observable(false) {
+        if (it) {
+            addChild(grid)
+        } else {
+            removeChild(grid)
         }
+    }
 
     private val grid = Grid()
 

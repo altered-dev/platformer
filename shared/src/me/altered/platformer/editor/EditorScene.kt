@@ -16,6 +16,7 @@ import me.altered.platformer.engine.input.plus
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
+import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.SceneManager
 import me.altered.platformer.engine.node.SceneManager.defer
@@ -26,13 +27,14 @@ import me.altered.platformer.engine.util.color
 import me.altered.platformer.engine.util.contains
 import me.altered.platformer.engine.util.offset
 import me.altered.platformer.engine.util.paint
-import me.altered.platformer.engine.util.scale
-import me.altered.platformer.engine.util.translate
+import me.altered.platformer.engine.util.transform
 import me.altered.platformer.`object`.Ellipse
 import me.altered.platformer.`object`.ObjectNode
 import me.altered.platformer.`object`.Rectangle
 import me.altered.platformer.`object`.World
 import me.altered.platformer.timeline.const
+import me.altered.platformer.util.logged
+import me.altered.platformer.util.observable
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
@@ -43,47 +45,39 @@ class EditorScene : Node("editor") {
     private val mousePos = Vector2f()
     private var leftDragging = false
     private var middleDragging = false
-    private var mode = Mode.POINTER
-
-    private var fps = 0.0f
-
     private var lastStart: Vector2f? = null
-
-    private val actions = ArrayDeque<CommittedAction<*>>()
-    private val undoneActions = ArrayDeque<Action<*>>()
 
     private val world = +World().apply {
         showGrid = true
     }
-    private var hovered: ObjectNode? = null
-        set(value) {
-            if (field == value) return
-            field = value
-            println("hovered: $hovered")
-        }
-    private var selected: ObjectNode? = null
-        set(value) {
-            if (field == value) return
-            field = value
-            println("selected: $hovered")
-        }
 
-    private val time = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 72.0f))
-    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 32.0f))
-    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
+    private var hovered: ObjectNode? by logged(null)
+    private var selected: ObjectNode? by logged(null)
+
+    private var fps: Float by observable(0.0f) {
+        fpsText.text = "fps: $it"
+    }
+    private var tool: Tool by observable(Tool.POINTER) {
+        toolText.text = "tool: $it"
+    }
+
+    private val actions = ArrayDeque<CommittedAction<*>>()
+    private val undoneActions = ArrayDeque<Action<*>>()
+
+    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 16.0f))
+    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
+    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 48.0f))
+    private val timeText = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 64.0f))
 
     override fun input(event: InputEvent) {
+        // TODO: refactor this mess
         when {
-            event pressed Key.N1 -> {
-                mode = Mode.POINTER
-            }
-            event pressed Key.N2 -> {
-                mode = Mode.RECTANGLE
-            }
-            event pressed Key.N3 -> {
-                mode = Mode.ELLIPSE
-            }
+            // tools
+            event pressed Key.N1 -> tool = Tool.POINTER
+            event pressed Key.N2 -> tool = Tool.RECTANGLE
+            event pressed Key.N3 -> tool = Tool.ELLIPSE
 
+            // actions
             event pressed MouseButton.LEFT -> {
                 lastStart = Vector2f(event.x, event.y)
                 leftDragging = true
@@ -92,25 +86,23 @@ class EditorScene : Node("editor") {
                 val start = lastStart ?: return
                 lastStart = null
                 leftDragging = false
-                val action = when (mode) {
-                    Mode.POINTER -> Action.SelectObject(hovered, selected)
-                    Mode.RECTANGLE -> Action.DrawRectangle(start, Vector2f(event.x, event.y))
-                    Mode.ELLIPSE -> Action.DrawEllipse(start, Vector2f(event.x, event.y))
+                val action = when (tool) {
+                    Tool.POINTER -> Action.SelectObject(hovered, selected)
+                    Tool.RECTANGLE -> Action.DrawRectangle(start, Vector2f(event.x, event.y))
+                    Tool.ELLIPSE -> Action.DrawEllipse(start, Vector2f(event.x, event.y))
                 }
                 commit(action)
             }
-
             event pressed Key.ESCAPE -> {
                 lastStart = null
                 leftDragging = false
             }
-            event pressed MouseButton.MIDDLE -> {
-                middleDragging = true
-            }
-            event released MouseButton.MIDDLE -> {
-                middleDragging = false
-            }
-            event scrolled Modifier.CONTROL -> {
+
+            // camera
+            event pressed MouseButton.MIDDLE -> middleDragging = true
+            event released MouseButton.MIDDLE -> middleDragging = false
+
+            event scrolledWith Modifier.CONTROL -> {
                 val oldPos = mousePos.screenToWorld()
                 when {
                     event.dy < 0 -> world.scale *= 1.1f
@@ -126,6 +118,8 @@ class EditorScene : Node("editor") {
             event pressed Modifier.CONTROL + Key.N0 -> {
                 world.scale = Vector2f(1.0f, 1.0f)
             }
+
+            // objects
             event.cursorMoved() -> {
                 if (middleDragging) {
                     world.position.x += event.x - mousePos.x
@@ -145,13 +139,15 @@ class EditorScene : Node("editor") {
                     undo(actions.removeLast())
                 }
             }
+
+            // time
             event pressed Key.RIGHT -> timeDirection += 1
             event released Key.RIGHT -> timeDirection -= 1
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
-            event pressed Key.E -> {
-                defer { SceneManager.scene = MainScene() }
-            }
+
+            // navigation
+            event pressed Key.E -> defer { SceneManager.scene = MainScene() }
         }
     }
 
@@ -159,7 +155,7 @@ class EditorScene : Node("editor") {
         fps = 1.0f / delta
         world.time += timeDirection * delta
         scaleText.text = "scale: ${world.scale}"
-        time.text = "time: ${world.time}"
+        timeText.text = "time: ${world.time}"
         fpsText.text = "fps: $fps"
     }
 
@@ -167,30 +163,28 @@ class EditorScene : Node("editor") {
         hovered?.let { hovered ->
             canvas.save()
             canvas
-                .translate(hovered.position)
-                .rotate(hovered.rotation)
-                .scale(hovered.scale)
+                .transform(world)
+                .transform(hovered)
             canvas.drawRect(hovered.bounds, debugPaint)
             canvas.restore()
         }
-        selected?.let { hovered ->
+        selected?.let { selected ->
             canvas.save()
             canvas
-                .translate(hovered.position)
-                .rotate(hovered.rotation)
-                .scale(hovered.scale)
-            canvas.drawRect(hovered.bounds, selectedPaint)
+                .transform(world)
+                .transform(selected)
+            canvas.drawRect(selected.bounds, selectedPaint)
             canvas.restore()
         }
 
         if (leftDragging) {
             val start = lastStart ?: return
-            when (mode) {
-                Mode.POINTER -> Unit
-                Mode.RECTANGLE -> {
+            when (tool) {
+                Tool.POINTER -> Unit
+                Tool.RECTANGLE -> {
                     canvas.drawRect(Rect.makeLTRB(start.x, start.y, mousePos.x, mousePos.y), debugPaint)
                 }
-                Mode.ELLIPSE -> {
+                Tool.ELLIPSE -> {
                     canvas.drawOval(Rect.makeLTRB(start.x, start.y, mousePos.x, mousePos.y), debugPaint)
                 }
             }
@@ -268,7 +262,7 @@ class EditorScene : Node("editor") {
         return this * world.scale + world.position
     }
 
-    enum class Mode { POINTER, RECTANGLE, ELLIPSE }
+    enum class Tool { POINTER, RECTANGLE, ELLIPSE }
 
     companion object {
 

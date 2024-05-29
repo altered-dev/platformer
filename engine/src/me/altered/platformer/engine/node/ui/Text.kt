@@ -9,6 +9,7 @@ import me.altered.platformer.engine.node.none
 import me.altered.platformer.engine.node.start
 import me.altered.platformer.engine.node.wrap
 import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.engine.util.emptyRect
 import me.altered.platformer.engine.util.paint
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Font
@@ -31,16 +32,16 @@ class Text(
     var text = text
         set(value) {
             field = value
-            blob = value.toTextBlob()!!
+            blob = value.toTextBlob()
         }
 
     override val name: String
         get() = text
 
-    private var blob: TextBlob = text.toTextBlob()!!
+    private var blob: TextBlob? = text.toTextBlob()
 
     override fun draw(canvas: Canvas, bounds: Rect) {
-        canvas.drawTextBlob(blob, 0.0f, font.size, paint)
+        blob?.let { canvas.drawTextBlob(it, 0.0f, font.size, paint) }
     }
 
     private fun String.toTextBlob(): TextBlob? {
@@ -54,7 +55,7 @@ class Text(
     override fun measure(bounds: Rect): Rect {
         val margin = margin
         val padding = (parent as? UiNode)?.padding ?: none
-        val textSize = blob.bounds
+        val textSize = blob?.bounds ?: return emptyRect()
 
         val w = when (val width = width) {
             is Size.Fixed -> width.value

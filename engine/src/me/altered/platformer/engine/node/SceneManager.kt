@@ -3,8 +3,7 @@ package me.altered.platformer.engine.node
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
 import me.altered.platformer.engine.util.currentTimeMillis
-import me.altered.platformer.engine.util.scale
-import me.altered.platformer.engine.util.translate
+import me.altered.platformer.engine.util.transform
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate
@@ -99,10 +98,7 @@ object SceneManager : SkikoRenderDelegate, InputHandler {
         canvas.save()
         val bounds = when (node) {
             is Node2D -> {
-                canvas
-                    .translate(node.position)
-                    .rotate(node.rotation)
-                    .scale(node.scale)
+                canvas.transform(node)
                 bounds
             }
 
