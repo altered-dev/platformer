@@ -1,3 +1,8 @@
 package me.altered.platformer.engine.input
 
-expect class InputListener(handler: InputHandler)
+import org.jetbrains.skiko.SkiaLayer
+
+expect class InputListener(handler: InputHandler) {
+
+    fun listenSkiaLayer(skiaLayer: SkiaLayer)
+}

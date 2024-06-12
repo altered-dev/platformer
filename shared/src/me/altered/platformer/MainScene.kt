@@ -7,14 +7,7 @@ import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.Node2D
-import me.altered.platformer.engine.node.SceneManager
-import me.altered.platformer.engine.node.SceneManager.defer
-import me.altered.platformer.engine.node.all
-import me.altered.platformer.engine.node.each
-import me.altered.platformer.engine.node.px
-import me.altered.platformer.engine.node.ui.Button
-import me.altered.platformer.engine.node.ui.Text
+import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.player.Player
 import me.altered.platformer.timeline.Timeline
 
@@ -34,21 +27,14 @@ class MainScene(
         player = +Player(position = Vector2f(100.0f, 300.0f))
     }
 
-    private val time = +Text("time: ${timeline.time}", margin = each(left = 16.0f, top = 32.0f))
-    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
-
-    private val button = +Button(
-        text = "Open editor",
-        width = 128.px,
-        height = 32.px,
-        margin = all(128.0f),
-    )
+//    private val time = +Text("time: ${timeline.time}", margin = each(left = 16.0f, top = 32.0f))
+//    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
         timeline.time += timeDirection * delta
-        time.text = "time: ${timeline.time}"
-        fpsText.text = "Ffps: $fps"
+//        time.text = "time: ${timeline.time}"
+//        fpsText.text = "Ffps: $fps"
     }
 
     override fun input(event: InputEvent) {
@@ -58,7 +44,7 @@ class MainScene(
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
             event pressed Key.E -> {
-                defer { SceneManager.scene = EditorScene() }
+                tree?.currentScene = EditorScene()
             }
         }
     }

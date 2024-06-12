@@ -8,7 +8,7 @@ import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.paint
 import kotlin.math.sign
@@ -43,7 +43,7 @@ class Player(
         }
     }
 
-    override fun draw(canvas: Canvas, bounds: Rect) {
+    override fun draw(canvas: Canvas) {
         val rect = Rect.makeLTRB(-10f, -10f, 10f, 10f)
         canvas.drawRect(rect, paint)
     }

@@ -1,7 +1,7 @@
 package me.altered.platformer.`object`
 
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.timeline.Expression
 import org.jetbrains.skia.Rect
 

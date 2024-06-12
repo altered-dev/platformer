@@ -42,7 +42,7 @@ class Ellipse(
         mode = PaintMode.STROKE
     }
 
-    override fun draw(canvas: Canvas, bounds: Rect) {
+    override fun draw(canvas: Canvas) {
         val rect = this.bounds
         canvas
             .drawOval(rect, fillPaint)

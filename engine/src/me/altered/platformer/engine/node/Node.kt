@@ -1,15 +1,10 @@
 package me.altered.platformer.engine.node
 
 import me.altered.platformer.engine.input.InputEvent
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.paint
-import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.PaintMode
-import org.jetbrains.skia.Rect
-import kotlin.jvm.JvmStatic
+import me.altered.platformer.engine.loop.SceneTree
 
 open class Node(
-    open val name: String,
+    open var name: String = "Node",
     parent: Node? = null,
 ) {
 
@@ -29,6 +24,20 @@ open class Node(
 
     private val _children = mutableSetOf<Node>()
     val children: Set<Node> by ::_children
+
+    var tree: SceneTree? = null
+        get() = field ?: parent?.tree
+        // ultra ugly hack because no friend classes
+        internal set
+
+    open val root: Node
+        get() = parent?.root ?: this
+
+    open val viewport: Viewport?
+        get() = parent?.viewport
+
+    open val window: Window?
+        get() = parent?.window
 
     fun addChild(child: Node): Boolean {
         // TODO: cyclic tree check
@@ -75,10 +84,7 @@ open class Node(
         return this
     }
 
-    open val root: Node
-        get() = parent?.root ?: this
-
-    open fun debugDraw(canvas: Canvas, bounds: Rect) = Unit
+    open fun enterTree() = Unit
 
     open fun ready() = Unit
 
@@ -86,22 +92,11 @@ open class Node(
 
     open fun physicsUpdate(delta: Float) = Unit
 
-    open fun draw(canvas: Canvas, bounds: Rect) = Unit
-
     open fun input(event: InputEvent) = Unit
+
+    open fun exitTree() = Unit
 
     open fun destroy() = Unit
 
     override fun toString() = "[${this::class.simpleName}] $name"
-
-    companion object {
-
-        @JvmStatic
-        protected val debugPaint = paint {
-            isAntiAlias = true
-            mode = PaintMode.STROKE
-            strokeWidth = 2.0f
-            color4f = Colors.red.withA(0.5f)
-        }
-    }
 }

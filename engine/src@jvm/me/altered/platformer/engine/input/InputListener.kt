@@ -1,6 +1,7 @@
 package me.altered.platformer.engine.input
 
 import me.altered.platformer.engine.util.enumValueOf
+import org.jetbrains.skiko.SkiaLayer
 import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import java.awt.event.MouseEvent
@@ -12,6 +13,14 @@ import java.awt.event.MouseWheelListener
 actual class InputListener actual constructor(
     private val handler: InputHandler,
 ) : MouseListener, MouseWheelListener, MouseMotionListener, KeyListener {
+
+    actual fun listenSkiaLayer(skiaLayer: SkiaLayer) {
+        skiaLayer.addMouseListener(this)
+        skiaLayer.addMouseMotionListener(this)
+        skiaLayer.addMouseWheelListener(this)
+        skiaLayer.addKeyListener(this)
+    }
+
     override fun mouseClicked(e: MouseEvent) = Unit
 
     override fun mousePressed(e: MouseEvent) {

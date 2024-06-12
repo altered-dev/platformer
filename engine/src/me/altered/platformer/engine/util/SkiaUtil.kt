@@ -1,7 +1,7 @@
 package me.altered.platformer.engine.util
 
 import me.altered.koml.Vector2fc
-import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.engine.node2d.Node2D
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Paint
@@ -20,7 +20,14 @@ fun Canvas.translate(vec: Vector2fc) = translate(vec.x, vec.y)
 
 fun Canvas.scale(vec: Vector2fc) = scale(vec.x, vec.y)
 
-fun Canvas.transform(node: Node2D) = translate(node.position).rotate(node.rotation).scale(node.scale)
+fun Canvas.skew(vec: Vector2fc) = skew(vec.x, vec.y)
+
+// TODO: transform matrix
+fun Canvas.transform(node: Node2D) = this
+    .translate(node.position)
+    .rotate(node.rotation)
+    .scale(node.scale)
+    .skew(node.skew)
 
 inline fun paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
 

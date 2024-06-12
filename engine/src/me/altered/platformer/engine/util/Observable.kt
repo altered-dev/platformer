@@ -1,4 +1,4 @@
-package me.altered.platformer.util
+package me.altered.platformer.engine.util
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

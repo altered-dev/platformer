@@ -2,137 +2,24 @@ package me.altered.platformer.engine.node
 
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
-import me.altered.platformer.engine.util.currentTimeMillis
-import me.altered.platformer.engine.util.transform
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate
 
-/**
- * FIXME: provide a more convenient way to change scenes from nodes
- *
- * TODO: also unsingleton this
- */
+@Deprecated("Replace with SceneTree.", ReplaceWith("SceneTree()", "me.altered.platformer.engine.loop.SceneTree"), DeprecationLevel.ERROR)
 object SceneManager : SkikoRenderDelegate, InputHandler {
 
     var scene: Node = EmptyNode
         set(value) {
-            destroy(field)
-            field = value
-            ready(value)
-            prettyPrint(value)
+            error("Replace with SceneTree.")
         }
-
-    // TODO: to args
-    var isDebug = true
-
-    private val deferred = mutableListOf<() -> Unit>()
-
-    var targetFps = 165.0f
-    var targetUps = 60.0f
-
-    private var initialTime = currentTimeMillis()
-    private val timeU = 1000.0f / targetUps
-    private val timeR = if (targetFps > 0) 1000.0f / targetFps else 0.0f
-    private var updateTime = initialTime
-    private var frameTime = initialTime
-    private var deltaUpdate = 0.0f
-    private var deltaFps = 0.0f
 
     override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
-        val now = currentTimeMillis()
-        deltaUpdate += (now - initialTime) / timeU
-        deltaFps += (now - initialTime) / timeR
-
-        if (deltaUpdate >= 1) {
-            physicsUpdate((now - updateTime) * 0.001f)
-            updateTime = now
-            deltaUpdate--
-        }
-
-        if (targetFps <= 0 || deltaFps >= 1) {
-            update((now - frameTime) * 0.001f)
-            frameTime = now
-            canvas.clear(0xFFFFFFFF.toInt())
-            draw(canvas, Rect.makeWH(width.toFloat(), height.toFloat()))
-            deltaFps--
-        }
-
-        postUpdate()
-        initialTime = now
-    }
-
-    fun Node.defer(block: () -> Unit) {
-        deferred += block
-    }
-
-    fun ready() = ready(scene)
-
-    private fun ready(node: Node) {
-        node.children.forEach { ready(it) }
-        node.ready()
-    }
-
-    fun update(delta: Float) = update(delta, scene)
-
-    private fun update(delta: Float, node: Node) {
-        node.update(delta)
-        node.children.forEach { update(delta, it) }
-    }
-
-    fun physicsUpdate(delta: Float) = physicsUpdate(delta, scene)
-
-    private fun physicsUpdate(delta: Float, node: Node) {
-        node.physicsUpdate(delta)
-        node.children.forEach { physicsUpdate(delta, it) }
-    }
-
-    private fun postUpdate() {
-        deferred.forEach { it() }
-        deferred.clear()
-    }
-
-    fun draw(canvas: Canvas, bounds: Rect) = draw(canvas, bounds, scene)
-
-    private fun draw(canvas: Canvas, bounds: Rect, node: Node) {
-        canvas.save()
-        val bounds = when (node) {
-            is Node2D -> {
-                canvas.transform(node)
-                bounds
-            }
-
-            is UiNode -> {
-                val bounds = node.measure(bounds)
-                canvas.translate(bounds.left, bounds.top)
-                Rect.makeWH(bounds.width, bounds.height)
-            }
-
-            else -> bounds
-        }
-
-        canvas.save()
-        node.draw(canvas, bounds)
-        if (isDebug) {
-            node.debugDraw(canvas, bounds)
-        }
-        canvas.restore()
-
-        node.children.forEach { draw(canvas, bounds, it) }
-        canvas.restore()
+        error("Replace with SceneTree.")
     }
 
     override fun input(event: InputEvent) = input(event, scene)
 
     private fun input(event: InputEvent, node: Node) {
-        node.children.forEach { input(event, it) }
-        node.input(event)
-    }
-
-    fun destroy() = destroy(scene)
-
-    private fun destroy(node: Node) {
-        node.children.forEach { destroy(it) }
-        node.destroy()
+        error("Replace with SceneTree.")
     }
 }

@@ -17,11 +17,8 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
 import me.altered.platformer.engine.input.scrolledWith
-import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.SceneManager
-import me.altered.platformer.engine.node.SceneManager.defer
-import me.altered.platformer.engine.node.each
-import me.altered.platformer.engine.node.ui.Text
+import me.altered.platformer.engine.node2d.Node2D
+//import me.altered.platformer.engine.node.ui.Text
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.color
 import me.altered.platformer.engine.util.contains
@@ -33,13 +30,13 @@ import me.altered.platformer.`object`.ObjectNode
 import me.altered.platformer.`object`.Rectangle
 import me.altered.platformer.`object`.World
 import me.altered.platformer.timeline.const
-import me.altered.platformer.util.logged
-import me.altered.platformer.util.observable
+import me.altered.platformer.engine.util.logged
+import me.altered.platformer.engine.util.observable
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 
-class EditorScene : Node("editor") {
+class EditorScene : Node2D("editor") {
 
     private var timeDirection = 0.0f
     private val mousePos = Vector2f()
@@ -55,19 +52,19 @@ class EditorScene : Node("editor") {
     private var selected: ObjectNode? by logged(null)
 
     private var fps: Float by observable(0.0f) {
-        fpsText.text = "fps: $it"
+//        fpsText.text = "fps: $it"
     }
     private var tool: Tool by observable(Tool.POINTER) {
-        toolText.text = "tool: $it"
+//        toolText.text = "tool: $it"
     }
 
     private val actions = ArrayDeque<CommittedAction<*>>()
     private val undoneActions = ArrayDeque<Action<*>>()
 
-    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 16.0f))
-    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
-    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 48.0f))
-    private val timeText = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 64.0f))
+//    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 16.0f))
+//    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
+//    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 48.0f))
+//    private val timeText = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 64.0f))
 
     override fun input(event: InputEvent) {
         // TODO: refactor this mess
@@ -116,7 +113,7 @@ class EditorScene : Node("editor") {
                 world.position.y += event.dy
             }
             event pressed Modifier.CONTROL + Key.N0 -> {
-                world.scale = Vector2f(1.0f, 1.0f)
+                world.scale.set(1.0f, 1.0f)
             }
 
             // objects
@@ -147,19 +144,19 @@ class EditorScene : Node("editor") {
             event released Key.LEFT -> timeDirection += 1
 
             // navigation
-            event pressed Key.E -> defer { SceneManager.scene = MainScene() }
+            event pressed Key.E -> tree?.currentScene = MainScene()
         }
     }
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
         world.time += timeDirection * delta
-        scaleText.text = "scale: ${world.scale}"
-        timeText.text = "time: ${world.time}"
-        fpsText.text = "fps: $fps"
+//        scaleText.text = "scale: ${world.scale}"
+//        timeText.text = "time: ${world.time}"
+//        fpsText.text = "fps: $fps"
     }
 
-    override fun draw(canvas: Canvas, bounds: Rect) {
+    override fun draw(canvas: Canvas) {
         hovered?.let { hovered ->
             canvas.save()
             canvas

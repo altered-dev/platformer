@@ -9,7 +9,7 @@ import kotlin.math.min
 import kotlin.math.round
 import kotlin.math.sqrt
 
-data class Vector2f(
+open class Vector2f(
     override var x: Float = 0.0f,
     override var y: Float = 0.0f,
 ) : Vector2fc {
@@ -67,6 +67,12 @@ data class Vector2f(
         0 -> x = value
         1 -> y = value
         else -> throw IllegalArgumentException()
+    }
+
+    fun set(vec: Vector2fc, dest: Vector2f = this): Vector2f {
+        dest.x = vec.x
+        dest.y = vec.y
+        return dest
     }
 
     fun set(
@@ -202,7 +208,7 @@ data class Vector2f(
         TODO("Not yet implemented")
     }
 
-    fun min(other: Vector2fc): Vector2f = min(other, Vector2f())
+    fun min(other: Vector2fc): Vector2f = min(other, this)
 
     override fun min(other: Vector2fc, dest: Vector2f): Vector2f {
         dest.x = min(x, other.x)
@@ -259,6 +265,11 @@ data class Vector2f(
     override fun equals(x: Float, y: Float): Boolean {
         return this.x == x && this.y == y
     }
+
+    override fun component1(): Float = x
+    override fun component2(): Float = y
+
+    override fun toString(): String = "Vector2f(x=$x, y=$y)"
 
     companion object {
 
