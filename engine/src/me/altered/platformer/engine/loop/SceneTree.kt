@@ -2,9 +2,12 @@ package me.altered.platformer.engine.loop
 
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
+import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.Window
+import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.currentTimeMillis
+import me.altered.platformer.engine.util.transform
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skiko.SkikoRenderDelegate
 
@@ -87,13 +90,15 @@ open class SceneTree(
         if (node == null) return
         canvas.save()
         when (node) {
-
+            is Node2D -> canvas.transform(node)
         }
 
         canvas.save()
-//        node.draw(canvas)
-        if (isDebug) {
-//            node.debugDraw(canvas)
+        if (node is CanvasNode) {
+            node.draw(canvas)
+            if (isDebug) {
+                node.debugDraw(canvas)
+            }
         }
         canvas.restore()
 

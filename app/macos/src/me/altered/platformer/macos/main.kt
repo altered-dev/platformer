@@ -18,7 +18,6 @@ import platform.AppKit.NSApplicationDelegateProtocol
 import platform.AppKit.NSBackingStoreBuffered
 import platform.AppKit.NSEvent
 import platform.AppKit.NSMenu
-import platform.AppKit.NSTitlebarSeparatorStyle
 import platform.AppKit.NSTrackingActiveInActiveApp
 import platform.AppKit.NSTrackingArea
 import platform.AppKit.NSTrackingMouseMoved
@@ -30,7 +29,6 @@ import platform.AppKit.NSWindowStyleMaskClosable
 import platform.AppKit.NSWindowStyleMaskMiniaturizable
 import platform.AppKit.NSWindowStyleMaskResizable
 import platform.AppKit.NSWindowStyleMaskTitled
-import platform.AppKit.NSWindowTitleHidden
 import platform.Foundation.NSMakeRect
 import platform.Foundation.NSSelectorFromString
 import platform.darwin.NSObject

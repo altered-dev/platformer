@@ -18,33 +18,35 @@ abstract class AbstractLogger : Logger {
         }
     }
 
+    private fun padMessage(message: String) = message.replace("\n", "\n                      ")
+
     final override fun v(tag: String, message: String) {
         if (level <= Logger.Level.VERBOSE) {
-            log("${padTag(tag)} v: $message")
+            log("${padTag(tag)} v: ${padMessage(message)}")
         }
     }
 
     final override fun d(tag: String, message: String) {
         if (level <= Logger.Level.DEBUG) {
-            log("${padTag(tag)} d: $message")
+            log("${padTag(tag)} d: ${padMessage(message)}")
         }
     }
 
     final override fun i(tag: String, message: String) {
         if (level <= Logger.Level.INFO) {
-            log("${padTag(tag)} i: $message")
+            log("${padTag(tag)} i: ${padMessage(message)}")
         }
     }
 
     final override fun w(tag: String, message: String) {
         if (level <= Logger.Level.WARNING) {
-            log("${padTag(tag)} w: $message")
+            log("${padTag(tag)} w: ${padMessage(message)}")
         }
     }
 
     final override fun e(tag: String, message: String) {
         if (level <= Logger.Level.ERROR) {
-            log("${padTag(tag)} e: $message")
+            log("${padTag(tag)} e: ${padMessage(message)}")
         }
     }
 }

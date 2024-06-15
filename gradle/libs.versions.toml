@@ -1,6 +1,5 @@
 [versions]
-kotlin = "2.0.0-RC2"
-skiko = "0.8.4"
+skiko = "0.8.8"
 coroutines = "1.8.0"
 
 [libraries]
@@ -22,9 +21,3 @@ skiko-android-x64 = { group = "org.jetbrains.skiko", name = "skiko-android-runti
 skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-arm64", version.ref = "skiko" }
 
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-
-[plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-
-[bundles]
-skiko-jvm = [ "skiko-jvm", "skiko-jvm-windows", "skiko-jvm-linux-x64", "skiko-jvm-linux-arm64", "skiko-jvm-macos-x64", "skiko-jvm-macos-arm64" ]
