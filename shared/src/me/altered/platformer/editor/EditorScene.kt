@@ -144,7 +144,7 @@ class EditorScene : Node2D("editor") {
             event released Key.LEFT -> timeDirection += 1
 
             // navigation
-            event pressed Key.E -> tree?.currentScene = MainScene()
+            event pressed Key.E -> tree?.scene = MainScene()
         }
     }
 

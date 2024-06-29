@@ -8,6 +8,8 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
+import me.altered.platformer.engine.ui.Button
+import me.altered.platformer.engine.ui.all
 import me.altered.platformer.player.Player
 import me.altered.platformer.timeline.Timeline
 
@@ -27,8 +29,12 @@ class MainScene(
         player = +Player(position = Vector2f(100.0f, 300.0f))
     }
 
-//    private val time = +Text("time: ${timeline.time}", margin = each(left = 16.0f, top = 32.0f))
-//    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 56.0f))
+    private val button = +Button(
+        text = "hello world",
+        padding = all(16.0f),
+        anchor = Vector2f(0.1f, 0.1f),
+        onClick = { tree?.scene = EditorScene() }
+    )
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
@@ -44,7 +50,7 @@ class MainScene(
             event pressed Key.LEFT -> timeDirection -= 1
             event released Key.LEFT -> timeDirection += 1
             event pressed Key.E -> {
-                tree?.currentScene = EditorScene()
+                tree?.scene = EditorScene()
             }
         }
     }

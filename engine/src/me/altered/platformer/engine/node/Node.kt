@@ -2,6 +2,12 @@ package me.altered.platformer.engine.node
 
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.loop.SceneTree
+import me.altered.platformer.engine.util.Logger
+import me.altered.platformer.engine.util.d
+import me.altered.platformer.engine.util.e
+import me.altered.platformer.engine.util.i
+import me.altered.platformer.engine.util.v
+import me.altered.platformer.engine.util.w
 
 open class Node(
     open var name: String = "Node",
@@ -97,6 +103,26 @@ open class Node(
     open fun exitTree() = Unit
 
     open fun destroy() = Unit
+
+    fun Logger.v(message: Any?) = v(this@Node.toString(), message)
+
+    fun Logger.d(message: Any?) = d(this@Node.toString(), message)
+
+    fun Logger.i(message: Any?) = i(this@Node.toString(), message)
+
+    fun Logger.w(message: Any?) = w(this@Node.toString(), message)
+
+    fun Logger.e(message: Any?) = e(this@Node.toString(), message)
+
+    fun Logger.v(lazyMessage: () -> Any?) = v(this@Node.toString(), lazyMessage)
+
+    fun Logger.d(lazyMessage: () -> Any?) = d(this@Node.toString(), lazyMessage)
+
+    fun Logger.i(lazyMessage: () -> Any?) = i(this@Node.toString(), lazyMessage)
+
+    fun Logger.w(lazyMessage: () -> Any?) = w(this@Node.toString(), lazyMessage)
+
+    fun Logger.e(lazyMessage: () -> Any?) = e(this@Node.toString(), lazyMessage)
 
     override fun toString() = "[${this::class.simpleName}] $name"
 }

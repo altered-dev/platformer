@@ -15,10 +15,10 @@ fun main() {
             isVsyncEnabled = true,
         )
     )
-    val window = Window("Hello, world!", null, 1280, 720)
+    val window = Window("Hello, world!", null, 1280, 720, 20.0f)
     val tree = SceneTree(window)
     val listener = InputListener(tree)
-    tree.currentScene = MainScene()
+    tree.scene = MainScene()
     skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, tree)
     invokeLater {
         listener.listenSkiaLayer(skiaLayer)

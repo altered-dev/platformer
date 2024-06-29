@@ -14,16 +14,6 @@ interface Logger {
 
     fun e(tag: String, message: String)
 
-    fun Logger.v(tag: String, message: Any?) = v(tag, message.toString())
-
-    fun Logger.d(tag: String, message: Any?) = d(tag, message.toString())
-
-    fun Logger.i(tag: String, message: Any?) = i(tag, message.toString())
-
-    fun Logger.w(tag: String, message: Any?) = w(tag, message.toString())
-
-    fun Logger.e(tag: String, message: Any?) = e(tag, message.toString())
-
     enum class Level { VERBOSE, DEBUG, INFO, WARNING, ERROR, NONE }
 
     companion object Default : Logger {

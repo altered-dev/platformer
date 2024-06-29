@@ -4,6 +4,7 @@ import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
+import me.altered.platformer.engine.util.drawCrosshair
 import org.jetbrains.skia.Canvas
 
 open class Node2D(
@@ -57,9 +58,7 @@ open class Node2D(
         }
 
     final override fun debugDraw(canvas: Canvas) {
-        canvas
-            .drawLine(0.0f, -5.0f, 0.0f, 5.0f, debugPaint)
-            .drawLine(-5.0f, 0.0f, 5.0f, 0.0f, debugPaint)
+        canvas.drawCrosshair(0.0f, 0.0f, 5.0f, debugPaint)
     }
 
     companion object {

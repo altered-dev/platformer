@@ -1,5 +1,6 @@
 package me.altered.platformer.engine.node
 
+import me.altered.koml.Vector2f
 import org.jetbrains.skiko.SkiaLayer
 import java.awt.Dimension
 import javax.swing.JFrame
@@ -10,7 +11,9 @@ actual class Window actual constructor(
     parent: Node?,
     width: Int,
     height: Int,
-) : Viewport(name, parent) {
+    viewportSize: Float,
+    offset: Vector2f,
+) : Viewport(name, parent, viewportSize, offset) {
 
     private val frame = JFrame(name).apply {
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE

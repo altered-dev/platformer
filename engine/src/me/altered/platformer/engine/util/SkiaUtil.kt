@@ -2,6 +2,7 @@ package me.altered.platformer.engine.util
 
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node2d.Node2D
+import me.altered.platformer.engine.ui.Insets
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Paint
@@ -22,6 +23,8 @@ fun Canvas.scale(vec: Vector2fc) = scale(vec.x, vec.y)
 
 fun Canvas.skew(vec: Vector2fc) = skew(vec.x, vec.y)
 
+fun Canvas.scale(scalar: Float) = scale(scalar, scalar)
+
 // TODO: transform matrix
 fun Canvas.transform(node: Node2D) = this
     .translate(node.position)
@@ -34,6 +37,12 @@ inline fun paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
 inline fun path(block: Path.() -> Unit): Path = Path().apply(block)
 
 fun Rect.offset(vec: Vector2fc) = offset(vec.x, vec.y)
+
+fun Rect.inset(insets: Insets) =
+    Rect.makeLTRB(left + insets.left, top + insets.top, right - insets.right, bottom - insets.bottom)
+
+fun Rect.outset(insets: Insets) =
+    Rect.makeLTRB(left - insets.left, top - insets.top, right + insets.right, bottom + insets.bottom)
 
 fun Rect.contains(x: Float, y: Float): Boolean {
     return x in left..right && y in top..bottom
