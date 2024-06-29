@@ -17,6 +17,7 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolled
 import me.altered.platformer.engine.input.scrolledWith
+import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
 //import me.altered.platformer.engine.node.ui.Text
 import me.altered.platformer.engine.util.Colors
@@ -85,8 +86,8 @@ class EditorScene : Node2D("editor") {
                 leftDragging = false
                 val action = when (tool) {
                     Tool.POINTER -> Action.SelectObject(hovered, selected)
-                    Tool.RECTANGLE -> Action.DrawRectangle(start, Vector2f(event.x, event.y))
-                    Tool.ELLIPSE -> Action.DrawEllipse(start, Vector2f(event.x, event.y))
+                    Tool.RECTANGLE -> Action.DrawRectangle(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
+                    Tool.ELLIPSE -> Action.DrawEllipse(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
                 }
                 commit(action)
             }
@@ -130,6 +131,7 @@ class EditorScene : Node2D("editor") {
                 if (undoneActions.isNotEmpty()) {
                     commit(undoneActions.removeLast())
                 }
+                prettyPrint(world)
             }
             event pressed Modifier.CONTROL + Key.Z -> {
                 if (actions.isNotEmpty()) {
@@ -208,8 +210,8 @@ class EditorScene : Node2D("editor") {
         return when (action) {
             is Action.SelectObject -> Unit as T
             is Action.DrawRectangle -> {
-                val start = action.start.screenToWorld()
-                val end = action.end.screenToWorld()
+                val start = action.start
+                val end = action.end
                 val size = end - start
                 Rectangle(
                     xExpr = const(start.x + size.x * 0.5f),
@@ -221,8 +223,8 @@ class EditorScene : Node2D("editor") {
                 ) as T
             }
             is Action.DrawEllipse -> {
-                val start = action.start.screenToWorld()
-                val end = action.end.screenToWorld()
+                val start = action.start
+                val end = action.end
                 val size = end - start
                 Ellipse(
                     xExpr = const(start.x + size.x * 0.5f),
