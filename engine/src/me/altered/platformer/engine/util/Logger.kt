@@ -14,11 +14,11 @@ interface Logger {
 
     fun e(tag: String, message: String)
 
-    enum class Level { VERBOSE, DEBUG, INFO, WARNING, ERROR, NONE }
+    enum class Level { Verbose, Debug, Info, Warning, Error, None }
 
     companion object Default : Logger {
 
-        var defaultLogger: Logger = PrintLogger(Level.VERBOSE)
+        var defaultLogger: Logger = PrintLogger(Level.Verbose)
 
         override val level: Level
             get() = defaultLogger.level

@@ -45,10 +45,10 @@ class MainScene(
 
     override fun input(event: InputEvent) {
         when {
-            event pressed Key.RIGHT -> timeDirection += 1
-            event released Key.RIGHT -> timeDirection -= 1
-            event pressed Key.LEFT -> timeDirection -= 1
-            event released Key.LEFT -> timeDirection += 1
+            event pressed Key.Right -> timeDirection += 1
+            event released Key.Right -> timeDirection -= 1
+            event pressed Key.Left -> timeDirection -= 1
+            event released Key.Left -> timeDirection += 1
             event pressed Key.E -> {
                 tree?.scene = EditorScene()
             }

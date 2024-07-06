@@ -10,9 +10,7 @@ import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.UiNode
 import me.altered.platformer.engine.util.currentTimeMillis
-import me.altered.platformer.engine.util.scale
 import me.altered.platformer.engine.util.transform
-import me.altered.platformer.engine.util.translate
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate

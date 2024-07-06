@@ -12,11 +12,11 @@ actual class Modifier(private val flags: ULong) {
     actual infix fun has(other: Modifier) = other.flags == 0UL || flags and other.flags != 0UL
 
     actual companion object {
-        actual val NONE = Modifier(0UL)
-        actual val SHIFT = Modifier(NSShiftKeyMask)
-        actual val CONTROL = Modifier(NSControlKeyMask)
-        actual val ALT = Modifier(NSAlternateKeyMask)
-        actual val SUPER = Modifier(ULong.MAX_VALUE) // TODO: what is a super key on mac?
+        actual val None = Modifier(0UL)
+        actual val Shift = Modifier(NSShiftKeyMask)
+        actual val Control = Modifier(NSControlKeyMask)
+        actual val Alt = Modifier(NSAlternateKeyMask)
+        actual val Super = Modifier(ULong.MAX_VALUE) // TODO: what is a super key on mac?
         val COMMAND = Modifier(NSCommandKeyMask)
         val FUNCTION = Modifier(NSFunctionKeyMask)
     }

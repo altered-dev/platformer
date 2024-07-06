@@ -29,7 +29,7 @@ actual class InputListener actual constructor(
                 button = enumValueOf(e.button),
                 x = e.x.toFloat(),
                 y = e.y.toFloat(),
-                action = Action.PRESS,
+                action = Action.Press,
                 modifier = Modifier(e.modifiersEx),
             )
         )
@@ -41,7 +41,7 @@ actual class InputListener actual constructor(
                 button = enumValueOf(e.button),
                 x = e.x.toFloat(),
                 y = e.y.toFloat(),
-                action = Action.RELEASE,
+                action = Action.Release,
                 modifier = Modifier(e.modifiersEx),
             )
         )
@@ -85,7 +85,7 @@ actual class InputListener actual constructor(
         handler.input(
             InputEvent.KeyEvent(
                 key = key,
-                action = Action.PRESS,
+                action = Action.Press,
                 modifier = Modifier(e.modifiersEx),
             )
         )
@@ -97,7 +97,7 @@ actual class InputListener actual constructor(
         handler.input(
             InputEvent.KeyEvent(
                 key = key,
-                action = Action.RELEASE,
+                action = Action.Release,
                 modifier = Modifier(e.modifiersEx),
             )
         )

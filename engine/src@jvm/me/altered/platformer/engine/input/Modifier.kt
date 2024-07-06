@@ -9,10 +9,10 @@ actual class Modifier(private val value: Int) {
     actual infix fun has(other: Modifier) = value and other.value == other.value
 
     actual companion object {
-        actual val NONE = Modifier(0)
-        actual val SHIFT = Modifier(SHIFT_DOWN_MASK)
-        actual val CONTROL = Modifier(CTRL_DOWN_MASK)
-        actual val ALT = Modifier(ALT_DOWN_MASK)
-        actual val SUPER = Modifier(META_DOWN_MASK)
+        actual val None = Modifier(0)
+        actual val Shift = Modifier(SHIFT_DOWN_MASK)
+        actual val Control = Modifier(CTRL_DOWN_MASK)
+        actual val Alt = Modifier(ALT_DOWN_MASK)
+        actual val Super = Modifier(META_DOWN_MASK)
     }
 }

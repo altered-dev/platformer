@@ -5,7 +5,7 @@ import kotlinx.cinterop.useContents
 import me.altered.platformer.MainScene
 import me.altered.platformer.engine.input.Action
 import me.altered.platformer.engine.input.InputEvent
-import me.altered.platformer.engine.input.LEFT
+import me.altered.platformer.engine.input.Left
 import me.altered.platformer.engine.input.Modifier
 import me.altered.platformer.engine.input.MouseButton
 import me.altered.platformer.engine.node.SceneManager
@@ -98,11 +98,11 @@ fun main() {
             val height = frame.useContents { size.height }
             event.locationInWindow.useContents {
                 sceneManager.input(InputEvent.MouseEvent(
-                    button = MouseButton.LEFT,
+                    button = MouseButton.Left,
                     x = x.toFloat(),
                     y = (height - y).toFloat(),
-                    action = Action.PRESS,
-                    modifier = Modifier.NONE,
+                    action = Action.Press,
+                    modifier = Modifier.None,
                 ))
             }
         }
@@ -111,11 +111,11 @@ fun main() {
             val height = frame.useContents { size.height }
             event.locationInWindow.useContents {
                 sceneManager.input(InputEvent.MouseEvent(
-                    button = MouseButton.LEFT,
+                    button = MouseButton.Left,
                     x = x.toFloat(),
                     y = (height - y).toFloat(),
-                    action = Action.RELEASE,
-                    modifier = Modifier.NONE,
+                    action = Action.Release,
+                    modifier = Modifier.None,
                 ))
             }
         }
@@ -124,7 +124,7 @@ fun main() {
             sceneManager.input(
                 InputEvent.KeyEvent(
                     key = enumValueOf(event.keyCode.toInt()),
-                    action = Action.PRESS,
+                    action = Action.Press,
                     modifier = Modifier(event.modifierFlags)
                 )
             )
@@ -134,7 +134,7 @@ fun main() {
             sceneManager.input(
                 InputEvent.KeyEvent(
                     key = enumValueOf(event.keyCode.toInt()),
-                    action = Action.RELEASE,
+                    action = Action.Release,
                     modifier = Modifier(event.modifierFlags)
                 )
             )

@@ -54,7 +54,7 @@ class Player(
             event released Key.A -> direction.x++
             event pressed Key.D -> direction.x++
             event released Key.D -> direction.x--
-            event pressed Key.SPACE -> direction.y = -3.0f
+            event pressed Key.Space -> direction.y = -3.0f
         }
     }
 }

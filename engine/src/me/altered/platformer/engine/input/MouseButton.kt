@@ -10,6 +10,6 @@ expect enum class MouseButton {
     companion object
 }
 
-val MouseButton.Companion.LEFT get() = MouseButton.N1
-val MouseButton.Companion.MIDDLE get() = MouseButton.N2
-val MouseButton.Companion.RIGHT get() = MouseButton.N3
+val MouseButton.Companion.Left get() = MouseButton.N1
+val MouseButton.Companion.Middle get() = MouseButton.N2
+val MouseButton.Companion.Right get() = MouseButton.N3

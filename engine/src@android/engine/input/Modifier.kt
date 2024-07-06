@@ -7,10 +7,10 @@ actual class Modifier(private val value: Int) {
     actual infix fun has(other: Modifier) = other.value == 0 || value and other.value != 0
 
     actual companion object {
-        actual val NONE = Modifier(0)
-        actual val SHIFT = Modifier(1)
-        actual val CONTROL = Modifier(2)
-        actual val ALT = Modifier(4)
-        actual val SUPER = Modifier(8)
+        actual val None = Modifier(0)
+        actual val Shift = Modifier(1)
+        actual val Control = Modifier(2)
+        actual val Alt = Modifier(4)
+        actual val Super = Modifier(8)
     }
 }

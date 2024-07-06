@@ -7,10 +7,10 @@ expect class Modifier {
     infix fun has(other: Modifier): Boolean
 
     companion object {
-        val NONE: Modifier
-        val SHIFT: Modifier
-        val CONTROL: Modifier
-        val ALT: Modifier
-        val SUPER: Modifier
+        val None: Modifier
+        val Shift: Modifier
+        val Control: Modifier
+        val Alt: Modifier
+        val Super: Modifier
     }
 }

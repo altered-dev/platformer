@@ -1,14 +1,14 @@
 package me.altered.platformer.engine.ui
 
 enum class Alignment {
-    START, CENTER, END,
+    Start, Center, End,
 }
 
 val start: Alignment
-    get() = Alignment.START
+    get() = Alignment.Start
 
 val center: Alignment
-    get() = Alignment.CENTER
+    get() = Alignment.Center
 
 val end: Alignment
-    get() = Alignment.END
+    get() = Alignment.End

@@ -7,8 +7,8 @@ import me.altered.platformer.editor.action.Action
 import me.altered.platformer.editor.action.CommittedAction
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
-import me.altered.platformer.engine.input.LEFT
-import me.altered.platformer.engine.input.MIDDLE
+import me.altered.platformer.engine.input.Left
+import me.altered.platformer.engine.input.Middle
 import me.altered.platformer.engine.input.Modifier
 import me.altered.platformer.engine.input.MouseButton
 import me.altered.platformer.engine.input.cursorMoved
@@ -55,7 +55,7 @@ class EditorScene : Node2D("editor") {
     private var fps: Float by observable(0.0f) {
 //        fpsText.text = "fps: $it"
     }
-    private var tool: Tool by observable(Tool.POINTER) {
+    private var tool: Tool by observable(Tool.Pointer) {
 //        toolText.text = "tool: $it"
     }
 
@@ -71,36 +71,36 @@ class EditorScene : Node2D("editor") {
         // TODO: refactor this mess
         when {
             // tools
-            event pressed Key.N1 -> tool = Tool.POINTER
-            event pressed Key.N2 -> tool = Tool.RECTANGLE
-            event pressed Key.N3 -> tool = Tool.ELLIPSE
+            event pressed Key.N1 -> tool = Tool.Pointer
+            event pressed Key.N2 -> tool = Tool.Rectangle
+            event pressed Key.N3 -> tool = Tool.Ellipse
 
             // actions
-            event pressed MouseButton.LEFT -> {
+            event pressed MouseButton.Left -> {
                 lastStart = Vector2f(event.x, event.y)
                 leftDragging = true
             }
-            event released MouseButton.LEFT -> {
+            event released MouseButton.Left -> {
                 val start = lastStart ?: return
                 lastStart = null
                 leftDragging = false
                 val action = when (tool) {
-                    Tool.POINTER -> Action.SelectObject(hovered, selected)
-                    Tool.RECTANGLE -> Action.DrawRectangle(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
-                    Tool.ELLIPSE -> Action.DrawEllipse(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
+                    Tool.Pointer -> Action.SelectObject(hovered, selected)
+                    Tool.Rectangle -> Action.DrawRectangle(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
+                    Tool.Ellipse -> Action.DrawEllipse(start.screenToWorld(), Vector2f(event.x, event.y).screenToWorld())
                 }
                 commit(action)
             }
-            event pressed Key.ESCAPE -> {
+            event pressed Key.Escape -> {
                 lastStart = null
                 leftDragging = false
             }
 
             // camera
-            event pressed MouseButton.MIDDLE -> middleDragging = true
-            event released MouseButton.MIDDLE -> middleDragging = false
+            event pressed MouseButton.Middle -> middleDragging = true
+            event released MouseButton.Middle -> middleDragging = false
 
-            event scrolledWith Modifier.CONTROL -> {
+            event scrolledWith Modifier.Control -> {
                 val oldPos = mousePos.screenToWorld()
                 when {
                     event.dy < 0 -> world.scale *= 1.1f
@@ -113,7 +113,7 @@ class EditorScene : Node2D("editor") {
                 world.position.x += event.dx
                 world.position.y += event.dy
             }
-            event pressed Modifier.CONTROL + Key.N0 -> {
+            event pressed Modifier.Control + Key.N0 -> {
                 world.scale.set(1.0f, 1.0f)
             }
 
@@ -127,23 +127,23 @@ class EditorScene : Node2D("editor") {
                 hovered = world.objects.findLast { mousePos.screenToWorld() in it.bounds.offset(it.position) }
                 middleDragging
             }
-            event pressed Modifier.CONTROL + Modifier.SHIFT + Key.Z -> {
+            event pressed Modifier.Control + Modifier.Shift + Key.Z -> {
                 if (undoneActions.isNotEmpty()) {
                     commit(undoneActions.removeLast())
                 }
                 prettyPrint(world)
             }
-            event pressed Modifier.CONTROL + Key.Z -> {
+            event pressed Modifier.Control + Key.Z -> {
                 if (actions.isNotEmpty()) {
                     undo(actions.removeLast())
                 }
             }
 
             // time
-            event pressed Key.RIGHT -> timeDirection += 1
-            event released Key.RIGHT -> timeDirection -= 1
-            event pressed Key.LEFT -> timeDirection -= 1
-            event released Key.LEFT -> timeDirection += 1
+            event pressed Key.Right -> timeDirection += 1
+            event released Key.Right -> timeDirection -= 1
+            event pressed Key.Left -> timeDirection -= 1
+            event released Key.Left -> timeDirection += 1
 
             // navigation
             event pressed Key.E -> tree?.scene = MainScene()
@@ -179,11 +179,11 @@ class EditorScene : Node2D("editor") {
         if (leftDragging) {
             val start = lastStart ?: return
             when (tool) {
-                Tool.POINTER -> Unit
-                Tool.RECTANGLE -> {
+                Tool.Pointer -> Unit
+                Tool.Rectangle -> {
                     canvas.drawRect(Rect.makeLTRB(start.x, start.y, mousePos.x, mousePos.y), debugPaint)
                 }
-                Tool.ELLIPSE -> {
+                Tool.Ellipse -> {
                     canvas.drawOval(Rect.makeLTRB(start.x, start.y, mousePos.x, mousePos.y), debugPaint)
                 }
             }
@@ -261,7 +261,7 @@ class EditorScene : Node2D("editor") {
         return this * world.scale + world.position
     }
 
-    enum class Tool { POINTER, RECTANGLE, ELLIPSE }
+    enum class Tool { Pointer, Rectangle, Ellipse }
 
     companion object {
 

@@ -11,31 +11,31 @@ fun Logger.w(tag: String, message: Any?) = w(tag, message.toString())
 fun Logger.e(tag: String, message: Any?) = e(tag, message.toString())
 
 inline fun Logger.v(tag: String, lazyMessage: () -> Any?) {
-    if (level >= Logger.Level.VERBOSE) {
+    if (level >= Logger.Level.Verbose) {
         v(tag, lazyMessage())
     }
 }
 
 inline fun Logger.d(tag: String, lazyMessage: () -> Any?) {
-    if (level >= Logger.Level.DEBUG) {
+    if (level >= Logger.Level.Debug) {
         d(tag, lazyMessage())
     }
 }
 
 inline fun Logger.i(tag: String, lazyMessage: () -> Any?) {
-    if (level >= Logger.Level.INFO) {
+    if (level >= Logger.Level.Info) {
         i(tag, lazyMessage())
     }
 }
 
 inline fun Logger.w(tag: String, lazyMessage: () -> Any?) {
-    if (level >= Logger.Level.WARNING) {
+    if (level >= Logger.Level.Warning) {
         w(tag, lazyMessage())
     }
 }
 
 inline fun Logger.e(tag: String, lazyMessage: () -> Any?) {
-    if (level >= Logger.Level.ERROR) {
+    if (level >= Logger.Level.Error) {
         e(tag, lazyMessage())
     }
 }
