@@ -25,7 +25,6 @@ import me.altered.platformer.engine.ui.all
 import me.altered.platformer.engine.ui.each
 import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.px
-//import me.altered.platformer.engine.node.ui.Text
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.Color
 import me.altered.platformer.engine.util.contains

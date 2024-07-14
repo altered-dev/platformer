@@ -2,15 +2,12 @@ package me.altered.platformer.engine.node
 
 import me.altered.koml.Vector2f
 import org.jetbrains.skiko.SkiaLayer
-import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.WindowConstants
 
 actual class Window actual constructor(
     name: String,
     parent: Node?,
-    width: Int,
-    height: Int,
     viewportSize: Float,
     offset: Vector2f,
 ) : Viewport(name, parent, viewportSize, offset) {

@@ -3,9 +3,9 @@ package me.altered.platformer.android
 import android.app.Activity
 import android.os.Bundle
 import android.widget.FrameLayout
-import me.altered.platformer.engine.node.SceneManager
+import me.altered.platformer.engine.loop.SceneTree
+import me.altered.platformer.engine.node.Window
 import org.jetbrains.skiko.SkiaLayer
-import org.jetbrains.skiko.SkiaLayerRenderDelegate
 
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,9 +15,10 @@ class MainActivity : Activity() {
         layout.layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
 
         val skiaLayer = SkiaLayer()
-        val renderDelegate = SceneManager
-        skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, renderDelegate)
-        skiaLayer.attachTo(layout)
+        val window = Window("Hello, world!", viewportSize = 20.0f, frameLayout = layout)
+        val sceneTree = SceneTree(window)
+        skiaLayer.renderDelegate = sceneTree
+        window.attachSkiaLayer(skiaLayer)
 
         setContentView(layout, layout.layoutParams)
     }
