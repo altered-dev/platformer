@@ -50,13 +50,11 @@ class World(
             _objects += obj
             obj.eval(time)
         }
-        println(objects.joinToString("\n"))
     }
 
     fun removeObject(obj: ObjectNode) {
         if (removeChild(obj)) {
             _objects -= obj
         }
-        println(objects.joinToString("\n"))
     }
 }

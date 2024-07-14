@@ -20,6 +20,9 @@ import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Box
+import me.altered.platformer.engine.ui.Text
+import me.altered.platformer.engine.ui.all
+import me.altered.platformer.engine.ui.each
 import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.px
 //import me.altered.platformer.engine.node.ui.Text
@@ -54,30 +57,44 @@ class EditorScene : Node2D("editor") {
     private var selected: ObjectNode? by logged(null)
 
     private var fps: Float by observable(0.0f) {
-//        fpsText.text = "fps: $it"
+        fpsText.text = "fps: $it"
     }
     private var tool: Tool by observable(Tool.Pointer) {
-//        toolText.text = "tool: $it"
+        toolText.text = "tool: $it"
     }
 
     private val actions = ArrayDeque<CommittedAction<*>>()
     private val undoneActions = ArrayDeque<Action<*>>()
 
+    private val objPane = +Box(
+        name = "objPane",
+        width = 256.px,
+        height = expand,
+        padding = all(16.0f),
+        background = Color(0xFF333333),
+    )
+
+    private val treeText = objPane + Text("", padding = each(left = 16.0f, top = 16.0f), color = Colors.White)
+
     private val inspector = +Box(
         name = "inspector",
         width = 256.px,
         height = expand,
+        padding = all(16.0f),
         anchor = Vector2f(1.0f, 0.0f),
         background = Color(0xFF333333),
     )
-
-//    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 16.0f))
-//    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
-//    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 48.0f))
-//    private val timeText = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 64.0f))
+    private val scaleText = inspector + Text("scale: ${scale.x}", padding = each(top = 16.0f), color = Colors.White)
+    private val timeText = inspector + Text("time: ${world.time}", padding = each(top = 40.0f), color = Colors.White)
+    private val fpsText = inspector + Text("fps: $fps", padding = each(top = 64.0f), color = Colors.White)
+    private val toolText = inspector + Text("tool: $tool", padding = each(top = 88.0f), color = Colors.White)
 
     override fun ready() {
         world.showGrid = true
+        world.position.set(
+            x = (window?.width ?: 0) * 0.25f,
+            y = (window?.height ?: 0) * 0.75f,
+        )
     }
 
     override fun input(event: InputEvent) {
@@ -170,9 +187,8 @@ class EditorScene : Node2D("editor") {
     override fun update(delta: Float) {
         fps = 1.0f / delta
         world.time += timeDirection * delta
-//        scaleText.text = "scale: ${world.scale}"
-//        timeText.text = "time: ${world.time}"
-//        fpsText.text = "fps: $fps"
+        scaleText.text = "scale: ${world.scale.x}"
+        timeText.text = "time: ${world.time}"
     }
 
     override fun draw(canvas: Canvas) {
@@ -215,13 +231,16 @@ class EditorScene : Node2D("editor") {
             }
             is Action.DeleteObject -> {
                 world.removeObject(action.obj)
+                treeText.text = world.objects.joinToString("\n")
                 selected = null
             }
             is Action.DrawRectangle -> if (product is Rectangle) {
                 world.addObject(product)
+                treeText.text = world.objects.joinToString("\n")
             }
             is Action.DrawEllipse -> if (product is Ellipse) {
                 world.addObject(product)
+                treeText.text = world.objects.joinToString("\n")
             }
         }
         actions.addLast(CommittedAction(action, product))
@@ -267,13 +286,16 @@ class EditorScene : Node2D("editor") {
             }
             is Action.DeleteObject -> {
                 world.addObject(action.action.obj)
+                treeText.text = world.objects.joinToString("\n")
                 selected = action.action.obj
             }
             is Action.DrawRectangle -> if (action.product is Rectangle) {
                 world.removeObject(action.product)
+                treeText.text = world.objects.joinToString("\n")
             }
             is Action.DrawEllipse -> if (action.product is Ellipse) {
                 world.removeObject(action.product)
+                treeText.text = world.objects.joinToString("\n")
             }
         }
         undoneActions.addLast(action.action)

@@ -161,6 +161,18 @@ open class Node(
     }
 
     /**
+     * A DSL function to conveniently add a child node in code.
+     *
+     * @receiver the node to be added
+     *
+     * @return the node itself
+     */
+    operator fun <N : Node> plus(node: N): N {
+        addChild(node)
+        return node
+    }
+
+    /**
      * TODO: not yet implemented into the lifecycle
      *
      * Called as soon as the node enters a tree.

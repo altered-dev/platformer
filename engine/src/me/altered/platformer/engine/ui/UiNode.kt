@@ -26,6 +26,9 @@ open class UiNode(
 
     fun invalidateLayout() {
         needsLayout = true
+        when (val parent = parent) {
+            is UiNode -> parent.invalidateLayout()
+        }
     }
 
     fun layout(parentBounds: Rect) {

@@ -4,7 +4,10 @@ import me.altered.koml.Vector2f
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.Paint
+import me.altered.platformer.engine.util.emptyRect
+import me.altered.platformer.engine.util.observable
 import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.TextBlob
@@ -16,30 +19,39 @@ class Text(
     width: Size = wrap,
     height: Size = wrap,
     padding: Insets = none,
-    anchor: Vector2f = Vector2f(0.5f, 0.5f),
+    anchor: Vector2f = Vector2f(0.0f, 0.0f),
+    color: Color4f = Colors.Black,
 ) : UiNode(text, parent, width, height, padding, anchor) {
 
-    private lateinit var textBlob: TextBlob
+    private var textBlob: TextBlob? = null
+
+    private val paint = Paint {
+        color4f = color
+    }
 
     var text: String
         get() = name
         set(value) {
             if (value == name) return
-            makeBlob(value)?.let { textBlob = it }
+            textBlob = makeBlob(value)
             name = value
-            needsLayout = true
+            invalidateLayout()
         }
 
+    var color by observable(color) {
+        paint.color4f = it
+    }
+
     init {
-        makeBlob(name)?.let { textBlob = it }
+        textBlob = makeBlob(text)
     }
 
     override fun draw(canvas: Canvas) {
-        canvas.drawTextBlob(textBlob, bounds.left, bounds.top, paint)
+        textBlob?.let { canvas.drawTextBlob(it, bounds.left + padding.left, bounds.top + padding.top, paint) }
     }
 
     override fun layoutChildren(parentBounds: Rect): Rect {
-        return textBlob.bounds
+        return textBlob?.bounds ?: emptyRect()
     }
 
     private fun makeBlob(value: String): TextBlob? {
@@ -51,12 +63,8 @@ class Text(
     }
 
     companion object {
-        val shaper = Shaper.make()
+        val shaper = Shaper.makeShaperDrivenWrapper()
 
         val font = Font(null, 13.0f)
-
-        val paint = Paint {
-            color4f = Colors.Black
-        }
     }
 }

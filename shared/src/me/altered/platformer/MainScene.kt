@@ -21,14 +21,10 @@ class MainScene(
     private var timeDirection = 0.0f
     private var fps = 0.0f
 
-    private val player: Player
-    private val _objects: Node2D
+    private val world = +Node2D("world")
 
-    private val world = +Node2D("world").apply {
-        _objects = +Node2D("objects").apply {
-        }
-        player = +Player(position = Vector2f(100.0f, 300.0f))
-    }
+    private val player = world + Player(position = Vector2f(100.0f, 300.0f))
+    private val _objects = world + Node2D("objects")
 
     private val time = +Text("time: 0", anchor = Vector2f(0.05f, 0.05f))
     private val fpsText = +Text("fps: 0", anchor = Vector2f(0.05f, 0.075f))

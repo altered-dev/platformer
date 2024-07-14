@@ -21,7 +21,7 @@ class Button(
     enabled: Boolean = true,
 ) : UiNode(text, parent, width, height, padding, anchor) {
 
-    private val textNode = +Text(text, width = expand, height = wrap)
+    private val textNode = +Text(text, width = expand, height = wrap, anchor = Vector2f(0.5f, 0.5f))
 
     var text by textNode::text
 

@@ -28,7 +28,7 @@ fun <T> logged(initialValue: T) = object : ReadWriteProperty<Any?, T> {
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         if (this.value == value) return
-        println("value of '${property.name}' changed, old: ${this.value}, new: $value")
+        Logger.d("Observable", "value of '${property.name}' changed, old: ${this.value}, new: $value")
         this.value = value
     }
 }
