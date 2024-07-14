@@ -16,5 +16,9 @@ expect class Window(
 
     var isVisible: Boolean
 
+    var width: Int
+
+    var height: Int
+
     fun attachSkiaLayer(layer: SkiaLayer)
 }

@@ -45,9 +45,7 @@ class EditorScene : Node2D("editor") {
     private var middleDragging = false
     private var lastStart: Vector2f? = null
 
-    private val world = +World().apply {
-        showGrid = true
-    }
+    private val world = +World()
 
     private var hovered: ObjectNode? by logged(null)
     private var selected: ObjectNode? by logged(null)
@@ -66,6 +64,10 @@ class EditorScene : Node2D("editor") {
 //    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
 //    private val scaleText = +Text("scale: ${world.scale}", margin = each(left = 16.0f, top = 48.0f))
 //    private val timeText = +Text("time: ${world.time}", margin = each(left = 16.0f, top = 64.0f))
+
+    override fun ready() {
+        world.showGrid = true
+    }
 
     override fun input(event: InputEvent) {
         // TODO: refactor this mess

@@ -9,6 +9,7 @@ import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Button
+import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.all
 import me.altered.platformer.player.Player
 import me.altered.platformer.timeline.Timeline
@@ -29,6 +30,9 @@ class MainScene(
         player = +Player(position = Vector2f(100.0f, 300.0f))
     }
 
+    private val time = +Text("time: 0", anchor = Vector2f(0.05f, 0.05f))
+    private val fpsText = +Text("fps: 0", anchor = Vector2f(0.05f, 0.075f))
+
     private val button = +Button(
         text = "hello world",
         padding = all(16.0f),
@@ -39,8 +43,8 @@ class MainScene(
     override fun update(delta: Float) {
         fps = 1.0f / delta
         timeline.time += timeDirection * delta
-//        time.text = "time: ${timeline.time}"
-//        fpsText.text = "Ffps: $fps"
+        time.text = "time: ${timeline.time}"
+        fpsText.text = "fps: $fps"
     }
 
     override fun input(event: InputEvent) {

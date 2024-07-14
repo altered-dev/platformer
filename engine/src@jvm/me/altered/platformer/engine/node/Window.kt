@@ -17,8 +17,9 @@ actual class Window actual constructor(
 
     private val frame = JFrame(name).apply {
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-        preferredSize = Dimension(width, height)
-        setLocationRelativeTo(null)
+        size = toolkit.screenSize
+//        preferredSize = Dimension(width, height)
+//        setLocationRelativeTo(null)
     }
 
     override var name: String
@@ -32,11 +33,11 @@ actual class Window actual constructor(
         get() = frame.isVisible
         set(value) { frame.isVisible = value }
 
-    var width: Int
+    actual var width: Int
         get() = frame.width
         set(value) = frame.setSize(value, height)
 
-    var height: Int
+    actual var height: Int
         get() = frame.height
         set(value) = frame.setSize(width, value)
 

@@ -27,7 +27,19 @@ class World(
         }
     }
 
-    private val grid = Grid(Rect.makeWH(2000.0f, 2000.0f))
+    private lateinit var grid: Grid
+
+    override fun ready() {
+        grid = Grid(
+            bounds = Rect.makeWH(
+                w = window?.width?.toFloat() ?: 2000.0f,
+                h = window?.height?.toFloat() ?: 2000.0f,
+            )
+        )
+        if (showGrid) {
+            addChild(grid)
+        }
+    }
 
     private fun updateObjects(time: Float) {
         _objects.forEach { it.eval(time) }

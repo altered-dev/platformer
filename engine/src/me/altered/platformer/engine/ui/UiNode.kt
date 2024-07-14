@@ -3,7 +3,6 @@ package me.altered.platformer.engine.ui
 import me.altered.koml.Vector2f
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.Logger
 import me.altered.platformer.engine.util.inset
 import me.altered.platformer.engine.util.outset
 import org.jetbrains.skia.Canvas
@@ -17,7 +16,7 @@ open class UiNode(
     var width: Size = expand,
     var height: Size = expand,
     var padding: Insets = none,
-    var anchor: Vector2f = Vector2f(0.0f, 0.0f),
+    val anchor: Vector2f = Vector2f(0.0f, 0.0f),
 ) : CanvasNode(name, parent) {
 
     internal var needsLayout = true
@@ -76,15 +75,10 @@ open class UiNode(
         }
         if (height is Size.Wrap) {
             val dh = parentBounds.height - childBounds.height.coerceIn(height.min, height.max)
-            top += dh * anchor.x
+            top += dh * anchor.y
             bottom -= dh * (1.0f - anchor.y)
         }
         bounds = Rect.makeLTRB(left, top, right, bottom)
-        Logger.d(name, """
-            parentBounds: $parentBounds
-            bounds: $bounds
-            childBounds: $childBounds
-        """.trimIndent())
     }
 
     open fun layoutChildren(parentBounds: Rect): Rect {

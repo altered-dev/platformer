@@ -24,17 +24,14 @@ class Text(
     var text: String
         get() = name
         set(value) {
-            val newBlob = when (val width = width) {
-                is Size.Expand -> shaper.shape(value, font, bounds.width)
-                is Size.Fixed -> shaper.shape(value, font, width.value)
-                is Size.Wrap -> shaper.shape(value, font)
-            }
-            newBlob?.let { textBlob = it }
+            if (value == name) return
+            makeBlob(value)?.let { textBlob = it }
             name = value
+            needsLayout = true
         }
 
     init {
-        this.text = text
+        makeBlob(name)?.let { textBlob = it }
     }
 
     override fun draw(canvas: Canvas) {
@@ -43,6 +40,14 @@ class Text(
 
     override fun layoutChildren(parentBounds: Rect): Rect {
         return textBlob.bounds
+    }
+
+    private fun makeBlob(value: String): TextBlob? {
+        return when (val width = width) {
+            is Size.Expand -> shaper.shape(value, font, bounds.width)
+            is Size.Fixed -> shaper.shape(value, font, width.value)
+            is Size.Wrap -> shaper.shape(value, font)
+        }
     }
 
     companion object {

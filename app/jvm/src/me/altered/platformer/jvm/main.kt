@@ -24,7 +24,7 @@ fun main() {
         listener.listenSkiaLayer(skiaLayer)
         window.attachSkiaLayer(skiaLayer)
         skiaLayer.needRedraw()
-        window.pack()
+//        window.pack()
         window.isVisible = true
     }
 }

@@ -1,10 +1,12 @@
 package me.altered.platformer.engine.util
 
+import me.altered.koml.Transform2fc
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Insets
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
+import org.jetbrains.skia.Matrix33
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
@@ -51,3 +53,5 @@ fun Rect.contains(x: Float, y: Float): Boolean {
 operator fun Rect.contains(vec: Vector2fc): Boolean {
     return vec.x in left..right && vec.y in top..bottom
 }
+
+fun Transform2fc.toSkMatrix() = Matrix33(scaleX, skewX, transX, skewY, scaleY, transY, 0.0f, 0.0f, 1.0f)
