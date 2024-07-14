@@ -93,6 +93,10 @@ class EditorScene : Node2D("editor") {
                 }
                 commit(action)
             }
+            event pressed Key.Delete -> {
+                val obj = selected ?: return
+                commit(Action.DeleteObject(obj))
+            }
             event pressed Key.Escape -> {
                 lastStart = null
                 leftDragging = false
@@ -198,6 +202,10 @@ class EditorScene : Node2D("editor") {
             is Action.SelectObject -> {
                 selected = action.new
             }
+            is Action.DeleteObject -> {
+                world.removeObject(action.obj)
+                selected = null
+            }
             is Action.DrawRectangle -> if (product is Rectangle) {
                 world.addObject(product)
             }
@@ -211,6 +219,7 @@ class EditorScene : Node2D("editor") {
     private fun <T> produce(action: Action<T>): T {
         return when (action) {
             is Action.SelectObject -> Unit as T
+            is Action.DeleteObject -> Unit as T
             is Action.DrawRectangle -> {
                 val start = action.start
                 val end = action.end
@@ -244,6 +253,10 @@ class EditorScene : Node2D("editor") {
         when (action.action) {
             is Action.SelectObject -> {
                 selected = action.action.old
+            }
+            is Action.DeleteObject -> {
+                world.addObject(action.action.obj)
+                selected = action.action.obj
             }
             is Action.DrawRectangle -> if (action.product is Rectangle) {
                 world.removeObject(action.product)

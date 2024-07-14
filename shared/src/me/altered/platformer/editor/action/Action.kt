@@ -9,6 +9,8 @@ sealed interface Action<out P> {
 
     data class SelectObject(val new: ObjectNode?, val old: ObjectNode?) : Action<Unit>
 
+    data class DeleteObject(val obj: ObjectNode) : Action<Unit>
+
     data class DrawRectangle(val start: Vector2fc, val end: Vector2fc) : Action<Rectangle>
 
     data class DrawEllipse(val start: Vector2fc, val end: Vector2fc) : Action<Ellipse>
