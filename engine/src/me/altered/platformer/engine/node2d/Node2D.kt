@@ -10,10 +10,10 @@ import org.jetbrains.skia.Canvas
 open class Node2D(
     name: String = "Node2D",
     parent: Node? = null,
-    val position: Vector2f = defaultPosition(),
-    var rotation: Float = defaultRotation(),
-    val scale: Vector2f = defaultScale(),
-    val skew: Vector2f = defaultSkew(),
+    val position: Vector2f = defaultPosition,
+    var rotation: Float = defaultRotation,
+    val scale: Vector2f = defaultScale,
+    val skew: Vector2f = defaultSkew,
     // TODO: origin for rotation and scale
     // TODO: z index
 ) : CanvasNode(name, parent) {
@@ -21,6 +21,8 @@ open class Node2D(
     // TODO: rotation radians
 
     // TODO: optimize
+    // also doesn't take into account a tree like this: Node2D > Node > Node2D
+    // the last node will have globalPosition == position, although it's not always true
     open var globalPosition: Vector2fc
         get() = when (val parent = parent) {
             is Node2D -> position + parent.globalPosition
@@ -63,9 +65,9 @@ open class Node2D(
 
     companion object {
 
-        fun defaultPosition() = Vector2f(0.0f, 0.0f)
-        fun defaultRotation() = 0.0f
-        fun defaultScale() = Vector2f(1.0f, 1.0f)
-        fun defaultSkew() = Vector2f(0.0f, 0.0f)
+        val defaultPosition get() = Vector2f(0.0f, 0.0f)
+        val defaultRotation get() = 0.0f
+        val defaultScale get() = Vector2f(1.0f, 1.0f)
+        val defaultSkew get() = Vector2f(0.0f, 0.0f)
     }
 }

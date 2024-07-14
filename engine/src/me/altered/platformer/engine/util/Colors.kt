@@ -4,14 +4,14 @@ object Colors {
 
     //                        AA RR GG BB
 
-    val white =       color(0xFF_FF_FF_FF)
-    val black =       color(0xFF_00_00_00)
-    val transparent = color(0x00_00_00_00)
+    val White =       Color(0xFF_FF_FF_FF)
+    val Black =       Color(0xFF_00_00_00)
+    val Transparent = Color(0x00_00_00_00)
 
-    val red =         color(0xFF_FF_00_00)
-    val green =       color(0xFF_00_FF_00)
-    val blue =        color(0xFF_00_00_FF)
-    val yellow =      color(0xFF_FF_FF_00)
-    val cyan =        color(0xFF_00_FF_FF)
-    val magenta =     color(0xFF_FF_00_FF)
+    val Red =         Color(0xFF_FF_00_00)
+    val Green =       Color(0xFF_00_FF_00)
+    val Blue =        Color(0xFF_00_00_FF)
+    val Yellow =      Color(0xFF_FF_FF_00)
+    val Cyan =        Color(0xFF_00_FF_FF)
+    val Magenta =     Color(0xFF_FF_00_FF)
 }

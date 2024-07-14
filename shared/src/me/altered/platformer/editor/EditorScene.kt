@@ -19,12 +19,15 @@ import me.altered.platformer.engine.input.scrolled
 import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
+import me.altered.platformer.engine.ui.Box
+import me.altered.platformer.engine.ui.expand
+import me.altered.platformer.engine.ui.px
 //import me.altered.platformer.engine.node.ui.Text
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.color
+import me.altered.platformer.engine.util.Color
 import me.altered.platformer.engine.util.contains
 import me.altered.platformer.engine.util.offset
-import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.engine.util.transform
 import me.altered.platformer.`object`.Ellipse
 import me.altered.platformer.`object`.ObjectNode
@@ -59,6 +62,14 @@ class EditorScene : Node2D("editor") {
 
     private val actions = ArrayDeque<CommittedAction<*>>()
     private val undoneActions = ArrayDeque<Action<*>>()
+
+    private val inspector = +Box(
+        name = "inspector",
+        width = 256.px,
+        height = expand,
+        anchor = Vector2f(1.0f, 0.0f),
+        background = Color(0xFF333333),
+    )
 
 //    private val fpsText = +Text("fps: $fps", margin = each(left = 16.0f, top = 16.0f))
 //    private val toolText = +Text("tool: $tool", margin = each(left = 16.0f, top = 32.0f))
@@ -230,7 +241,7 @@ class EditorScene : Node2D("editor") {
                     rotationExpr = const(0.0f),
                     widthExpr = const(size.x),
                     heightExpr = const(size.y),
-                    fillExpr = const(color(0xFF333333)),
+                    fillExpr = const(Color(0xFF333333)),
                 ) as T
             }
             is Action.DrawEllipse -> {
@@ -243,7 +254,7 @@ class EditorScene : Node2D("editor") {
                     widthExpr = const(size.x),
                     heightExpr = const(size.y),
                     rotationExpr = const(0.0f),
-                    fillExpr = const(color(0xFF333333)),
+                    fillExpr = const(Color(0xFF333333)),
                 ) as T
             }
         }
@@ -280,11 +291,11 @@ class EditorScene : Node2D("editor") {
 
     companion object {
 
-        private val selectedPaint = paint {
+        private val selectedPaint = Paint {
             isAntiAlias = true
             mode = PaintMode.STROKE
             strokeWidth = 2.0f
-            color4f = Colors.blue.withA(0.5f)
+            color4f = Colors.Blue.withA(0.5f)
         }
     }
 }

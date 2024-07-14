@@ -2,8 +2,8 @@ package me.altered.platformer.editor
 
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.color
-import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.Color
+import me.altered.platformer.engine.util.Paint
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
@@ -13,17 +13,17 @@ class Grid(
     private val bounds: Rect,
 ) : Node2D("grid") {
 
-    private val originPaint = paint {
+    private val originPaint = Paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
-        color4f = Colors.black
+        color4f = Colors.Black
         strokeWidth = 0.0f
     }
 
-    private val gridPaint = paint {
+    private val gridPaint = Paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
-        color4f = color(0x40000000)
+        color4f = Color(0x40000000)
         strokeWidth = 0.0f
     }
 

@@ -3,7 +3,7 @@ package me.altered.platformer.engine.ui
 import me.altered.koml.Vector2f
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.Paint
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Rect
@@ -55,8 +55,8 @@ class Text(
 
         val font = Font(null, 13.0f)
 
-        val paint = paint {
-            color4f = Colors.black
+        val paint = Paint {
+            color4f = Colors.Black
         }
     }
 }

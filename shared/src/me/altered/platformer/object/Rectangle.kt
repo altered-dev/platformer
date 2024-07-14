@@ -4,7 +4,7 @@ import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
-import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.Colors
@@ -16,8 +16,8 @@ class Rectangle(
     override var rotationExpr: Expression<Float>,
     var widthExpr: Expression<Float>,
     var heightExpr: Expression<Float>,
-    var fillExpr: Expression<Color4f> = const(Colors.transparent),
-    var strokeExpr: Expression<Color4f> = const(Colors.transparent),
+    var fillExpr: Expression<Color4f> = const(Colors.Transparent),
+    var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeWidthExpr: Expression<Float> = const(0.0f),
 ) : ObjectNode("rectangle") {
 
@@ -32,12 +32,12 @@ class Rectangle(
             return Rect.makeLTRB(w.withSign(-1), h.withSign(-1), w.withSign(1), h.withSign(1))
         }
 
-    private val fillPaint = paint {
+    private val fillPaint = Paint {
         isAntiAlias = true
         mode = PaintMode.FILL
     }
 
-    private val strokePaint = paint {
+    private val strokePaint = Paint {
         isAntiAlias = true
         mode = PaintMode.STROKE
     }

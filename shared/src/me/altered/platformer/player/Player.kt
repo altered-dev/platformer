@@ -10,7 +10,7 @@ import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.paint
+import me.altered.platformer.engine.util.Paint
 import kotlin.math.sign
 
 class Player(
@@ -22,8 +22,8 @@ class Player(
     private val direction = Vector2f()
     private val gravity = 9.8f
 
-    private val paint = paint {
-        color4f = Colors.black
+    private val paint = Paint {
+        color4f = Colors.Black
     }
 
     override fun update(delta: Float) {

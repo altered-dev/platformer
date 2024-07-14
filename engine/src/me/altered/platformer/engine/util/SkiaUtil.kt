@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package me.altered.platformer.engine.util
 
 import me.altered.koml.Transform2fc
@@ -11,9 +13,9 @@ import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
 
-fun color(hex: Number): Color4f = Color4f(hex.toInt())
+fun Color(hex: Number): Color4f = Color4f(hex.toInt())
 
-fun color(r: Float, g: Float, b: Float, a: Float = 1.0f) = Color4f(r, g, b, a)
+fun Color(r: Float, g: Float, b: Float, a: Float = 1.0f) = Color4f(r, g, b, a)
 
 fun emptyRect(): Rect = Rect(0.0f, 0.0f, 0.0f, 0.0f)
 
@@ -34,9 +36,9 @@ fun Canvas.transform(node: Node2D) = this
     .scale(node.scale)
     .skew(node.skew)
 
-inline fun paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
+inline fun Paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
 
-inline fun path(block: Path.() -> Unit): Path = Path().apply(block)
+inline fun Path(block: Path.() -> Unit): Path = Path().apply(block)
 
 fun Rect.offset(vec: Vector2fc) = offset(vec.x, vec.y)
 
