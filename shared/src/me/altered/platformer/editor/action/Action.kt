@@ -1,9 +1,9 @@
 package me.altered.platformer.editor.action
 
 import me.altered.koml.Vector2fc
-import me.altered.platformer.`object`.Ellipse
-import me.altered.platformer.`object`.ObjectNode
-import me.altered.platformer.`object`.Rectangle
+import me.altered.platformer.objects.Ellipse
+import me.altered.platformer.objects.ObjectNode
+import me.altered.platformer.objects.Rectangle
 
 sealed interface Action<out P> {
 

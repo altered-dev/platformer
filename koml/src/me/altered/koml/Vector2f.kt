@@ -24,6 +24,7 @@ open class Vector2f(
         get() = if (x >= y) 1 else 0
 
     override fun isFinite(): Boolean = x.isFinite() && y.isFinite()
+    override fun isNaN(): Boolean = x.isNaN() || y.isNaN()
 
     override fun copy(dest: Vector2f): Vector2f {
         dest.x = x
@@ -40,7 +41,7 @@ open class Vector2f(
     fun negate() = negate(this)
 
     override fun normalize(length: Float, dest: Vector2f): Vector2f {
-        val invLength = 1.0f / sqrt(x * x + y * y)
+        val invLength = length / sqrt(x * x + y * y)
         dest.x = x * invLength
         dest.y = y * invLength
         return dest

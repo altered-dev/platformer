@@ -48,6 +48,13 @@ fun Rect.inset(insets: Insets) =
 fun Rect.outset(insets: Insets) =
     Rect.makeLTRB(left - insets.left, top - insets.top, right + insets.right, bottom + insets.bottom)
 
+fun Rect.add(other: Rect): Rect = Rect(
+    left = minOf(left, other.left),
+    top = minOf(top, other.top),
+    right = maxOf(right, other.right),
+    bottom = maxOf(bottom, other.bottom),
+)
+
 fun Rect.contains(x: Float, y: Float): Boolean {
     return x in left..right && y in top..bottom
 }

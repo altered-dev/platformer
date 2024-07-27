@@ -31,10 +31,10 @@ import me.altered.platformer.engine.util.contains
 import me.altered.platformer.engine.util.offset
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.engine.util.transform
-import me.altered.platformer.`object`.Ellipse
-import me.altered.platformer.`object`.ObjectNode
-import me.altered.platformer.`object`.Rectangle
-import me.altered.platformer.`object`.World
+import me.altered.platformer.objects.Ellipse
+import me.altered.platformer.objects.ObjectNode
+import me.altered.platformer.objects.Rectangle
+import me.altered.platformer.objects.World
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.logged
 import me.altered.platformer.engine.util.observable

@@ -157,6 +157,9 @@ fun interface Easing {
         val BounceIn = Easing { 1.0f - BounceOut.ease(1.0f - it) }
 
         @JvmField
+        /**
+         * FIXME: this animation is wrong
+         */
         val BounceOut = Easing {
             when {
                 it < 1.0f / D1 -> N1 * it * it

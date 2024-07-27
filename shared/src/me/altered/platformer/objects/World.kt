@@ -1,4 +1,4 @@
-package me.altered.platformer.`object`
+package me.altered.platformer.objects
 
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.node2d.Node2D
@@ -10,13 +10,15 @@ class World(
     objects: List<ObjectNode> = emptyList(),
 ) : Node2D("world") {
 
+    constructor(vararg objects: ObjectNode) : this(objects = objects.asList())
+
     private val _objects = objects.toMutableList()
     val objects: List<ObjectNode> by ::_objects
 
     var time by observable(time, ::updateObjects)
 
     init {
-        updateObjects(time)
+        addChildren(_objects)
     }
 
     var showGrid by observable(false) {
@@ -39,6 +41,7 @@ class World(
         if (showGrid) {
             addChild(grid)
         }
+        updateObjects(time)
     }
 
     private fun updateObjects(time: Float) {

@@ -59,7 +59,7 @@ open class Node2D(
             })
         }
 
-    final override fun debugDraw(canvas: Canvas) {
+    override fun debugDraw(canvas: Canvas) {
         canvas.drawCrosshair(0.0f, 0.0f, 5.0f, debugPaint)
     }
 

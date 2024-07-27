@@ -12,6 +12,7 @@ interface Vector2fc {
     val maxComponent: Int
 
     fun isFinite(): Boolean
+    fun isNaN(): Boolean
 
     fun copy(dest: Vector2f = Vector2f()): Vector2f
     operator fun unaryPlus(): Vector2fc = copy()

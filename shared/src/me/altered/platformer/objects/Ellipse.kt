@@ -1,4 +1,4 @@
-package me.altered.platformer.`object`
+package me.altered.platformer.objects
 
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
@@ -10,16 +10,16 @@ import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.Colors
 import kotlin.math.withSign
 
-class Rectangle(
+class Ellipse(
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
-    override var rotationExpr: Expression<Float>,
     var widthExpr: Expression<Float>,
     var heightExpr: Expression<Float>,
+    override var rotationExpr: Expression<Float>,
     var fillExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeWidthExpr: Expression<Float> = const(0.0f),
-) : ObjectNode("rectangle") {
+) : ObjectNode("ellipse") {
 
     // TODO: constraint to non-negative
     var width: Float = 0.0f
@@ -45,9 +45,9 @@ class Rectangle(
     override fun draw(canvas: Canvas) {
         val rect = this.bounds
         canvas
-            .drawRect(rect, fillPaint)
+            .drawOval(rect, fillPaint)
             // TODO: stroke modes: outside, center, inside
-            .drawRect(rect, strokePaint)
+            .drawOval(rect, strokePaint)
     }
 
     override fun eval(time: Float) {

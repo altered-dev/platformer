@@ -1,6 +1,7 @@
 package me.altered.platformer.timeline
 
 import me.altered.koml.Vector2f
+import me.altered.koml.lerp
 import me.altered.platformer.util.KeyframeList
 import org.jetbrains.skia.Color4f
 
@@ -9,7 +10,7 @@ class AnimatedFloat(
 ) : Expression.Animated<Float>(keyframes) {
 
     override fun animate(from: Float, to: Float, t: Float): Float {
-        return from + t * (to - from)
+        return lerp(from, to, t)
     }
 }
 
