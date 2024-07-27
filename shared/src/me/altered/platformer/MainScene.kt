@@ -12,10 +12,8 @@ import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.all
 import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.objects.World
 import me.altered.platformer.objects.ellipse
-import me.altered.platformer.objects.group
 import me.altered.platformer.objects.rectangle
 import me.altered.platformer.player.Player
 import me.altered.platformer.timeline.Easing
@@ -43,11 +41,36 @@ class MainScene : Node("main") {
             y = const(480.0f),
             rotation = animated(
                 0.0f at 0.0f,
-                360.0f at 3.0f with Easing.Linear,
+                360.0f at 3.0f with Easing.SineInOut,
             ),
             width = const(150.0f),
             height = const(30.0f),
             fill = const(Colors.Black),
+        ),
+        rectangle(
+            x = const(800.0f),
+            y = animated(
+                460.0f at 0.0f,
+                400.0f at 1.0f with Easing.SineInOut,
+                400.0f at 3.0f,
+                460.0f at 4.0f with Easing.SineInOut,
+                460.0f at 6.0f,
+            ),
+            rotation = const(0.0f),
+            width = const(100.0f),
+            height = const(30.0f),
+            fill = const(Colors.Magenta),
+        ),
+        ellipse(
+            x = const(650.0f),
+            y = const(480.0f),
+            rotation = const(0.0f),
+            width = animated(
+                100.0f at 0.0f,
+                150.0f at 1.0f,
+            ),
+            height = const(100.0f),
+            fill = const(Colors.Red),
         )
     )
 
@@ -85,6 +108,9 @@ class MainScene : Node("main") {
             event released Key.Left -> timeDirection += 1
             event pressed Key.E -> {
                 tree?.scene = EditorScene()
+            }
+            event pressed Key.T -> {
+                player1.position.set(100.0f, 300.0f)
             }
         }
     }

@@ -1,5 +1,9 @@
 package me.altered.platformer.objects
 
+import me.altered.koml.Vector2f
+import me.altered.koml.Vector2fc
+import me.altered.koml.div
+import me.altered.koml.scaleAround
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
@@ -57,5 +61,28 @@ class Ellipse(
         fillPaint.color4f = fillExpr.eval(time)
         strokePaint.color4f = strokeExpr.eval(time)
         strokePaint.strokeWidth = strokeWidthExpr.eval(time)
+    }
+
+    override fun collide(position: Vector2fc, radius: Float): Vector2fc? {
+        if (width <= 0.0f || height <= 0.0f) return null
+        return rotated(position) {
+            scaled(it) { position ->
+                val rad = height * 0.5f
+                val collision = position - this.position
+                if (collision.lengthSquared > (rad + radius) * (rad + radius)) {
+                    return null
+                }
+                this.position + collision.normalize(rad)
+            }
+        }
+    }
+
+    private inline fun scaled(position: Vector2fc, transform: (position: Vector2fc) -> Vector2fc): Vector2fc {
+        if (width == height) return transform(position)
+        val diff = height / width
+        val scale = Vector2f(diff, 1.0f)
+        val newPos = position.scaleAround(this.position, scale)
+        val result = transform(newPos).scaleAround(this.position, 1.0f / scale)
+        return result
     }
 }
