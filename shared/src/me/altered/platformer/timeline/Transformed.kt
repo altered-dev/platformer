@@ -11,4 +11,4 @@ class NegatedFloat(
     override fun toString() = "-$original"
 }
 
-operator fun Expression<Float>.unaryMinus() = NegatedFloat(this)
+operator fun Expression<Float>.unaryMinus(): Expression<Float> = NegatedFloat(this)

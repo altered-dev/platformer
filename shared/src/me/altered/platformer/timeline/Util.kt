@@ -2,7 +2,7 @@ package me.altered.platformer.timeline
 
 // region expressions
 
-fun <T> const(value: T) = Expression.Constant(value)
+fun <T> const(value: T): Expression<T> = Expression.Constant(value)
 
 fun alerp(from: Float, to: Float, value: Float): Float {
     return (value - from) / (to - from)

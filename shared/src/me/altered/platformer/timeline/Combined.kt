@@ -12,7 +12,7 @@ class FloatSum(
     override fun toString() = "$left + $right"
 }
 
-operator fun Expression<Float>.plus(other: Expression<Float>) = FloatSum(this, other)
+operator fun Expression<Float>.plus(other: Expression<Float>): Expression<Float> = FloatSum(this, other)
 
 class FloatDifference(
     override val left: Expression<Float>,
@@ -26,7 +26,7 @@ class FloatDifference(
     override fun toString() = "$left - $right"
 }
 
-operator fun Expression<Float>.minus(other: Expression<Float>) = FloatDifference(this, other)
+operator fun Expression<Float>.minus(other: Expression<Float>): Expression<Float> = FloatDifference(this, other)
 
 class FloatProduct(
     override val left: Expression<Float>,
@@ -40,7 +40,7 @@ class FloatProduct(
     override fun toString() = "$left * $right"
 }
 
-operator fun Expression<Float>.times(other: Expression<Float>) = FloatProduct(this, other)
+operator fun Expression<Float>.times(other: Expression<Float>): Expression<Float> = FloatProduct(this, other)
 
 class FloatFraction(
     override val left: Expression<Float>,
@@ -54,4 +54,4 @@ class FloatFraction(
     override fun toString() = "$left / $right"
 }
 
-operator fun Expression<Float>.div(other: Expression<Float>) = FloatFraction(this, other)
+operator fun Expression<Float>.div(other: Expression<Float>): Expression<Float> = FloatFraction(this, other)

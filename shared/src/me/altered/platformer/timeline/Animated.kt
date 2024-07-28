@@ -16,7 +16,7 @@ class AnimatedFloat(
 
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Float>>,
-) = AnimatedFloat(KeyframeList(keyframes))
+): Expression<Float> = AnimatedFloat(KeyframeList(keyframes))
 
 class AnimatedColor4f(
     keyframes: KeyframeList<Color4f>,
@@ -29,7 +29,7 @@ class AnimatedColor4f(
 
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Color4f>>,
-) = AnimatedColor4f(KeyframeList(keyframes))
+): Expression<Color4f> = AnimatedColor4f(KeyframeList(keyframes))
 
 class AnimatedVector2f(
     keyframes: KeyframeList<Vector2f>,
@@ -42,4 +42,4 @@ class AnimatedVector2f(
 
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Vector2f>>,
-) = AnimatedVector2f(KeyframeList(keyframes))
+): Expression<Vector2f> = AnimatedVector2f(KeyframeList(keyframes))
