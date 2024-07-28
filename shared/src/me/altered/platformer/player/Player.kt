@@ -2,8 +2,6 @@ package me.altered.platformer.player
 
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
-import me.altered.koml.sum
-import me.altered.platformer.MainScene
 import me.altered.platformer.engine.input.InputEvent
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
@@ -14,6 +12,8 @@ import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.Paint
+import me.altered.platformer.engine.util.translate
+import me.altered.platformer.objects.World
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.withSign
@@ -34,6 +34,11 @@ class Player(
         color4f = Colors.Black
     }
 
+    private val world: World
+        get() = parent as World
+
+    private val lastCollisions = mutableListOf<Vector2fc>()
+
     override fun physicsUpdate(delta: Float) {
         // apply acceleration/deceleration based on player input
         if (abs(velocity.x) < Epsilon) {
@@ -52,26 +57,33 @@ class Player(
         // apply velocity
         position += velocity * delta
 
+        lastCollisions.clear()
         // handle collisions
-        val collisions = (parent?.parent as MainScene).makeCollisions(position, radius)
-        val dir = collisions.mapNotNull { col ->
+        var isOnFloor = false
+        world.makeCollisions(position, radius) { col ->
+            lastCollisions += col
+            // TODO: better floor/wall detection
+            if (col.y - position.y > 0.0f) isOnFloor = true
             val mv = position - col
-            mv.normalize(radius - mv.length).takeUnless { it.isNaN() }
-        }.sum()
-        position += dir
+            val norm = mv.normalize(radius - mv.length)
+            if (!norm.isNaN()) position += norm
+        }
+
         // stop the player from falling through the floor
         // also jump
-        if (isOnFloor(collisions)) {
+        if (isOnFloor) {
             velocity.y = input.y * JumpForce
         }
     }
 
-    private fun isOnFloor(collisions: List<Vector2fc>): Boolean {
-        return collisions.any { it.y > position.y }
-    }
+    private val colPaint = Paint { color4f = Colors.Yellow }
 
     override fun draw(canvas: Canvas) {
         canvas.drawRect(rect, paint)
+        canvas.translate(-position)
+        lastCollisions.forEach { col ->
+            canvas.drawCircle(col.x, col.y, 2.0f, colPaint)
+        }
     }
 
     override fun debugDraw(canvas: Canvas) = Unit

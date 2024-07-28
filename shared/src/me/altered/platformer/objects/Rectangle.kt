@@ -14,6 +14,7 @@ import me.altered.platformer.engine.util.offset
 import kotlin.math.withSign
 
 class Rectangle(
+    name: String,
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
     override var rotationExpr: Expression<Float>,
@@ -22,7 +23,7 @@ class Rectangle(
     var fillExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeWidthExpr: Expression<Float> = const(0.0f),
-) : ObjectNode("rectangle") {
+) : ObjectNode(name) {
 
     // TODO: constraint to non-negative
     var width: Float = 0.0f
@@ -62,16 +63,16 @@ class Rectangle(
         strokePaint.strokeWidth = strokeWidthExpr.eval(time)
     }
 
-    override fun collide(position: Vector2fc, radius: Float): Vector2fc? {
-        return rotated(position) { position ->
+    override fun collide(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {
+        rotated(position) { position ->
             val bounds = bounds.offset(this.position)
             val x = position.x.coerceIn(bounds.left, bounds.right)
             val y = position.y.coerceIn(bounds.top, bounds.bottom)
             val vec = Vector2f(x, y)
             if (vec.distanceSquared(position) > (radius * radius)) {
-                return null
+                return
             }
             vec
-        }
+        }.let(onCollision)
     }
 }

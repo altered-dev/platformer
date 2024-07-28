@@ -254,6 +254,7 @@ class EditorScene : Node2D("editor") {
                 val end = action.end
                 val size = end - start
                 Rectangle(
+                    name = "rectangle",
                     xExpr = const(start.x + size.x * 0.5f),
                     yExpr = const(start.y + size.y * 0.5f),
                     rotationExpr = const(0.0f),
@@ -267,6 +268,7 @@ class EditorScene : Node2D("editor") {
                 val end = action.end
                 val size = end - start
                 Ellipse(
+                    name = "ellipse",
                     xExpr = const(start.x + size.x * 0.5f),
                     yExpr = const(start.y + size.y * 0.5f),
                     widthExpr = const(size.x),

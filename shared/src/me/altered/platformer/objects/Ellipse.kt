@@ -15,6 +15,7 @@ import me.altered.platformer.engine.util.Colors
 import kotlin.math.withSign
 
 class Ellipse(
+    name: String,
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
     var widthExpr: Expression<Float>,
@@ -23,7 +24,7 @@ class Ellipse(
     var fillExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
     var strokeWidthExpr: Expression<Float> = const(0.0f),
-) : ObjectNode("ellipse") {
+) : ObjectNode(name) {
 
     // TODO: constraint to non-negative
     var width: Float = 0.0f
@@ -63,18 +64,18 @@ class Ellipse(
         strokePaint.strokeWidth = strokeWidthExpr.eval(time)
     }
 
-    override fun collide(position: Vector2fc, radius: Float): Vector2fc? {
-        if (width <= 0.0f || height <= 0.0f) return null
+    override fun collide(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {
+        if (width <= 0.0f || height <= 0.0f) return
         return rotated(position) {
             scaled(it) { position ->
                 val rad = height * 0.5f
                 val collision = position - this.position
                 if (collision.lengthSquared > (rad + radius) * (rad + radius)) {
-                    return null
+                    return
                 }
                 this.position + collision.normalize(rad)
             }
-        }
+        }.let(onCollision)
     }
 
     private inline fun scaled(position: Vector2fc, transform: (position: Vector2fc) -> Vector2fc): Vector2fc {

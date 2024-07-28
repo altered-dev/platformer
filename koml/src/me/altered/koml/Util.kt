@@ -50,6 +50,7 @@ fun lerp(from: Float, to: Float, t: Float): Float {
 }
 
 fun Vector2fc.rotateAround(point: Vector2fc, deg: Float): Vector2fc {
+    if (deg == 0.0f) return this
     val sin = sin(deg.deg2rad())
     val cos = cos(deg.deg2rad())
     val dx = ((x - point.x) * cos) - ((point.y - y) * sin) + point.x

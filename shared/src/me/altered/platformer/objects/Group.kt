@@ -6,10 +6,11 @@ import me.altered.platformer.timeline.const
 import org.jetbrains.skia.Rect
 
 class Group(
+    name: String,
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
     override var rotationExpr: Expression<Float> = const(0.0f),
-) : ObjectNode("group") {
+) : ObjectNode(name) {
 
     override val bounds: Rect
         get() {

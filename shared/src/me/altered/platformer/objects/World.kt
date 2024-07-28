@@ -1,5 +1,6 @@
 package me.altered.platformer.objects
 
+import me.altered.koml.Vector2fc
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.observable
@@ -58,6 +59,12 @@ class World(
     fun removeObject(obj: ObjectNode) {
         if (removeChild(obj)) {
             _objects -= obj
+        }
+    }
+
+    fun makeCollisions(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {
+        objects.forEach { obj ->
+            obj.collide(position, radius, onCollision)
         }
     }
 }

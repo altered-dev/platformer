@@ -11,6 +11,7 @@ import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Matrix33
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Path
+import org.jetbrains.skia.Point
 import org.jetbrains.skia.Rect
 
 fun Color(hex: Number): Color4f = Color4f(hex.toInt())
@@ -64,3 +65,5 @@ operator fun Rect.contains(vec: Vector2fc): Boolean {
 }
 
 fun Transform2fc.toSkMatrix() = Matrix33(scaleX, skewX, transX, skewY, scaleY, transY, 0.0f, 0.0f, 1.0f)
+
+fun Vector2fc.toPoint(): Point = Point(x, y)
