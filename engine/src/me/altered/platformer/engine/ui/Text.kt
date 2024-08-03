@@ -54,6 +54,8 @@ class Text(
         return textBlob?.bounds ?: emptyRect()
     }
 
+    override fun debugDraw(canvas: Canvas) = Unit
+
     private fun makeBlob(value: String): TextBlob? {
         return when (val width = width) {
             is Size.Expand -> shaper.shape(value, font, bounds.width)

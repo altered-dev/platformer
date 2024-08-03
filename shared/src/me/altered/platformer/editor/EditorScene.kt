@@ -229,16 +229,16 @@ class EditorScene : Node2D("editor") {
                 selected = action.new
             }
             is Action.DeleteObject -> {
-                world.removeObject(action.obj)
+                world.remove(action.obj)
                 treeText.text = world.objects.joinToString("\n")
                 selected = null
             }
             is Action.DrawRectangle -> if (product is Rectangle) {
-                world.addObject(product)
+                world.place(product)
                 treeText.text = world.objects.joinToString("\n")
             }
             is Action.DrawEllipse -> if (product is Ellipse) {
-                world.addObject(product)
+                world.place(product)
                 treeText.text = world.objects.joinToString("\n")
             }
         }
@@ -286,16 +286,16 @@ class EditorScene : Node2D("editor") {
                 selected = action.action.old
             }
             is Action.DeleteObject -> {
-                world.addObject(action.action.obj)
+                world.place(action.action.obj)
                 treeText.text = world.objects.joinToString("\n")
                 selected = action.action.obj
             }
             is Action.DrawRectangle -> if (action.product is Rectangle) {
-                world.removeObject(action.product)
+                world.remove(action.product)
                 treeText.text = world.objects.joinToString("\n")
             }
             is Action.DrawEllipse -> if (action.product is Ellipse) {
-                world.removeObject(action.product)
+                world.remove(action.product)
                 treeText.text = world.objects.joinToString("\n")
             }
         }

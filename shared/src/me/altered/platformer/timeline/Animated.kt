@@ -4,6 +4,7 @@ import me.altered.koml.Vector2f
 import me.altered.koml.lerp
 import me.altered.platformer.util.KeyframeList
 import org.jetbrains.skia.Color4f
+import kotlin.jvm.JvmName
 
 class AnimatedFloat(
     keyframes: KeyframeList<Float>,
@@ -14,6 +15,7 @@ class AnimatedFloat(
     }
 }
 
+@JvmName("animatedFloat")
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Float>>,
 ): Expression<Float> = AnimatedFloat(KeyframeList(keyframes))
@@ -27,6 +29,7 @@ class AnimatedColor4f(
     }
 }
 
+@JvmName("animatedColor4f")
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Color4f>>,
 ): Expression<Color4f> = AnimatedColor4f(KeyframeList(keyframes))
@@ -40,6 +43,7 @@ class AnimatedVector2f(
     }
 }
 
+@JvmName("animatedVector2f")
 fun animated(
     vararg keyframes: Pair<Float, Keyframe<Vector2f>>,
 ): Expression<Vector2f> = AnimatedVector2f(KeyframeList(keyframes))

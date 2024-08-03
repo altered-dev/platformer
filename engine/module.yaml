@@ -11,4 +11,4 @@ aliases:
 
 dependencies:
   - ../koml: exported
-  - $libs.skiko: compile-only
+  - $libs.skiko: exported

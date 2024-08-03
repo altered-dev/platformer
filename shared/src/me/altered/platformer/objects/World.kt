@@ -8,19 +8,13 @@ import org.jetbrains.skia.Rect
 
 class World(
     time: Float = 0.0f,
-    objects: List<ObjectNode> = emptyList(),
-) : Node2D("world") {
+) : Node2D("world"), ObjectContainer {
 
-    constructor(vararg objects: ObjectNode) : this(objects = objects.asList())
-
-    private val _objects = objects.toMutableList()
+    private val _objects = mutableListOf<ObjectNode>()
     val objects: List<ObjectNode> by ::_objects
 
     var time by observable(time, ::updateObjects)
-
-    init {
-        addChildren(_objects)
-    }
+    private var initialized = false
 
     var showGrid by observable(false) {
         if (it) {
@@ -43,23 +37,30 @@ class World(
             addChild(grid)
         }
         updateObjects(time)
+        initialized = true
     }
 
     private fun updateObjects(time: Float) {
         _objects.forEach { it.eval(time) }
     }
 
-    fun addObject(obj: ObjectNode) {
+    override fun place(obj: ObjectNode) {
         if (addChild(obj)) {
             _objects += obj
-            obj.eval(time)
+            if (initialized) {
+                obj.eval(time)
+            }
         }
     }
 
-    fun removeObject(obj: ObjectNode) {
+    override fun remove(obj: ObjectNode) {
         if (removeChild(obj)) {
             _objects -= obj
         }
+    }
+
+    override fun find(name: String): ObjectNode? {
+        return _objects.find { it.name == name }
     }
 
     fun makeCollisions(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {

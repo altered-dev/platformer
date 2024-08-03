@@ -10,7 +10,7 @@ class Group(
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
     override var rotationExpr: Expression<Float> = const(0.0f),
-) : ObjectNode(name) {
+) : ObjectNode(name), ObjectContainer {
 
     override val bounds: Rect
         get() {
@@ -30,5 +30,17 @@ class Group(
                 child.eval(time)
             }
         }
+    }
+
+    override fun place(obj: ObjectNode) {
+        addChild(obj)
+    }
+
+    override fun remove(obj: ObjectNode) {
+        removeChild(obj)
+    }
+
+    override fun find(name: String): ObjectNode? {
+        return children.find { it.name == name } as? ObjectNode
     }
 }

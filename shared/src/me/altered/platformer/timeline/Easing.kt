@@ -55,7 +55,12 @@ fun interface Easing {
         val QuadOut = Easing { 1.0f - (1.0f - it) * (1.0f - it) }
 
         @JvmField
-        val QuadInOut = Easing { if (it < 0.5f) 2.0f * it * it else 1.0f - (-2.0f * it + 2.0f).pow(2) * 0.5f }
+        val QuadInOut = Easing {
+            when {
+                it < 0.5f -> 2.0f * it * it
+                else      -> 1.0f - (-2.0f * it + 2.0f).pow(2) * 0.5f
+            }
+        }
 
         @JvmField
         val CubicIn = Easing { it * it * it }
@@ -64,7 +69,12 @@ fun interface Easing {
         val CubicOut = Easing { 1.0f - (1.0f - it) * (1.0f - it) * (1.0f - it) }
 
         @JvmField
-        val CubicInOut = Easing { if (it < 0.5f) 4.0f * it * it * it else 1.0f - (-2.0f * it + 2.0f).pow(3) * 0.5f }
+        val CubicInOut = Easing {
+            when {
+                it < 0.5f -> 4.0f * it * it * it
+                else      -> 1.0f - (-2.0f * it + 2.0f).pow(3) * 0.5f
+            }
+        }
 
         @JvmField
         val QuartIn = Easing { it * it * it * it }
@@ -73,7 +83,12 @@ fun interface Easing {
         val QuartOut = Easing { 1.0f - (1.0f - it).pow(4) }
 
         @JvmField
-        val QuartInOut = Easing { if (it < 0.5f) 8.0f * it * it * it * it else 1.0f - (-2.0f * it + 2.0f).pow(4) * 0.5f }
+        val QuartInOut = Easing {
+            when {
+                it < 0.5f -> 8.0f * it * it * it * it
+                else      -> 1.0f - (-2.0f * it + 2.0f).pow(4) * 0.5f
+            }
+        }
 
         @JvmField
         val QuintIn = Easing { it * it * it * it * it }
@@ -82,7 +97,12 @@ fun interface Easing {
         val QuintOut = Easing { 1.0f - (1.0f - it).pow(5) }
 
         @JvmField
-        val QuintInOut = Easing { if (it < 0.5f) 16.0f * it * it * it * it * it else 1.0f - (-2.0f * it + 2.0f).pow(5) * 0.5f }
+        val QuintInOut = Easing {
+            when {
+                it < 0.5f -> 16.0f * it * it * it * it * it
+                else      -> 1.0f - (-2.0f * it + 2.0f).pow(5) * 0.5f
+            }
+        }
 
         @JvmField
         val ExpoIn = Easing { if (it == 0.0f) 0.0f else 2.0f.pow(10.0f * it - 10.0f) }
@@ -93,8 +113,7 @@ fun interface Easing {
         @JvmField
         val ExpoInOut = Easing {
             when {
-                it == 0.0f -> 0.0f
-                it == 1.0f -> 1.0f
+                it == 0.0f || it == 1.0f -> it
                 it < 0.5f  -> 2.0f.pow(20.0f * it - 10.0f) * 0.5f
                 else       -> (2.0f - 2.0f.pow(-20.0f * it + 10.0f)) * 0.5f
             }
@@ -115,7 +134,7 @@ fun interface Easing {
         }
 
         @JvmField
-        val BackIn = Easing { C1 * it * it * it - C3 * it * it }
+        val BackIn = Easing { C3 * it * it * it - C1 * it * it }
 
         @JvmField
         val BackOut = Easing { 1.0f + C3 * (it - 1.0f) * (it - 1.0f) * (it - 1.0f) + C1 * (it - 1.0f) * (it - 1.0f) }
@@ -157,15 +176,21 @@ fun interface Easing {
         val BounceIn = Easing { 1.0f - BounceOut.ease(1.0f - it) }
 
         @JvmField
-        /**
-         * FIXME: this animation is wrong
-         */
         val BounceOut = Easing {
             when {
                 it < 1.0f / D1 -> N1 * it * it
-                it < 2.0f / D1 -> N1 * (it - 1.5f / D1) * (it - 1.5f) + 0.75f
-                it < 2.5f / D1 -> N1 * (it - 2.25f / D1) * (it - 2.25f) + 0.9375f
-                else           -> N1 * (it - 2.625f / D1) * (it - 2.625f) + 0.984375f
+                it < 2.0f / D1 -> {
+                    val x2 = it - (1.5f / D1)
+                    N1 * x2 * x2 + 0.75f
+                }
+                it < 2.5f / D1 -> {
+                    val x2 = it - (2.25f / D1)
+                    N1 * x2 * x2 + 0.9375f
+                }
+                else -> {
+                    val x2 = it - (2.625f / D1)
+                    N1 * x2 * x2 + 0.984375f
+                }
             }
         }
 

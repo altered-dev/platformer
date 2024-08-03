@@ -6,7 +6,11 @@ import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
 import org.jetbrains.skia.Color4f
 
-fun rectangle(
+inline fun world(time: Float = 0.0f, builder: ObjectContainer.() -> Unit = {}): World {
+    return World(time).apply(builder)
+}
+
+fun ObjectContainer.rectangle(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
@@ -16,7 +20,7 @@ fun rectangle(
     fill: Expression<Color4f> = const(Colors.Transparent),
     stroke: Expression<Color4f> = const(Colors.Transparent),
     strokeWidth: Expression<Float> = const(0.0f),
-): Rectangle = Rectangle(
+) = Rectangle(
     name = name,
     xExpr = x,
     yExpr = y,
@@ -26,9 +30,9 @@ fun rectangle(
     fillExpr = fill,
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
-)
+).also(::place)
 
-fun ellipse(
+fun ObjectContainer.ellipse(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
@@ -38,7 +42,7 @@ fun ellipse(
     fill: Expression<Color4f> = const(Colors.Transparent),
     stroke: Expression<Color4f> = const(Colors.Transparent),
     strokeWidth: Expression<Float> = const(0.0f),
-): Ellipse = Ellipse(
+) = Ellipse(
     name = name,
     xExpr = x,
     yExpr = y,
@@ -48,9 +52,9 @@ fun ellipse(
     fillExpr = fill,
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
-)
+).also(::place)
 
-fun polygon(
+fun ObjectContainer.polygon(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
@@ -59,7 +63,7 @@ fun polygon(
     fill: Expression<Color4f> = const(Colors.Transparent),
     stroke: Expression<Color4f> = const(Colors.Transparent),
     strokeWidth: Expression<Float> = const(0.0f),
-): Polygon = Polygon(
+) = Polygon(
     name = name,
     xExpr = x,
     yExpr = y,
@@ -68,19 +72,17 @@ fun polygon(
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
     points = points.asList(),
-)
+).also(::place)
 
-fun group(
+fun ObjectContainer.group(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
     rotation: Expression<Float>,
-    vararg children: ObjectNode,
-): Group = Group(
+    children: ObjectContainer.() -> Unit = {},
+) = Group(
     name = name,
     xExpr = x,
     yExpr = y,
     rotationExpr = rotation,
-).apply {
-    addChildren(children.asIterable())
-}
+).apply(children).also(::place)

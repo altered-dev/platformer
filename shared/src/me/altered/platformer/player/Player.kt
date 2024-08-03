@@ -63,7 +63,7 @@ class Player(
         world.makeCollisions(position, radius) { col ->
             lastCollisions += col
             // TODO: better floor/wall detection
-            if (col.y - position.y > 0.0f) isOnFloor = true
+            if (col.y - position.y > radius * 0.25f) isOnFloor = true
             val mv = position - col
             val norm = mv.normalize(radius - mv.length)
             if (!norm.isNaN()) position += norm
