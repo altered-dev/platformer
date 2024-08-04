@@ -261,6 +261,8 @@ class EditorScene : Node2D("editor") {
                     widthExpr = const(size.x),
                     heightExpr = const(size.y),
                     fillExpr = const(solid(0xFF333333)),
+                    strokeExpr = const(emptyBrush()),
+                    strokeWidthExpr = const(0.0f),
                 ) as T
             }
             is Action.DrawEllipse -> {
@@ -275,6 +277,8 @@ class EditorScene : Node2D("editor") {
                     heightExpr = const(size.y),
                     rotationExpr = const(0.0f),
                     fillExpr = const(solid(0xFF333333)),
+                    strokeExpr = const(emptyBrush()),
+                    strokeWidthExpr = const(0.0f),
                 ) as T
             }
         }

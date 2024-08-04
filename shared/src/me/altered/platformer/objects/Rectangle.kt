@@ -3,14 +3,12 @@ package me.altered.platformer.objects
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.platformer.editor.Brush
-import me.altered.platformer.editor.emptyBrush
 import me.altered.platformer.editor.toShader
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.timeline.Expression
-import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.offset
 import kotlin.math.withSign
 
@@ -21,9 +19,9 @@ class Rectangle(
     override var rotationExpr: Expression<Float>,
     var widthExpr: Expression<Float>,
     var heightExpr: Expression<Float>,
-    var fillExpr: Expression<Brush> = const(emptyBrush()),
-    var strokeExpr: Expression<Brush> = const(emptyBrush()),
-    var strokeWidthExpr: Expression<Float> = const(0.0f),
+    var fillExpr: Expression<Brush>,
+    var strokeExpr: Expression<Brush>,
+    var strokeWidthExpr: Expression<Float>,
 ) : ObjectNode(name) {
 
     // TODO: constraint to non-negative

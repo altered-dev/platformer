@@ -3,12 +3,10 @@ package me.altered.platformer.objects
 import me.altered.koml.Vector2fc
 import me.altered.platformer.editor.Brush
 import me.altered.platformer.editor.emptyBrush
-import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
-import org.jetbrains.skia.Color4f
 
-inline fun world(time: Float = 0.0f, builder: ObjectContainer.() -> Unit = {}): World {
+inline fun world(time: Float = 0.0f, builder: WorldContext.() -> Unit = {}): World {
     return World(time).apply(builder)
 }
 
@@ -16,9 +14,9 @@ fun ObjectContainer.rectangle(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
-    rotation: Expression<Float>,
-    width: Expression<Float>,
-    height: Expression<Float>,
+    rotation: Expression<Float> = const(0.0f),
+    width: Expression<Float> = const(0.0f),
+    height: Expression<Float> = const(0.0f),
     fill: Expression<Brush> = const(emptyBrush()),
     stroke: Expression<Brush> = const(emptyBrush()),
     strokeWidth: Expression<Float> = const(0.0f),
@@ -32,15 +30,15 @@ fun ObjectContainer.rectangle(
     fillExpr = fill,
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
-).also(::place)
+).also(::place).let(::Reference)
 
 fun ObjectContainer.ellipse(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
-    rotation: Expression<Float>,
-    width: Expression<Float>,
-    height: Expression<Float>,
+    rotation: Expression<Float> = const(0.0f),
+    width: Expression<Float> = const(0.0f),
+    height: Expression<Float> = const(0.0f),
     fill: Expression<Brush> = const(emptyBrush()),
     stroke: Expression<Brush> = const(emptyBrush()),
     strokeWidth: Expression<Float> = const(0.0f),
@@ -54,16 +52,16 @@ fun ObjectContainer.ellipse(
     fillExpr = fill,
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
-).also(::place)
+).also(::place).let(::Reference)
 
 fun ObjectContainer.polygon(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
-    rotation: Expression<Float>,
+    rotation: Expression<Float> = const(0.0f),
     vararg points: Expression<Vector2fc>,
-    fill: Expression<Color4f> = const(Colors.Transparent),
-    stroke: Expression<Color4f> = const(Colors.Transparent),
+    fill: Expression<Brush> = const(emptyBrush()),
+    stroke: Expression<Brush> = const(emptyBrush()),
     strokeWidth: Expression<Float> = const(0.0f),
 ) = Polygon(
     name = name,
@@ -74,17 +72,20 @@ fun ObjectContainer.polygon(
     strokeExpr = stroke,
     strokeWidthExpr = strokeWidth,
     points = points.asList(),
-).also(::place)
+).also(::place).let(::Reference)
 
 fun ObjectContainer.group(
     name: String,
     x: Expression<Float>,
     y: Expression<Float>,
-    rotation: Expression<Float>,
+    rotation: Expression<Float> = const(0.0f),
     children: ObjectContainer.() -> Unit = {},
 ) = Group(
     name = name,
     xExpr = x,
     yExpr = y,
     rotationExpr = rotation,
-).apply(children).also(::place)
+)
+    .apply(children)
+    .also(::place)
+    .let(::Reference)

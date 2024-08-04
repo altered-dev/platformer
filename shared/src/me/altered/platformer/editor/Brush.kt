@@ -18,7 +18,7 @@ sealed interface Brush {
     @JvmInline
     value class Solid(val color: Int) : Brush {
         @OptIn(ExperimentalStdlibApi::class)
-        override fun toString(): String = "solid(${color.toHexString(HexFormat)})"
+        override fun toString(): String = color.toHexString(HexFormat)
     }
 
     data class Linear(val x0: Float, val y0: Float, val x1: Float, val y1: Float, val colors: IntArray, val positions: FloatArray?) : Brush {

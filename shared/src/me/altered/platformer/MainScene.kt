@@ -4,7 +4,6 @@ import me.altered.koml.Vector2f
 import me.altered.platformer.editor.EditorScene
 import me.altered.platformer.editor.linear
 import me.altered.platformer.editor.solid
-import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
@@ -13,10 +12,7 @@ import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.all
-import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.objects.ellipse
-import me.altered.platformer.objects.group
-import me.altered.platformer.objects.polygon
 import me.altered.platformer.objects.rectangle
 import me.altered.platformer.objects.world
 import me.altered.platformer.player.Player
@@ -24,10 +20,9 @@ import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.animated
 import me.altered.platformer.timeline.at
 import me.altered.platformer.timeline.const
-import me.altered.platformer.timeline.point
-import me.altered.platformer.timeline.reference
+import me.altered.platformer.timeline.plus
+import me.altered.platformer.timeline.times
 import me.altered.platformer.timeline.with
-import me.altered.platformer.timeline.x
 
 class MainScene : Node("main") {
 
@@ -36,111 +31,45 @@ class MainScene : Node("main") {
 
     private val world = +world {
         rectangle(
-            name = "blue",
+            name = "floor",
+            x = const(750.0f),
+            y = const(600.0f),
+            width = const(1500.0f),
+            height = const(30.0f),
+            fill = const(solid(0x80000000)),
+        )
+        val box = rectangle(
+            name = "box",
             x = animated(
                 300.0f at 0.0f,
-                200.0f at 0.5f with Easing.BounceOut,
+                600.0f at 2.0f with Easing.BackOut,
+                100.0f at 5.0f with Easing.ExpoOut,
             ),
-            y = reference("black", x),
-            rotation = const(0.0f),
-            width = const(30.0f),
-            height = const(30.0f),
-            fill = const(solid(Color.Blue)),
-        )
-        rectangle(
-            name = "green",
-            x = const(600.0f),
-            y = const(520.0f),
-            rotation = const(0.0f),
-            width = const(1500.0f),
+            y = const(500.0f),
+            width = const(50.0f),
             height = const(50.0f),
-            fill = animated(
-                solid(Color.Green) at 0.0f,
-                solid(Color.Magenta) at 2.0f with Easing.SineInOut,
-            ),
-        )
-        rectangle(
-            name = "black",
-            x = animated(
-                500.0f at 0.0f,
-                400.0f at 2.0f with Easing.SineInOut,
-            ),
-            y = const(480.0f),
-            rotation = animated(
-                0.0f at 0.0f,
-                360.0f at 3.0f with Easing.SineInOut,
-            ),
-            width = const(150.0f),
-            height = const(30.0f),
-            fill = const(linear(-75.0f, 0.0f, 75.0f, 0.0f, Color.Black, Color.Cyan)),
-            stroke = const(linear(-75.0f, 0.0f, 75.0f, 0.0f, Color.Cyan, Color.Black)),
-            strokeWidth = const(2.0f),
-        )
-        rectangle(
-            name = "magenta",
-            x = const(800.0f),
-            y = animated(
-                460.0f at 0.0f,
-                400.0f at 1.0f with Easing.SineInOut,
-                400.0f at 3.0f,
-                460.0f at 4.0f with Easing.SineInOut,
-                460.0f at 6.0f,
-            ),
-            rotation = const(0.0f),
-            width = const(100.0f),
-            height = const(30.0f),
-            fill = const(solid(Color.Magenta)),
+            fill = const(linear(-25.0f, 25.0f, 25.0f, -25.0f, 0xFFFA8072, 0xFFFCBFB8)),
         )
         ellipse(
             name = "ellipse",
-            x = const(650.0f),
-            y = const(480.0f),
-            rotation = animated(
-                0.0f at 0.0f,
-                180.0f at 2.0f,
-            ),
-            width = const(150.0f),
+            x = const(400.0f),
+            y = const(450.0f),
+            width = const(100.0f),
             height = const(100.0f),
-            fill = const(solid(Color.Red)),
+            fill = const(solid(0x80000000)),
         )
-        polygon(
-            name = "polygon",
-            x = const(350.0f),
-            y = const(400.0f),
+        rectangle(
+            name = "otherbox",
+            x = box.x + const(100.0f),
+            y = const(250.0f) + player.y * const(0.5f),
             rotation = animated(
                 0.0f at 0.0f,
-                90.0f at 1.0f with Easing.ExpoInOut,
+                1280.0f at 3.0f with Easing.SineInOut,
             ),
-            point(0.0f, 0.0f),
-            point(
-                x = animated(
-                    50.0f at 0.0f,
-                    100.0f at 1.0f with Easing.ExpoInOut,
-                ),
-                y = const(0.0f),
-            ),
-            point(0.0f, 50.0f),
-            fill = const(Colors.Black),
+            width = const(40.0f),
+            height = const(40.0f),
+            fill = const(solid(0xFFB2FFB2))
         )
-        group(
-            name = "lol",
-            x = const(300.0f),
-            y = const(300.0f),
-            rotation = const(0.0f),
-        ) {
-            ellipse(
-                name = "moreellipse",
-                x = const(650.0f),
-                y = const(480.0f),
-                rotation = animated(
-                    0.0f at 0.0f,
-                    180.0f at 2.0f,
-                ),
-                width = const(150.0f),
-                height = const(100.0f),
-                fill = const(solid(Color.Red)),
-            )
-        }
     }
 
     private val player = world + Player(position = Vector2f(100.0f, 450.0f))
@@ -157,7 +86,7 @@ class MainScene : Node("main") {
 
     override fun update(delta: Float) {
         fps = 1.0f / delta
-        world.time += timeDirection * delta
+        world.time = (world.time + timeDirection * delta).coerceAtLeast(0.0f)
         time.text = "time: ${world.time}"
         fpsText.text = "fps: $fps"
     }

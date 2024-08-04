@@ -5,16 +5,6 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-private const val PI = kotlin.math.PI.toFloat()
-
-private const val C1 = 1.70158f
-private const val C2 = C1 * 1.525f
-private const val C3 = C1 + 1.0f
-private const val C4 = (2.0f * PI) / 3.0f
-private const val C5 = (2.0f * PI) / 4.5f
-private const val N1 = 7.5625f
-private const val D1 = 2.75f
-
 /**
  * A set of smoothing functions for animation interpolation.
  */
@@ -204,5 +194,16 @@ fun interface Easing {
             value < 0.5f -> (1.0f - BounceOut.ease(1.0f - 2.0f * value)) * 0.5f
             else      -> (1.0f + BounceOut.ease(2.0f * value - 1.0f)) * 0.5f
         }
+    }
+
+    private companion object {
+        private const val PI = kotlin.math.PI.toFloat()
+        private const val C1 = 1.70158f
+        private const val C2 = C1 * 1.525f
+        private const val C3 = C1 + 1.0f
+        private const val C4 = (2.0f * PI) / 3.0f
+        private const val C5 = (2.0f * PI) / 4.5f
+        private const val N1 = 7.5625f
+        private const val D1 = 2.75f
     }
 }

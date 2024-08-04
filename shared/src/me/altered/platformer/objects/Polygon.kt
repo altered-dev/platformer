@@ -3,14 +3,13 @@ package me.altered.platformer.objects
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.koml.rotateAround
-import me.altered.platformer.engine.util.Colors
+import me.altered.platformer.editor.Brush
+import me.altered.platformer.editor.toShader
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.engine.util.offset
 import me.altered.platformer.engine.util.toPoint
 import me.altered.platformer.timeline.Expression
-import me.altered.platformer.timeline.const
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.Point
@@ -21,9 +20,9 @@ class Polygon(
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
     override var rotationExpr: Expression<Float>,
-    var fillExpr: Expression<Color4f> = const(Colors.Transparent),
-    var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
-    var strokeWidthExpr: Expression<Float> = const(0.0f),
+    var fillExpr: Expression<Brush>,
+    var strokeExpr: Expression<Brush>,
+    var strokeWidthExpr: Expression<Float>,
     // might replace with floats but require size % 2 == 0
     var points: List<Expression<Vector2fc>>,
 ) : ObjectNode(name) {
@@ -51,8 +50,8 @@ class Polygon(
 
     override fun eval(time: Float) {
         super.eval(time)
-        fillPaint.color4f = fillExpr.eval(time)
-        strokePaint.color4f = strokeExpr.eval(time)
+        fillPaint.shader = fillExpr.eval(time).toShader()
+        strokePaint.shader = strokeExpr.eval(time).toShader()
         strokePaint.strokeWidth = strokeWidthExpr.eval(time)
         _points = Array(points.size) { i ->
             points[i].eval(time).toPoint()

@@ -4,11 +4,14 @@ import me.altered.koml.Vector2fc
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.observable
+import me.altered.platformer.player.Player
+import me.altered.platformer.timeline.Expression
+import me.altered.platformer.timeline.named
 import org.jetbrains.skia.Rect
 
 class World(
     time: Float = 0.0f,
-) : Node2D("world"), ObjectContainer {
+) : Node2D("world"), WorldContext {
 
     private val _objects = mutableListOf<ObjectNode>()
     val objects: List<ObjectNode> by ::_objects
@@ -22,6 +25,24 @@ class World(
         } else {
             removeChild(grid)
         }
+    }
+
+    private val _player: Player? by lazy {
+        children.find { it is Player } as Player?
+    }
+
+    override val player: PlayerContext = object : PlayerContext {
+        override val x: Expression<Float> = named("player.x") { _player?.position?.x ?: 0.0f }
+        override val y: Expression<Float> = named("player.y") { _player?.position?.y ?: 0.0f }
+    }
+
+    override fun reference(name: String): ObjectContext = object : ObjectContext {
+        private val obj by lazy {
+            _objects.find { it.name == name } ?: error("Object with name '$name' not found.")
+        }
+        override val x: Expression<Float> = named("$name.x") { obj.xExpr.eval(it) }
+        override val y: Expression<Float> = named("$name.y") { obj.yExpr.eval(it) }
+        override val rotation: Expression<Float> = named("$name.rotation") { obj.rotationExpr.eval(it) }
     }
 
     private lateinit var grid: Grid
@@ -57,10 +78,6 @@ class World(
         if (removeChild(obj)) {
             _objects -= obj
         }
-    }
-
-    override fun find(name: String): ObjectNode? {
-        return _objects.find { it.name == name }
     }
 
     fun makeCollisions(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {

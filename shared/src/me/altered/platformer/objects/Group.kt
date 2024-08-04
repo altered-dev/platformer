@@ -2,14 +2,13 @@ package me.altered.platformer.objects
 
 import me.altered.platformer.engine.util.add
 import me.altered.platformer.timeline.Expression
-import me.altered.platformer.timeline.const
 import org.jetbrains.skia.Rect
 
 class Group(
     name: String,
     override var xExpr: Expression<Float>,
     override var yExpr: Expression<Float>,
-    override var rotationExpr: Expression<Float> = const(0.0f),
+    override var rotationExpr: Expression<Float>,
 ) : ObjectNode(name), ObjectContainer {
 
     override val bounds: Rect
@@ -39,11 +38,6 @@ class Group(
     override fun remove(obj: ObjectNode) {
         removeChild(obj)
     }
-
-    override fun find(name: String): ObjectNode? {
-        return children.find { it.name == name } as? ObjectNode
-    }
-
 
     override fun toString(): String = """
         ${super.toString()} (
