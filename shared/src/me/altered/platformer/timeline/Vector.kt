@@ -14,6 +14,8 @@ class VectorExpression(
             y = y.eval(time),
         )
     }
+
+    override fun toString() = "($x; $y)"
 }
 
 fun point(

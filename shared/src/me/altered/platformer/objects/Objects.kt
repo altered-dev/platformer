@@ -1,6 +1,8 @@
 package me.altered.platformer.objects
 
 import me.altered.koml.Vector2fc
+import me.altered.platformer.editor.Brush
+import me.altered.platformer.editor.emptyBrush
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
@@ -17,8 +19,8 @@ fun ObjectContainer.rectangle(
     rotation: Expression<Float>,
     width: Expression<Float>,
     height: Expression<Float>,
-    fill: Expression<Color4f> = const(Colors.Transparent),
-    stroke: Expression<Color4f> = const(Colors.Transparent),
+    fill: Expression<Brush> = const(emptyBrush()),
+    stroke: Expression<Brush> = const(emptyBrush()),
     strokeWidth: Expression<Float> = const(0.0f),
 ) = Rectangle(
     name = name,
@@ -39,8 +41,8 @@ fun ObjectContainer.ellipse(
     rotation: Expression<Float>,
     width: Expression<Float>,
     height: Expression<Float>,
-    fill: Expression<Color4f> = const(Colors.Transparent),
-    stroke: Expression<Color4f> = const(Colors.Transparent),
+    fill: Expression<Brush> = const(emptyBrush()),
+    stroke: Expression<Brush> = const(emptyBrush()),
     strokeWidth: Expression<Float> = const(0.0f),
 ) = Ellipse(
     name = name,

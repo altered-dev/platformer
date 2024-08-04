@@ -7,7 +7,8 @@ fun prettyString(node: Node) = buildString {
 }
 
 private fun StringBuilder.prettyString(node: Node, indent: Int) {
-    appendLine("  ".repeat(indent) + "- " + node)
+    val spaces = "  ".repeat(indent)
+    appendLine("$spaces- ${node.toString().replace("\n", "\n$spaces  ")}")
     node.children.forEach { prettyString(it, indent + 1) }
 }
 

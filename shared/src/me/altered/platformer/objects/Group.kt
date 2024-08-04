@@ -43,4 +43,13 @@ class Group(
     override fun find(name: String): ObjectNode? {
         return children.find { it.name == name } as? ObjectNode
     }
+
+
+    override fun toString(): String = """
+        ${super.toString()} (
+            x = $xExpr
+            y = $yExpr
+            rotation = $rotationExpr
+        )
+    """.trimIndent()
 }

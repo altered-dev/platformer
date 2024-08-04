@@ -1,6 +1,5 @@
 package me.altered.platformer.timeline
 
-import kotlin.jvm.JvmField
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -34,172 +33,176 @@ fun interface Easing {
 
     fun easeSafe(value: Float): Float = ease(value.coerceIn(0.0f, 1.0f))
 
-    companion object {
+    data object Linear : Easing {
+        override fun ease(value: Float): Float = value
+    }
 
-        @JvmField
-        val Linear = Easing { it }
+    data object SineIn : Easing {
+        override fun ease(value: Float): Float = 1.0f - cos(value * PI * 0.5f)
+    }
 
-        @JvmField
-        val SineIn = Easing { 1.0f - cos(it * PI * 0.5f) }
+    data object SineOut : Easing {
+        override fun ease(value: Float): Float = sin(value * PI * 0.5f)
+    }
 
-        @JvmField
-        val SineOut = Easing { sin(it * PI * 0.5f) }
+    data object SineInOut : Easing {
+        override fun ease(value: Float): Float = -(cos(value * PI) - 1) * 0.5f
+    }
 
-        @JvmField
-        val SineInOut = Easing { -(cos(it * PI) - 1) * 0.5f }
+    data object QuadIn : Easing {
+        override fun ease(value: Float): Float = value * value
+    }
 
-        @JvmField
-        val QuadIn = Easing { it * it }
+    data object QuadOut : Easing {
+        override fun ease(value: Float): Float = 1.0f - (1.0f - value) * (1.0f - value)
+    }
 
-        @JvmField
-        val QuadOut = Easing { 1.0f - (1.0f - it) * (1.0f - it) }
+    data object QuadInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> 2.0f * value * value
+            else      -> 1.0f - (-2.0f * value + 2.0f).pow(2) * 0.5f
+        }
+    }
 
-        @JvmField
-        val QuadInOut = Easing {
-            when {
-                it < 0.5f -> 2.0f * it * it
-                else      -> 1.0f - (-2.0f * it + 2.0f).pow(2) * 0.5f
+    data object CubicIn : Easing {
+        override fun ease(value: Float): Float = value * value * value
+    }
+
+    data object CubicOut : Easing {
+        override fun ease(value: Float): Float = 1.0f - (1.0f - value) * (1.0f - value) * (1.0f - value)
+    }
+
+    data object CubicInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> 4.0f * value * value * value
+            else      -> 1.0f - (-2.0f * value + 2.0f).pow(3) * 0.5f
+        }
+    }
+
+    data object QuartIn : Easing {
+        override fun ease(value: Float): Float = value * value * value * value
+    }
+
+    data object QuartOut : Easing {
+        override fun ease(value: Float): Float = 1.0f - (1.0f - value).pow(4)
+    }
+
+    data object QuartInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> 8.0f * value * value * value * value
+            else      -> 1.0f - (-2.0f * value + 2.0f).pow(4) * 0.5f
+        }
+    }
+
+    data object QuintIn : Easing {
+        override fun ease(value: Float): Float = value * value * value * value * value
+    }
+
+    data object QuintOut : Easing {
+        override fun ease(value: Float): Float = 1.0f - (1.0f - value).pow(5)
+    }
+
+    data object QuintInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> 16.0f * value * value * value * value * value
+            else      -> 1.0f - (-2.0f * value + 2.0f).pow(5) * 0.5f
+        }
+    }
+
+    data object ExpoIn : Easing {
+        override fun ease(value: Float): Float = if (value == 0.0f) 0.0f else 2.0f.pow(10.0f * value - 10.0f)
+    }
+
+    data object ExpoOut : Easing {
+        override fun ease(value: Float): Float = if (value == 1.0f) 1.0f else 1.0f - 2.0f.pow(-10.0f * value)
+    }
+
+    data object ExpoInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value == 0.0f || value == 1.0f -> value
+            value < 0.5f  -> 2.0f.pow(20.0f * value - 10.0f) * 0.5f
+            else       -> (2.0f - 2.0f.pow(-20.0f * value + 10.0f)) * 0.5f
+        }
+    }
+
+    data object CircIn : Easing {
+        override fun ease(value: Float): Float = 1.0f - sqrt(1 - value * value)
+    }
+
+    data object CircOut : Easing {
+        override fun ease(value: Float): Float = sqrt(1.0f - (1.0f - value) * (1.0f - value))
+    }
+
+    data object CircInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> (1.0f - sqrt(1.0f - 4.0f * value * value)) * 0.5f
+            else      -> (sqrt(1.0f - (-2.0f * value + 2.0f).pow(2)) + 1.0f) * 0.5f
+        }
+    }
+
+    data object BackIn : Easing {
+        override fun ease(value: Float): Float = C3 * value * value * value - C1 * value * value
+    }
+
+    data object BackOut : Easing {
+        override fun ease(value: Float): Float = 1.0f + C3 * (value - 1.0f) * (value - 1.0f) * (value - 1.0f) + C1 * (value - 1.0f) * (value - 1.0f)
+    }
+
+    data object BackInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> ((2.0f * value).pow(2) * ((C2 + 1.0f) * 2.0f * value - C2)) * 0.5f
+            else      -> ((2.0f * value - 2.0f).pow(2) * ((C2 + 1.0f) * (value * 2.0f - 2.0f) + C2) + 2.0f) * 0.5f
+        }
+    }
+
+    data object ElasticIn : Easing {
+        override fun ease(value: Float): Float = when (value) {
+            0.0f, 1.0f -> value
+            else       -> -(2.0f.pow(10.0f * value - 10.0f)) * sin((value * 10.0f - 10.75f) * C4)
+        }
+    }
+
+    data object ElasticOut : Easing {
+        override fun ease(value: Float): Float = when (value) {
+            0.0f, 1.0f -> value
+            else       -> 2.0f.pow(-10.0f * value) * sin((value * 10.0f - 0.75f) * C4) + 1.0f
+        }
+    }
+
+    data object ElasticInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value == 0.0f || value == 1.0f -> value
+            value < 0.5f -> -(2.0f.pow(20.0f * value - 10.0f) * sin((20.0f * value - 11.125f) * C5)) * 0.5f
+            else      -> (2.0f.pow(-20.0f * value + 10.0f) * sin((20.0f * value - 11.125f) * C5)) * 0.5f + 1.0f
+        }
+    }
+
+    data object BounceIn : Easing {
+        override fun ease(value: Float): Float = 1.0f - BounceOut.ease(1.0f - value)
+    }
+
+    data object BounceOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 1.0f / D1 -> N1 * value * value
+            value < 2.0f / D1 -> {
+                val x2 = value - (1.5f / D1)
+                N1 * x2 * x2 + 0.75f
+            }
+            value < 2.5f / D1 -> {
+                val x2 = value - (2.25f / D1)
+                N1 * x2 * x2 + 0.9375f
+            }
+            else -> {
+                val x2 = value - (2.625f / D1)
+                N1 * x2 * x2 + 0.984375f
             }
         }
+    }
 
-        @JvmField
-        val CubicIn = Easing { it * it * it }
-
-        @JvmField
-        val CubicOut = Easing { 1.0f - (1.0f - it) * (1.0f - it) * (1.0f - it) }
-
-        @JvmField
-        val CubicInOut = Easing {
-            when {
-                it < 0.5f -> 4.0f * it * it * it
-                else      -> 1.0f - (-2.0f * it + 2.0f).pow(3) * 0.5f
-            }
-        }
-
-        @JvmField
-        val QuartIn = Easing { it * it * it * it }
-
-        @JvmField
-        val QuartOut = Easing { 1.0f - (1.0f - it).pow(4) }
-
-        @JvmField
-        val QuartInOut = Easing {
-            when {
-                it < 0.5f -> 8.0f * it * it * it * it
-                else      -> 1.0f - (-2.0f * it + 2.0f).pow(4) * 0.5f
-            }
-        }
-
-        @JvmField
-        val QuintIn = Easing { it * it * it * it * it }
-
-        @JvmField
-        val QuintOut = Easing { 1.0f - (1.0f - it).pow(5) }
-
-        @JvmField
-        val QuintInOut = Easing {
-            when {
-                it < 0.5f -> 16.0f * it * it * it * it * it
-                else      -> 1.0f - (-2.0f * it + 2.0f).pow(5) * 0.5f
-            }
-        }
-
-        @JvmField
-        val ExpoIn = Easing { if (it == 0.0f) 0.0f else 2.0f.pow(10.0f * it - 10.0f) }
-
-        @JvmField
-        val ExpoOut = Easing { if (it == 1.0f) 1.0f else 1.0f - 2.0f.pow(-10.0f * it) }
-
-        @JvmField
-        val ExpoInOut = Easing {
-            when {
-                it == 0.0f || it == 1.0f -> it
-                it < 0.5f  -> 2.0f.pow(20.0f * it - 10.0f) * 0.5f
-                else       -> (2.0f - 2.0f.pow(-20.0f * it + 10.0f)) * 0.5f
-            }
-        }
-
-        @JvmField
-        val CircIn = Easing { 1.0f - sqrt(1 - it * it) }
-
-        @JvmField
-        val CircOut = Easing { sqrt(1.0f - (1.0f - it) * (1.0f - it)) }
-
-        @JvmField
-        val CircInOut = Easing {
-            when {
-                it < 0.5f -> (1.0f - sqrt(1.0f - 4.0f * it * it)) * 0.5f
-                else      -> (sqrt(1.0f - (-2.0f * it + 2.0f).pow(2)) + 1.0f) * 0.5f
-            }
-        }
-
-        @JvmField
-        val BackIn = Easing { C3 * it * it * it - C1 * it * it }
-
-        @JvmField
-        val BackOut = Easing { 1.0f + C3 * (it - 1.0f) * (it - 1.0f) * (it - 1.0f) + C1 * (it - 1.0f) * (it - 1.0f) }
-
-        @JvmField
-        val BackInOut = Easing {
-            when {
-                it < 0.5f -> ((2.0f * it).pow(2) * ((C2 + 1.0f) * 2.0f * it - C2)) * 0.5f
-                else      -> ((2.0f * it - 2.0f).pow(2) * ((C2 + 1.0f) * (it * 2.0f - 2.0f) + C2) + 2.0f) * 0.5f
-            }
-        }
-
-        @JvmField
-        val ElasticIn = Easing {
-            when (it) {
-                0.0f, 1.0f -> it
-                else       -> -(2.0f.pow(10.0f * it - 10.0f)) * sin((it * 10.0f - 10.75f) * C4)
-            }
-        }
-
-        @JvmField
-        val ElasticOut = Easing {
-            when (it) {
-                0.0f, 1.0f -> it
-                else       -> 2.0f.pow(-10.0f * it) * sin((it * 10.0f - 0.75f) * C4) + 1.0f
-            }
-        }
-
-        @JvmField
-        val ElasticInOut = Easing {
-            when {
-                it == 0.0f || it == 1.0f -> it
-                it < 0.5f -> -(2.0f.pow(20.0f * it - 10.0f) * sin((20.0f * it - 11.125f) * C5)) * 0.5f
-                else      -> (2.0f.pow(-20.0f * it + 10.0f) * sin((20.0f * it - 11.125f) * C5)) * 0.5f + 1.0f
-            }
-        }
-
-        @JvmField
-        val BounceIn = Easing { 1.0f - BounceOut.ease(1.0f - it) }
-
-        @JvmField
-        val BounceOut = Easing {
-            when {
-                it < 1.0f / D1 -> N1 * it * it
-                it < 2.0f / D1 -> {
-                    val x2 = it - (1.5f / D1)
-                    N1 * x2 * x2 + 0.75f
-                }
-                it < 2.5f / D1 -> {
-                    val x2 = it - (2.25f / D1)
-                    N1 * x2 * x2 + 0.9375f
-                }
-                else -> {
-                    val x2 = it - (2.625f / D1)
-                    N1 * x2 * x2 + 0.984375f
-                }
-            }
-        }
-
-        @JvmField
-        val BounceInOut = Easing {
-            when {
-                it < 0.5f -> (1.0f - BounceOut.ease(1.0f - 2.0f * it)) * 0.5f
-                else      -> (1.0f + BounceOut.ease(2.0f * it - 1.0f)) * 0.5f
-            }
+    data object BounceInOut : Easing {
+        override fun ease(value: Float): Float = when {
+            value < 0.5f -> (1.0f - BounceOut.ease(1.0f - 2.0f * value)) * 0.5f
+            else      -> (1.0f + BounceOut.ease(2.0f * value - 1.0f)) * 0.5f
         }
     }
 }

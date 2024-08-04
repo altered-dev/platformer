@@ -85,4 +85,18 @@ class Polygon(
         val nx = (((p.x - ax) * dx + (p.y - ay) * dy) / d2).coerceIn(0.0f, 1.0f)
         return Vector2f(x = dx * nx + ax, y = dy * nx + ay)
     }
+
+
+    override fun toString(): String = """
+        ${super.toString()} (
+            x = $xExpr
+            y = $yExpr
+            rotation = $rotationExpr
+            fill = $fillExpr
+            stroke = $strokeExpr
+            strokeWidth = $strokeWidthExpr
+            points:
+            ${points.joinToString("\n            ")}
+        )
+    """.trimIndent()
 }

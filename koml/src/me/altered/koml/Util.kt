@@ -45,10 +45,7 @@ fun Iterable<Vector2fc>.average(): Vector2fc {
     }
 }
 
-fun lerp(from: Float, to: Float, t: Float): Float {
-    return from + t * (to - from)
-}
-
+// TODO: move to class
 fun Vector2fc.rotateAround(point: Vector2fc, deg: Float): Vector2fc {
     if (deg == 0.0f) return this
     val sin = sin(deg.deg2rad())

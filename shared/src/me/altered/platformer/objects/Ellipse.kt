@@ -4,14 +4,15 @@ import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.koml.div
 import me.altered.koml.scaleAround
+import me.altered.platformer.editor.Brush
+import me.altered.platformer.editor.emptyBrush
+import me.altered.platformer.editor.toShader
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.timeline.Expression
 import me.altered.platformer.timeline.const
-import me.altered.platformer.engine.util.Colors
 import kotlin.math.withSign
 
 class Ellipse(
@@ -21,8 +22,8 @@ class Ellipse(
     var widthExpr: Expression<Float>,
     var heightExpr: Expression<Float>,
     override var rotationExpr: Expression<Float>,
-    var fillExpr: Expression<Color4f> = const(Colors.Transparent),
-    var strokeExpr: Expression<Color4f> = const(Colors.Transparent),
+    var fillExpr: Expression<Brush> = const(emptyBrush()),
+    var strokeExpr: Expression<Brush> = const(emptyBrush()),
     var strokeWidthExpr: Expression<Float> = const(0.0f),
 ) : ObjectNode(name) {
 
@@ -59,8 +60,8 @@ class Ellipse(
         super.eval(time)
         width = widthExpr.eval(time)
         height = heightExpr.eval(time)
-        fillPaint.color4f = fillExpr.eval(time)
-        strokePaint.color4f = strokeExpr.eval(time)
+        fillPaint.shader = fillExpr.eval(time).toShader()
+        strokePaint.shader = strokeExpr.eval(time).toShader()
         strokePaint.strokeWidth = strokeWidthExpr.eval(time)
     }
 
@@ -86,4 +87,17 @@ class Ellipse(
         val result = transform(newPos).scaleAround(this.position, 1.0f / scale)
         return result
     }
+
+    override fun toString(): String = """
+        ${super.toString()} (
+            x = $xExpr
+            y = $yExpr
+            rotation = $rotationExpr
+            width = $widthExpr
+            height = $heightExpr
+            fill = $fillExpr
+            stroke = $strokeExpr
+            strokeWidth = $strokeWidthExpr
+        )
+    """.trimIndent()
 }

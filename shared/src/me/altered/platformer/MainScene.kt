@@ -2,6 +2,9 @@ package me.altered.platformer
 
 import me.altered.koml.Vector2f
 import me.altered.platformer.editor.EditorScene
+import me.altered.platformer.editor.linear
+import me.altered.platformer.editor.solid
+import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
@@ -38,11 +41,11 @@ class MainScene : Node("main") {
                 300.0f at 0.0f,
                 200.0f at 0.5f with Easing.BounceOut,
             ),
-            y = reference("black", ::x),
+            y = reference("black", x),
             rotation = const(0.0f),
             width = const(30.0f),
             height = const(30.0f),
-            fill = const(Colors.Blue),
+            fill = const(solid(Color.Blue)),
         )
         rectangle(
             name = "green",
@@ -51,7 +54,10 @@ class MainScene : Node("main") {
             rotation = const(0.0f),
             width = const(1500.0f),
             height = const(50.0f),
-            fill = const(Colors.Green),
+            fill = animated(
+                solid(Color.Green) at 0.0f,
+                solid(Color.Magenta) at 2.0f with Easing.SineInOut,
+            ),
         )
         rectangle(
             name = "black",
@@ -66,7 +72,9 @@ class MainScene : Node("main") {
             ),
             width = const(150.0f),
             height = const(30.0f),
-            fill = const(Colors.Black),
+            fill = const(linear(-75.0f, 0.0f, 75.0f, 0.0f, Color.Black, Color.Cyan)),
+            stroke = const(linear(-75.0f, 0.0f, 75.0f, 0.0f, Color.Cyan, Color.Black)),
+            strokeWidth = const(2.0f),
         )
         rectangle(
             name = "magenta",
@@ -81,7 +89,7 @@ class MainScene : Node("main") {
             rotation = const(0.0f),
             width = const(100.0f),
             height = const(30.0f),
-            fill = const(Colors.Magenta),
+            fill = const(solid(Color.Magenta)),
         )
         ellipse(
             name = "ellipse",
@@ -93,7 +101,7 @@ class MainScene : Node("main") {
             ),
             width = const(150.0f),
             height = const(100.0f),
-            fill = const(Colors.Red),
+            fill = const(solid(Color.Red)),
         )
         polygon(
             name = "polygon",
@@ -130,7 +138,7 @@ class MainScene : Node("main") {
                 ),
                 width = const(150.0f),
                 height = const(100.0f),
-                fill = const(Colors.Red),
+                fill = const(solid(Color.Red)),
             )
         }
     }
