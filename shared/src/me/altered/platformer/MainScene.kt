@@ -12,16 +12,16 @@ import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.all
-import me.altered.platformer.objects.ellipse
-import me.altered.platformer.objects.rectangle
-import me.altered.platformer.objects.world
-import me.altered.platformer.player.Player
+import me.altered.platformer.level.ellipse
+import me.altered.platformer.level.group
+import me.altered.platformer.level.rectangle
+import me.altered.platformer.level.Player
+import me.altered.platformer.level.world
 import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.animated
 import me.altered.platformer.timeline.at
 import me.altered.platformer.timeline.const
 import me.altered.platformer.timeline.plus
-import me.altered.platformer.timeline.times
 import me.altered.platformer.timeline.with
 
 class MainScene : Node("main") {
@@ -38,7 +38,7 @@ class MainScene : Node("main") {
             height = const(30.0f),
             fill = const(solid(0x80000000)),
         )
-        val box = rectangle(
+        rectangle(
             name = "box",
             x = animated(
                 300.0f at 0.0f,
@@ -60,8 +60,8 @@ class MainScene : Node("main") {
         )
         rectangle(
             name = "otherbox",
-            x = box.x + const(100.0f),
-            y = const(250.0f) + player.y * const(0.5f),
+            x = const(500.0f),
+            y = const(250.0f) + const(0.5f),
             rotation = animated(
                 0.0f at 0.0f,
                 1280.0f at 3.0f with Easing.SineInOut,
@@ -70,6 +70,45 @@ class MainScene : Node("main") {
             height = const(40.0f),
             fill = const(solid(0xFFB2FFB2))
         )
+        group(
+            name = "group",
+            x = const(800.0f),
+            y = const(300.0f),
+            rotation = animated(
+                0.0f at 0.0f,
+                360.0f at 2.0f with Easing.ElasticInOut,
+            )
+        ) {
+            ellipse(
+                name = "child",
+                x = const(50.0f),
+                width = const(20.0f),
+                height = const(20.0f),
+                fill = animated(
+                    solid(0xFFFA8072) at 0.0f,
+                    solid(0xFFFCBFB8) at 2.0f with Easing.SineInOut,
+                )
+            )
+            group(
+                name = "nested",
+                y = const(100.0f),
+                rotation = animated(
+                    0.0f at 0.0f,
+                    -180.0f at 2.0f with Easing.ElasticInOut,
+                )
+            ) {
+                ellipse(
+                    name = "nestedChild",
+                    x = const(50.0f),
+                    width = const(20.0f),
+                    height = const(20.0f),
+                    fill = animated(
+                        solid(0xFFFCBFB8) at 0.0f,
+                        solid(0xFFFA8072) at 2.0f with Easing.SineInOut,
+                    )
+                )
+            }
+        }
     }
 
     private val player = world + Player(position = Vector2f(100.0f, 450.0f))

@@ -1,4 +1,4 @@
-package me.altered.platformer.player
+package me.altered.platformer.level
 
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
@@ -13,7 +13,6 @@ import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.util.Colors
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.engine.util.translate
-import me.altered.platformer.objects.World
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.withSign
@@ -60,7 +59,7 @@ class Player(
         lastCollisions.clear()
         // handle collisions
         var isOnFloor = false
-        world.makeCollisions(position, radius) { col ->
+        world.collide(position, radius) { col ->
             lastCollisions += col
             // TODO: better floor/wall detection
             if (col.y - position.y > radius * 0.25f) isOnFloor = true

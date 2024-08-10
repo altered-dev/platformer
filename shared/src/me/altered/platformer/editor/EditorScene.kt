@@ -31,13 +31,15 @@ import me.altered.platformer.engine.util.contains
 import me.altered.platformer.engine.util.offset
 import me.altered.platformer.engine.util.Paint
 import me.altered.platformer.engine.util.transform
-import me.altered.platformer.objects.Ellipse
-import me.altered.platformer.objects.ObjectNode
-import me.altered.platformer.objects.Rectangle
-import me.altered.platformer.objects.World
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.logged
 import me.altered.platformer.engine.util.observable
+import me.altered.platformer.level.World
+import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.Rectangle
+import me.altered.platformer.level.node.EllipseNode
+import me.altered.platformer.level.node.ObjectNode
+import me.altered.platformer.level.node.RectangleNode
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
@@ -51,9 +53,15 @@ class EditorScene : Node2D("editor") {
     private var lastStart: Vector2f? = null
 
     private val world = +World()
+    private val grid = world + Grid(
+        bounds = Rect.makeWH(
+            w = window?.width?.toFloat() ?: 2000.0f,
+            h = window?.height?.toFloat() ?: 2000.0f,
+        ),
+    )
 
-    private var hovered: ObjectNode? by logged(null)
-    private var selected: ObjectNode? by logged(null)
+    private var hovered: ObjectNode<*>? by logged(null)
+    private var selected: ObjectNode<*>? by logged(null)
 
     private var fps: Float by observable(0.0f) {
         fpsText.text = "fps: $it"
@@ -89,7 +97,6 @@ class EditorScene : Node2D("editor") {
     private val toolText = inspector + Text("tool: $tool", padding = each(top = 88.0f), color = Colors.White)
 
     override fun ready() {
-        world.showGrid = true
         world.position.set(
             x = (window?.width ?: 0) * 0.25f,
             y = (window?.height ?: 0) * 0.75f,
@@ -233,11 +240,11 @@ class EditorScene : Node2D("editor") {
                 treeText.text = world.objects.joinToString("\n")
                 selected = null
             }
-            is Action.DrawRectangle -> if (product is Rectangle) {
+            is Action.DrawRectangle -> if (product is RectangleNode) {
                 world.place(product)
                 treeText.text = world.objects.joinToString("\n")
             }
-            is Action.DrawEllipse -> if (product is Ellipse) {
+            is Action.DrawEllipse -> if (product is EllipseNode) {
                 world.place(product)
                 treeText.text = world.objects.joinToString("\n")
             }
@@ -245,6 +252,7 @@ class EditorScene : Node2D("editor") {
         actions.addLast(CommittedAction(action, product))
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> produce(action: Action<T>): T {
         return when (action) {
             is Action.SelectObject -> Unit as T
@@ -253,32 +261,37 @@ class EditorScene : Node2D("editor") {
                 val start = action.start
                 val end = action.end
                 val size = end - start
-                Rectangle(
-                    name = "rectangle",
-                    xExpr = const(start.x + size.x * 0.5f),
-                    yExpr = const(start.y + size.y * 0.5f),
-                    rotationExpr = const(0.0f),
-                    widthExpr = const(size.x),
-                    heightExpr = const(size.y),
-                    fillExpr = const(solid(0xFF333333)),
-                    strokeExpr = const(emptyBrush()),
-                    strokeWidthExpr = const(0.0f),
+                RectangleNode(
+                    obj = Rectangle(
+                        name = "rectangle",
+                        x = const(start.x + size.x * 0.5f),
+                        y = const(start.y + size.y * 0.5f),
+                        rotation = const(0.0f),
+                        width = const(size.x),
+                        height = const(size.y),
+                        cornerRadius = const(0.0f),
+                        fill = const(solid(0xFF333333)),
+                        stroke = const(emptyBrush()),
+                        strokeWidth = const(0.0f),
+                    )
                 ) as T
             }
             is Action.DrawEllipse -> {
                 val start = action.start
                 val end = action.end
                 val size = end - start
-                Ellipse(
-                    name = "ellipse",
-                    xExpr = const(start.x + size.x * 0.5f),
-                    yExpr = const(start.y + size.y * 0.5f),
-                    widthExpr = const(size.x),
-                    heightExpr = const(size.y),
-                    rotationExpr = const(0.0f),
-                    fillExpr = const(solid(0xFF333333)),
-                    strokeExpr = const(emptyBrush()),
-                    strokeWidthExpr = const(0.0f),
+                EllipseNode(
+                    obj = Ellipse(
+                        name = "ellipse",
+                        x = const(start.x + size.x * 0.5f),
+                        y = const(start.y + size.y * 0.5f),
+                        width = const(size.x),
+                        height = const(size.y),
+                        rotation = const(0.0f),
+                        fill = const(solid(0xFF333333)),
+                        stroke = const(emptyBrush()),
+                        strokeWidth = const(0.0f),
+                    )
                 ) as T
             }
         }
@@ -294,11 +307,11 @@ class EditorScene : Node2D("editor") {
                 treeText.text = world.objects.joinToString("\n")
                 selected = action.action.obj
             }
-            is Action.DrawRectangle -> if (action.product is Rectangle) {
+            is Action.DrawRectangle -> if (action.product is RectangleNode) {
                 world.remove(action.product)
                 treeText.text = world.objects.joinToString("\n")
             }
-            is Action.DrawEllipse -> if (action.product is Ellipse) {
+            is Action.DrawEllipse -> if (action.product is EllipseNode) {
                 world.remove(action.product)
                 treeText.text = world.objects.joinToString("\n")
             }
