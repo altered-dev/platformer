@@ -1,11 +1,15 @@
 package me.altered.platformer.timeline
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
 /**
  * An expression defined by a number that never changes.
  */
 @JvmInline
+@Serializable
+@SerialName("const")
 value class Constant<out T>(private val value: T) : Expression<T> {
 
     override fun eval(time: Float): T = value

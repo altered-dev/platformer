@@ -17,3 +17,7 @@ test-dependencies@jvm:
 
 test-settings@jvm:
   junit: junit-5
+
+settings:
+  kotlin:
+    serialization: json

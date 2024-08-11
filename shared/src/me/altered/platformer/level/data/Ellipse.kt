@@ -1,8 +1,12 @@
 package me.altered.platformer.level.data
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import me.altered.platformer.editor.Brush
 import me.altered.platformer.timeline.Expression
 
+@Serializable
+@SerialName("ellipse")
 data class Ellipse(
     override val name: String,
     override val x: Expression<Float>,

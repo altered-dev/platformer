@@ -1,25 +1,92 @@
 package me.altered.koml
 
+import kotlin.math.sqrt
+
+/**
+ * A representation of a two-dimensional (planar) vector in Euclidean space.
+ */
 interface Vector2fc {
 
+    /**
+     * The horizontal component of the vector.
+     */
     val x: Float
+
+    /**
+     * The vertical component of the vector.
+     */
     val y: Float
 
+    /**
+     * The total length of the vector.
+     *
+     * If the squared length is required, it is advised to use [lengthSquared], as it is more efficient.
+     */
     val length: Float
+
+    /**
+     * The total length of the vector squared.
+     *
+     * It is usually more efficient than [length], since it doesn't contain [sqrt] in it.
+     */
     val lengthSquared: Float
 
+    /**
+     * Returns the minimum of the two components ([x] and [y]).
+     */
     val minComponent: Int
+
+    /**
+     * Returns the maximum of the two components ([x] and [y]).
+     */
     val maxComponent: Int
 
+    /**
+     * Whether this vector only contains finite number components.
+     */
     fun isFinite(): Boolean
+
+    /**
+     * Whether this vector contains a [Float.NaN] component.
+     */
     fun isNaN(): Boolean
 
+    /**
+     * Returns a new vector that is equal to this vector.
+     *
+     * @param dest The vector that the changes will be applied to.
+     */
     fun copy(dest: Vector2f = Vector2f()): Vector2f
+
+    /**
+     * Returns a new vector that is equal to this vector.
+     */
     operator fun unaryPlus(): Vector2fc = copy()
+
+    /**
+     * Returns a new vector that has both components with inverted signs.
+     *
+     * @param dest The vector that the changes will be applied to.
+     */
     fun negate(dest: Vector2f = Vector2f()): Vector2f
+
+    /**
+     * Returns a new vector that has both components with inverted signs.
+     */
     operator fun unaryMinus(): Vector2fc = negate()
 
+    /**
+     * Returns a new vector that has the same direction (normal) as this vector, but with its length equal to [length].
+     *
+     * @param dest The vector that the changes will be applied to.
+     */
     fun normalize(length: Float = 1.0f, dest: Vector2f = Vector2f()): Vector2fc
+
+    /**
+     * Returns a new vector that has the same length but is facing a perpendicular direction.
+     *
+     * @param dest The vector that the changes will be applied to.
+     */
     fun perpendicular(dest: Vector2f = Vector2f()): Vector2fc
 
     @Throws(IllegalArgumentException::class)

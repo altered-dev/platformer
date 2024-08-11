@@ -1,7 +1,11 @@
 package me.altered.platformer.level.data
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import me.altered.platformer.timeline.Expression
 
+@Serializable
+@SerialName("group")
 data class Group(
     override val name: String,
     override val x: Expression<Float>,

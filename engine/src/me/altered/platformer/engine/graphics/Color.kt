@@ -1,35 +1,61 @@
 package me.altered.platformer.engine.graphics
 
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 
+/**
+ * A class representing a color in ARGB color space.
+ */
 @JvmInline
+@Serializable
+@OptIn(ExperimentalStdlibApi::class)
 value class Color(val value: Int) {
 
+    /**
+     * The alpha component of the color.
+     */
     val a: Int get() = value shr 24 and 0xFF
 
+    /**
+     * The red component of the color.
+     */
     val r: Int get() = value shr 16 and 0xFF
 
+    /**
+     * The green component of the color.
+     */
     val g: Int get() = value shr 8 and 0xFF
 
+    /**
+     * The blue component of the color.
+     */
     val b: Int get() = value and 0xFF
+
+    constructor(value: Long) : this(value.toInt())
+
+    constructor(hex: String) : this(hex.hexToInt(hexFormat))
+
+    override fun toString() = value.toHexString(hexFormat)
 
     companion object {
 
-        // TODO: to color object
-        const val White =       0xFF_FF_FF_FF
-        const val Black =       0xFF_00_00_00
-        const val Transparent = 0x00_00_00_00
+        val White =       Color(0xFF_FF_FF_FF)
+        val Black =       Color(0xFF_00_00_00)
+        val Transparent = Color(0x00_00_00_00)
 
-        const val Red =         0xFF_FF_00_00
-        const val Green =       0xFF_00_FF_00
-        const val Blue =        0xFF_00_00_FF
-        const val Yellow =      0xFF_FF_FF_00
-        const val Cyan =        0xFF_00_FF_FF
-        const val Magenta =     0xFF_FF_00_FF
+        val Red =         Color(0xFF_FF_00_00)
+        val Green =       Color(0xFF_00_FF_00)
+        val Blue =        Color(0xFF_00_00_FF)
+        val Yellow =      Color(0xFF_FF_FF_00)
+        val Cyan =        Color(0xFF_00_FF_FF)
+        val Magenta =     Color(0xFF_FF_00_FF)
+
+        private val hexFormat = HexFormat {
+            upperCase = true
+            number.prefix = "#"
+        }
     }
 }
-
-fun Color(value: Long) = Color(value.toInt())
 
 fun Color(r: Int, g: Int, b: Int, a: Int = 255): Color {
     require(a in 0..255) { "alpha is out of 0..255 range: $a" }

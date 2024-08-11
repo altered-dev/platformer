@@ -1,6 +1,7 @@
 [versions]
 skiko = "0.8.8"
 coroutines = "1.8.0"
+serialization = "1.7.1"
 
 [libraries]
 skiko = { group = "org.jetbrains.skiko", name = "skiko", version.ref = "skiko" }
@@ -21,3 +22,4 @@ skiko-android-x64 = { group = "org.jetbrains.skiko", name = "skiko-android-runti
 skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-arm64", version.ref = "skiko" }
 
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "serialization" }

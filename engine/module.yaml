@@ -12,3 +12,8 @@ aliases:
 dependencies:
   - ../koml: exported
   - $libs.skiko: exported
+  - $libs.kotlinx.serialization.cbor: exported
+
+settings:
+  kotlin:
+    serialization: json

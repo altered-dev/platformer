@@ -1,5 +1,6 @@
 package me.altered.platformer.level.data
 
+import kotlinx.serialization.Serializable
 import me.altered.platformer.editor.Brush
 import me.altered.platformer.timeline.Expression
 
@@ -7,6 +8,7 @@ import me.altered.platformer.timeline.Expression
  * A descriptor of an object inside a level.
  * All properties are expressions in order to allow animations.
  */
+@Serializable
 sealed interface Object {
 
     val name: String

@@ -1,5 +1,7 @@
 package me.altered.platformer.editor
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.skia.Shader
 import kotlin.jvm.JvmInline
 
@@ -9,13 +11,18 @@ private val HexFormat = HexFormat {
     number.prefix = "#"
 }
 
+@Serializable
 sealed interface Brush {
 
+    @Serializable
+    @SerialName("empty")
     data object Empty : Brush {
         override fun toString(): String = "empty"
     }
 
     @JvmInline
+    @Serializable
+    @SerialName("solid")
     value class Solid(val color: Int) : Brush {
         @OptIn(ExperimentalStdlibApi::class)
         override fun toString(): String = color.toHexString(HexFormat)

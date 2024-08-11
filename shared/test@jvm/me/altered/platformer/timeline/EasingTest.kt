@@ -63,5 +63,6 @@ private val easings = listOf(
 )
 
 private fun testEasings(consumer: ThrowingConsumer<Easing>): Stream<DynamicTest> {
-    return DynamicTest.stream(easings.iterator(), consumer)
+    TODO()
+//    return DynamicTest.stream(easings.iterator(), consumer)
 }

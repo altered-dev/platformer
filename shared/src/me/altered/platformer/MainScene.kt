@@ -48,6 +48,10 @@ class MainScene : Node("main") {
             y = const(500.0f),
             width = const(50.0f),
             height = const(50.0f),
+            cornerRadius = animated(
+                0.0f at 0.0f,
+                25.0f at 1.0f with Easing.SineInOut,
+            ),
             fill = const(linear(-25.0f, 25.0f, 25.0f, -25.0f, 0xFFFA8072, 0xFFFCBFB8)),
         )
         ellipse(
