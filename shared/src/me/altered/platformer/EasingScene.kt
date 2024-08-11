@@ -1,11 +1,12 @@
 package me.altered.platformer
 
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.each
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.Paint
-import me.altered.platformer.engine.util.scale
+import me.altered.platformer.engine.graphics.drawCircle
+import me.altered.platformer.engine.graphics.scale
 import me.altered.platformer.timeline.Easing
 import org.jetbrains.skia.Canvas
 
@@ -16,7 +17,7 @@ class EasingScene : CanvasNode("easings") {
     }
 
     private val paint = Paint {
-        color4f = Colors.Black
+        color = Color.Black
     }
 
     override fun draw(canvas: Canvas) {
@@ -24,7 +25,7 @@ class EasingScene : CanvasNode("easings") {
             .translate(16.0f, 64.0f)
             .scale(128.0f)
 
-        easings.forEachIndexed { index, (name, easing) ->
+        easings.forEachIndexed { index, (_, easing) ->
             repeat(101) {
                 val x = it * 0.01f
                 val y = easing.ease(x)

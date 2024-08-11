@@ -3,9 +3,10 @@ package me.altered.platformer.level.node
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.platformer.editor.toShader
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.Paint
-import me.altered.platformer.engine.util.offset
+import me.altered.platformer.engine.graphics.drawRRect
+import me.altered.platformer.engine.graphics.offset
 import me.altered.platformer.level.data.Rectangle
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode

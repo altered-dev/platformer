@@ -4,7 +4,7 @@ import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.drawCrosshair
+import me.altered.platformer.engine.graphics.drawCrosshair
 import org.jetbrains.skia.Canvas
 
 open class Node2D(

@@ -1,26 +1,18 @@
 @file:Suppress("FunctionName")
 
-package me.altered.platformer.engine.util
+package me.altered.platformer.engine.graphics
 
-import me.altered.koml.Transform2fc
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Insets
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color4f
-import org.jetbrains.skia.Matrix33
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.Path
-import org.jetbrains.skia.Point
+import org.jetbrains.skia.RRect
 import org.jetbrains.skia.Rect
-
-fun Color(hex: Number): Color4f = Color4f(hex.toInt())
-
-fun Color(r: Float, g: Float, b: Float, a: Float = 1.0f) = Color4f(r, g, b, a)
+import org.jetbrains.skia.TextBlob
 
 fun emptyRect(): Rect = Rect(0.0f, 0.0f, 0.0f, 0.0f)
 
-fun Canvas.clear(color4f: Color4f) = clear(color4f.toColor())
+fun Canvas.clear(color: Color) = clear(color.value)
 
 fun Canvas.translate(vec: Vector2fc) = translate(vec.x, vec.y)
 
@@ -30,16 +22,25 @@ fun Canvas.skew(vec: Vector2fc) = skew(vec.x, vec.y)
 
 fun Canvas.scale(scalar: Float) = scale(scalar, scalar)
 
+// TODO: to canvas delegate
+fun Canvas.drawRect(rect: Rect, paint: Paint) = drawRect(rect, paint.nativePaint)
+
+fun Canvas.drawRRect(rRect: RRect, paint: Paint) = drawRRect(rRect, paint.nativePaint)
+
+fun Canvas.drawOval(rect: Rect, paint: Paint) = drawOval(rect, paint.nativePaint)
+
+fun Canvas.drawLine(x0: Float, y0: Float, x1: Float, y1: Float, paint: Paint) = drawLine(x0, y0, x1, y1, paint.nativePaint)
+
+fun Canvas.drawTextBlob(blob: TextBlob, x: Float, y: Float, paint: Paint) = drawTextBlob(blob, x, y, paint.nativePaint)
+
+fun Canvas.drawCircle(x: Float, y: Float, radius: Float, paint: Paint) = drawCircle(x, y, radius, paint.nativePaint)
+
 // TODO: transform matrix
 fun Canvas.transform(node: Node2D) = this
     .translate(node.position)
     .rotate(node.rotation)
     .scale(node.scale)
     .skew(node.skew)
-
-inline fun Paint(block: Paint.() -> Unit): Paint = Paint().apply(block)
-
-inline fun Path(block: Path.() -> Unit): Path = Path().apply(block)
 
 fun Rect.offset(vec: Vector2fc) = offset(vec.x, vec.y)
 
@@ -49,13 +50,6 @@ fun Rect.inset(insets: Insets) =
 fun Rect.outset(insets: Insets) =
     Rect.makeLTRB(left - insets.left, top - insets.top, right + insets.right, bottom + insets.bottom)
 
-fun Rect.add(other: Rect): Rect = Rect(
-    left = minOf(left, other.left),
-    top = minOf(top, other.top),
-    right = maxOf(right, other.right),
-    bottom = maxOf(bottom, other.bottom),
-)
-
 fun Rect.contains(x: Float, y: Float): Boolean {
     return x in left..right && y in top..bottom
 }
@@ -63,7 +57,3 @@ fun Rect.contains(x: Float, y: Float): Boolean {
 operator fun Rect.contains(vec: Vector2fc): Boolean {
     return vec.x in left..right && vec.y in top..bottom
 }
-
-fun Transform2fc.toSkMatrix() = Matrix33(scaleX, skewX, transX, skewY, scaleY, transY, 0.0f, 0.0f, 1.0f)
-
-fun Vector2fc.toPoint(): Point = Point(x, y)

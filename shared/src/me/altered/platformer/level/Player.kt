@@ -2,6 +2,8 @@ package me.altered.platformer.level
 
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.input.InputEvent
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
@@ -10,9 +12,9 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.Paint
-import me.altered.platformer.engine.util.translate
+import me.altered.platformer.engine.graphics.drawCircle
+import me.altered.platformer.engine.graphics.drawRect
+import me.altered.platformer.engine.graphics.translate
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.withSign
@@ -30,7 +32,7 @@ class Player(
     private val rect = Rect(-radius, -radius, radius, radius)
 
     private val paint = Paint {
-        color4f = Colors.Black
+        color = Color.Black
     }
 
     private val world: World
@@ -75,7 +77,7 @@ class Player(
         }
     }
 
-    private val colPaint = Paint { color4f = Colors.Yellow }
+    private val colPaint = Paint { color = Color.Yellow }
 
     override fun draw(canvas: Canvas) {
         canvas.drawRect(rect, paint)

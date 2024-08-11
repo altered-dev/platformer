@@ -1,7 +1,6 @@
-package me.altered.platformer.engine.util
+package me.altered.platformer.engine.graphics
 
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Paint
 
 fun Canvas.drawCrosshair(x: Float, y: Float, size: Float, paint: Paint): Canvas {
     drawLine(x, y - size, x, y + size, paint)

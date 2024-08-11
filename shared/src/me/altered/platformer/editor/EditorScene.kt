@@ -5,6 +5,8 @@ import me.altered.koml.Vector2fc
 import me.altered.platformer.MainScene
 import me.altered.platformer.editor.action.Action
 import me.altered.platformer.editor.action.CommittedAction
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.Left
@@ -25,12 +27,11 @@ import me.altered.platformer.engine.ui.all
 import me.altered.platformer.engine.ui.each
 import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.px
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.Color
-import me.altered.platformer.engine.util.contains
-import me.altered.platformer.engine.util.offset
-import me.altered.platformer.engine.util.Paint
-import me.altered.platformer.engine.util.transform
+import me.altered.platformer.engine.graphics.contains
+import me.altered.platformer.engine.graphics.drawOval
+import me.altered.platformer.engine.graphics.drawRect
+import me.altered.platformer.engine.graphics.offset
+import me.altered.platformer.engine.graphics.transform
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.logged
 import me.altered.platformer.engine.util.observable
@@ -81,7 +82,7 @@ class EditorScene : Node2D("editor") {
         background = Color(0xFF333333),
     )
 
-    private val treeText = objPane + Text("", padding = each(left = 16.0f, top = 16.0f), color = Colors.White)
+    private val treeText = objPane + Text("", padding = each(left = 16.0f, top = 16.0f), color = Color.White)
 
     private val inspector = +Box(
         name = "inspector",
@@ -91,10 +92,10 @@ class EditorScene : Node2D("editor") {
         anchor = Vector2f(1.0f, 0.0f),
         background = Color(0xFF333333),
     )
-    private val scaleText = inspector + Text("scale: ${scale.x}", padding = each(top = 16.0f), color = Colors.White)
-    private val timeText = inspector + Text("time: ${world.time}", padding = each(top = 40.0f), color = Colors.White)
-    private val fpsText = inspector + Text("fps: $fps", padding = each(top = 64.0f), color = Colors.White)
-    private val toolText = inspector + Text("tool: $tool", padding = each(top = 88.0f), color = Colors.White)
+    private val scaleText = inspector + Text("scale: ${scale.x}", padding = each(top = 16.0f), color = Color.White)
+    private val timeText = inspector + Text("time: ${world.time}", padding = each(top = 40.0f), color = Color.White)
+    private val fpsText = inspector + Text("fps: $fps", padding = each(top = 64.0f), color = Color.White)
+    private val toolText = inspector + Text("tool: $tool", padding = each(top = 88.0f), color = Color.White)
 
     override fun ready() {
         world.position.set(
@@ -335,7 +336,7 @@ class EditorScene : Node2D("editor") {
             isAntiAlias = true
             mode = PaintMode.STROKE
             strokeWidth = 2.0f
-            color4f = Colors.Blue.withA(0.5f)
+            color = Color.Blue.copy(a = 0x80)
         }
     }
 }

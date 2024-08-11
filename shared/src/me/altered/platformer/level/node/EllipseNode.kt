@@ -5,8 +5,9 @@ import me.altered.koml.Vector2fc
 import me.altered.koml.div
 import me.altered.koml.scaleAround
 import me.altered.platformer.editor.toShader
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.Paint
+import me.altered.platformer.engine.graphics.drawOval
 import me.altered.platformer.level.data.Ellipse
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode

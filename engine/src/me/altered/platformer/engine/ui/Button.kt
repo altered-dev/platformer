@@ -8,7 +8,7 @@ import me.altered.platformer.engine.input.cursorMoved
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.contains
+import me.altered.platformer.engine.graphics.contains
 
 class Button(
     text: String = "Button",

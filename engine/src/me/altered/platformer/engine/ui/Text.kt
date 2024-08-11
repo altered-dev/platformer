@@ -1,13 +1,13 @@
 package me.altered.platformer.engine.ui
 
 import me.altered.koml.Vector2f
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.util.Colors
-import me.altered.platformer.engine.util.Paint
-import me.altered.platformer.engine.util.emptyRect
+import me.altered.platformer.engine.graphics.drawTextBlob
+import me.altered.platformer.engine.graphics.emptyRect
 import me.altered.platformer.engine.util.observable
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color4f
 import org.jetbrains.skia.Font
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.TextBlob
@@ -20,13 +20,13 @@ class Text(
     height: Size = wrap,
     padding: Insets = none,
     anchor: Vector2f = Vector2f(0.0f, 0.0f),
-    color: Color4f = Colors.Black,
+    color: Color = Color.Black,
 ) : UiNode(text, parent, width, height, padding, anchor) {
 
     private var textBlob: TextBlob? = null
 
     private val paint = Paint {
-        color4f = color
+        this.color = color
     }
 
     var text: String
@@ -39,7 +39,7 @@ class Text(
         }
 
     var color by observable(color) {
-        paint.color4f = it
+        paint.color = it
     }
 
     init {

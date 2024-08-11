@@ -35,6 +35,15 @@ value class Color(val value: Int) {
 
     constructor(hex: String) : this(hex.hexToInt(hexFormat))
 
+    fun copy() = Color(value)
+
+    fun copy(
+        r: Int = this.r,
+        g: Int = this.g,
+        b: Int = this.b,
+        a: Int = this.a,
+    ) = Color(r, g, b, a)
+
     override fun toString() = value.toHexString(hexFormat)
 
     companion object {
