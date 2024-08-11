@@ -18,7 +18,7 @@ class MainActivity : Activity() {
         val window = Window("Hello, world!", viewportSize = 20.0f, frameLayout = layout)
         val sceneTree = SceneTree(window)
         skiaLayer.renderDelegate = sceneTree
-        window.attachSkiaLayer(skiaLayer)
+        skiaLayer.attachTo(layout)
 
         setContentView(layout, layout.layoutParams)
     }

@@ -1,9 +1,13 @@
 [versions]
+junit = "5.10.3"
 skiko = "0.8.8"
 coroutines = "1.8.0"
 serialization = "1.7.1"
+kotlin = "2.0.10"
+android = "8.5.0"
 
 [libraries]
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
 skiko = { group = "org.jetbrains.skiko", name = "skiko", version.ref = "skiko" }
 
 skiko-jvm = { group = "org.jetbrains.skiko", name = "skiko-awt", version.ref = "skiko" }
@@ -21,5 +25,14 @@ skiko-android = { group = "org.jetbrains.skiko", name = "skiko-android", version
 skiko-android-x64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-x64", version.ref = "skiko" }
 skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-arm64", version.ref = "skiko" }
 
+android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android" }
+kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android" }
+android-library = { id = "com.android.library", version.ref = "android" }

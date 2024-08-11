@@ -42,6 +42,6 @@ actual class Window actual constructor(
         set(_) = Unit
 
     actual fun attachSkiaLayer(layer: SkiaLayer) {
-        layer.attachTo(layer)
+//        layer.attachTo(this.frame)
     }
 }
