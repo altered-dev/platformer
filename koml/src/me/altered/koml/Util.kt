@@ -45,6 +45,16 @@ fun Iterable<Vector2fc>.average(): Vector2fc {
     }
 }
 
+fun Collection<Vector2fc>.toFloatArray(): FloatArray {
+    var index = 0
+    val array = FloatArray(size * 2)
+    forEach { (x, y) ->
+        array[index++] = x
+        array[index++] = y
+    }
+    return array
+}
+
 // TODO: move to class
 fun Vector2fc.rotateAround(point: Vector2fc, deg: Float): Vector2fc {
     if (deg == 0.0f) return this

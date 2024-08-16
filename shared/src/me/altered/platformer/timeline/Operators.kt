@@ -1,16 +1,20 @@
 package me.altered.platformer.timeline
 
-abstract class Unary<T, TR>(protected val expression: Expression<T>) : Expression<TR> {
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed class Unary<T, TR> : Expression<TR> {
+    abstract val expression: Expression<T>
 
     abstract fun transform(value: T): TR
 
     final override fun eval(time: Float): TR = transform(expression.eval(time))
 }
 
-abstract class Binary<L, R, T>(
-    protected val left: Expression<L>,
-    protected val right: Expression<R>,
-) : Expression<T> {
+@Serializable
+sealed class Binary<L, R, T> : Expression<T> {
+    abstract val left: Expression<L>
+    abstract val right: Expression<R>
 
     abstract fun transform(left: L, right: R): T
 

@@ -44,6 +44,24 @@ value class Color(val value: Int) {
         a: Int = this.a,
     ) = Color(r, g, b, a)
 
+    fun lerp(to: Color, t: Float): Color {
+        val (r1, g1, b1, a1) = this
+        val (r2, g2, b2, a2) = to
+        val r = (r1 + t * (r2 - r1)).toInt()
+        val g = (g1 + t * (g2 - g1)).toInt()
+        val b = (b1 + t * (b2 - b1)).toInt()
+        val a = (a1 + t * (a2 - a1)).toInt()
+        return Color(r, g, b, a)
+    }
+
+    operator fun component1() = r
+
+    operator fun component2() = g
+
+    operator fun component3() = b
+
+    operator fun component4() = a
+
     override fun toString() = value.toHexString(hexFormat)
 
     companion object {

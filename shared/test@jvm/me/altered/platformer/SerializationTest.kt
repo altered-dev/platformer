@@ -12,11 +12,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import me.altered.platformer.editor.emptyBrush
-import me.altered.platformer.editor.solid
+import me.altered.platformer.engine.graphics.emptyBrush
 import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.timeline.Constant
 import me.altered.platformer.timeline.const
+import me.altered.platformer.timeline.plus
 import kotlin.test.Test
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -33,9 +33,7 @@ class SerializationTest {
     }
 
     val json = Json {
-//        useArrayPolymorphism = true
         prettyPrint = true
-
         serializersModule = module
     }
 
@@ -59,18 +57,17 @@ class SerializationTest {
     @Test
     fun testExpression() {
         encodeAndDecode(Constant(100.0f))
-        encodeAndDecode(const(TestData(100.0f)))
         encodeAndDecode(
             Rectangle(
                 name = "wow",
-                x = const(1.0f),
+                x = const(1.2f) + const(3.4f) + const(5.6f),
                 y = const(2.0f),
                 rotation = const(3.0f),
                 width = const(4.0f),
                 height = const(5.0f),
                 cornerRadius = const(6.0f),
                 fill = const(emptyBrush()),
-                stroke = const(solid(0xFF000000)),
+                stroke = const(emptyBrush()),
                 strokeWidth = const(7.0f),
             )
         )

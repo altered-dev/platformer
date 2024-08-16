@@ -1,43 +1,59 @@
 package me.altered.platformer.timeline
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import me.altered.koml.lerp
 
-class FloatUnaryMinus(expression: Expression<Float>) : Unary<Float, Float>(expression) {
+@Serializable
+@SerialName("unaryMinus")
+class FloatUnaryMinus(override val expression: Expression<Float>) : Unary<Float, Float>() {
 
     override fun transform(value: Float): Float = -value
     override fun toString(): String = "-$expression"
 }
 
-class FloatPlus(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Float>(left, right) {
+@Serializable
+@SerialName("plus")
+class FloatPlus(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Float>() {
 
     override fun transform(left: Float, right: Float): Float = left + right
     override fun toString(): String = "$left + $right"
 }
 
-class FloatMinus(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Float>(left, right) {
+@Serializable
+@SerialName("minus")
+class FloatMinus(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Float>() {
 
     override fun transform(left: Float, right: Float): Float = left - right
     override fun toString(): String = "$left - $right"
 }
 
-class FloatTimes(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Float>(left, right) {
+@Serializable
+@SerialName("times")
+class FloatTimes(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Float>() {
 
     override fun transform(left: Float, right: Float): Float = left * right
     override fun toString(): String = "$left * $right"
 }
 
-class FloatDiv(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Float>(left, right) {
+@Serializable
+@SerialName("div")
+class FloatDiv(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Float>() {
 
     override fun transform(left: Float, right: Float): Float = left / right
     override fun toString(): String = "$left / $right"
 }
 
-class FloatRem(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Float>(left, right) {
+@Serializable
+@SerialName("rem")
+class FloatRem(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Float>() {
 
     override fun transform(left: Float, right: Float): Float = left % right
     override fun toString(): String = "$left % $right"
 }
 
+@Serializable
+@SerialName("lerp")
 class FloatLerp(
     private val from: Expression<Float>,
     private val to: Expression<Float>,

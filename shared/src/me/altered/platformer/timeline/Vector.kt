@@ -1,8 +1,12 @@
 package me.altered.platformer.timeline
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 
+@Serializable
+@SerialName("vector")
 class VectorExpression(
     val x: Expression<Float>,
     val y: Expression<Float>,

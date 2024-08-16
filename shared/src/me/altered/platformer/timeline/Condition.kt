@@ -1,5 +1,10 @@
 package me.altered.platformer.timeline
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("condition")
 class Condition<T>(
     val condition: Expression<Boolean>,
     val positive: Expression<T>,
@@ -26,19 +31,25 @@ fun <T> condition(
 
 // ---
 
-class BooleanNot(expression: Expression<Boolean>) : Unary<Boolean, Boolean>(expression) {
+@Serializable
+@SerialName("not")
+class BooleanNot(override val expression: Expression<Boolean>) : Unary<Boolean, Boolean>() {
 
     override fun transform(value: Boolean): Boolean = !value
     override fun toString(): String = "!$expression"
 }
 
-class BooleanAnd(left: Expression<Boolean>, right: Expression<Boolean>) : Binary<Boolean, Boolean, Boolean>(left, right) {
+@Serializable
+@SerialName("and")
+class BooleanAnd(override val left: Expression<Boolean>, override val right: Expression<Boolean>) : Binary<Boolean, Boolean, Boolean>() {
 
     override fun transform(left: Boolean, right: Boolean): Boolean = left && right
     override fun toString(): String = "$left && $right"
 }
 
-class BooleanOr(left: Expression<Boolean>, right: Expression<Boolean>) : Binary<Boolean, Boolean, Boolean>(left, right) {
+@Serializable
+@SerialName("or")
+class BooleanOr(override val left: Expression<Boolean>, override val right: Expression<Boolean>) : Binary<Boolean, Boolean, Boolean>() {
 
     override fun transform(left: Boolean, right: Boolean): Boolean = left || right
     override fun toString(): String = "$left || $right"

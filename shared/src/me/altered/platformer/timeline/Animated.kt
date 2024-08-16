@@ -1,17 +1,16 @@
 package me.altered.platformer.timeline
 
 import me.altered.koml.lerp
-import me.altered.platformer.editor.Brush
-import me.altered.platformer.editor.emptyBrush
-import me.altered.platformer.editor.solid
+import me.altered.platformer.engine.graphics.Brush
+import me.altered.platformer.engine.graphics.emptyBrush
+import me.altered.platformer.engine.graphics.solid
 import me.altered.platformer.util.KeyframeList
-import org.jetbrains.skia.Color
 import kotlin.jvm.JvmName
 
 /**
  * An expression defined by a set of keyframes and interpolated with a timeline.
  */
-abstract class Animated<T>(
+sealed class Animated<T>(
     private val keyframes: KeyframeList<T>,
 ) : Expression<T> {
 
@@ -58,7 +57,7 @@ class AnimatedBrush(keyframes: KeyframeList<Brush>) : Animated<Brush>(keyframes)
     override fun animate(from: Brush, to: Brush, t: Float): Brush {
         // TODO: support gradient animations
         if (from !is Brush.Solid || to !is Brush.Solid) return emptyBrush()
-        return solid(Color.makeLerp(to.color, from.color, t))
+        return solid(from.color.lerp(to.color, t))
     }
 }
 

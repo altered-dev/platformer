@@ -26,6 +26,11 @@ sealed interface Easing {
      */
     fun ease(value: Float): Float
 
+    /**
+     * Applies the easing function onto [value], clamping it between 0 and 1 to avoid unexpected results.
+     *
+     * @see ease
+     */
     fun easeSafe(value: Float): Float = ease(value.coerceIn(0.0f, 1.0f))
 
     @Serializable

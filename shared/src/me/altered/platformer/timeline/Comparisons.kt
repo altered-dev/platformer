@@ -1,36 +1,51 @@
 package me.altered.platformer.timeline
 
-class FloatEq(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("eq")
+class FloatEq(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left == right
     override fun toString(): String = "$left == $right"
 }
 
-class FloatNeq(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+@Serializable
+@SerialName("neq")
+class FloatNeq(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left != right
     override fun toString(): String = "$left != $right"
 }
 
-class FloatGreater(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+@Serializable
+@SerialName("greater")
+class FloatGreater(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left > right
     override fun toString(): String = "$left > $right"
 }
 
-class FloatGreaterEq(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+@Serializable
+@SerialName("greaterEq")
+class FloatGreaterEq(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left >= right
     override fun toString(): String = "$left >= $right"
 }
 
-class FloatLess(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+@Serializable
+@SerialName("less")
+class FloatLess(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left < right
     override fun toString(): String = "$left < $right"
 }
 
-class FloatLessEq(left: Expression<Float>, right: Expression<Float>) : Binary<Float, Float, Boolean>(left, right) {
+@Serializable
+@SerialName("lessEq")
+class FloatLessEq(override val left: Expression<Float>, override val right: Expression<Float>) : Binary<Float, Float, Boolean>() {
 
     override fun transform(left: Float, right: Float): Boolean = left <= right
     override fun toString(): String = "$left <= $right"

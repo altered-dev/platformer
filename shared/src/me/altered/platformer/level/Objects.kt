@@ -1,7 +1,7 @@
 package me.altered.platformer.level
 
-import me.altered.platformer.editor.Brush
-import me.altered.platformer.editor.emptyBrush
+import me.altered.platformer.engine.graphics.Brush
+import me.altered.platformer.engine.graphics.emptyBrush
 import me.altered.platformer.level.data.Ellipse
 import me.altered.platformer.level.data.Group
 import me.altered.platformer.level.data.Rectangle

@@ -2,8 +2,9 @@ package me.altered.platformer
 
 import me.altered.koml.Vector2f
 import me.altered.platformer.editor.EditorScene
-import me.altered.platformer.editor.linear
-import me.altered.platformer.editor.solid
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.graphics.linear
+import me.altered.platformer.engine.graphics.solid
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
@@ -12,10 +13,10 @@ import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.all
-import me.altered.platformer.level.ellipse
-import me.altered.platformer.level.group
 import me.altered.platformer.level.rectangle
 import me.altered.platformer.level.Player
+import me.altered.platformer.level.ellipse
+import me.altered.platformer.level.group
 import me.altered.platformer.level.world
 import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.animated
@@ -52,7 +53,7 @@ class MainScene : Node("main") {
                 0.0f at 0.0f,
                 25.0f at 1.0f with Easing.SineInOut,
             ),
-            fill = const(linear(-25.0f, 25.0f, 25.0f, -25.0f, 0xFFFA8072, 0xFFFCBFB8)),
+            fill = const(linear(-25.0f, 25.0f, 25.0f, -25.0f, listOf(Color(0xFFFA8072), Color(0xFFFCBFB8)))),
         )
         ellipse(
             name = "ellipse",

@@ -26,7 +26,7 @@ operator fun <T : Comparable<T>> Expression<T>.rangeTo(other: Expression<T>) = R
 
 operator fun Expression<Float>.rangeTo(other: Expression<Float>) = FloatRange(this, other)
 
-class FloatWithin(left: Expression<Float>, right: Expression<ClosedFloatingPointRange<Float>>) : Binary<Float, ClosedFloatingPointRange<Float>, Boolean>(left, right) {
+class FloatWithin(override val left: Expression<Float>, override val right: Expression<ClosedFloatingPointRange<Float>>) : Binary<Float, ClosedFloatingPointRange<Float>, Boolean>() {
     override fun transform(left: Float, right: ClosedFloatingPointRange<Float>): Boolean = left in right
     override fun toString(): String = "$left in $right"
 }

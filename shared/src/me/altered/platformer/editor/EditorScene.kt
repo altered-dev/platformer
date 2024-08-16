@@ -30,7 +30,9 @@ import me.altered.platformer.engine.ui.px
 import me.altered.platformer.engine.graphics.contains
 import me.altered.platformer.engine.graphics.drawOval
 import me.altered.platformer.engine.graphics.drawRect
+import me.altered.platformer.engine.graphics.emptyBrush
 import me.altered.platformer.engine.graphics.offset
+import me.altered.platformer.engine.graphics.solid
 import me.altered.platformer.engine.graphics.transform
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.logged

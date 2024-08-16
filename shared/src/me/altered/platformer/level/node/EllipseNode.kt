@@ -4,7 +4,7 @@ import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.koml.div
 import me.altered.koml.scaleAround
-import me.altered.platformer.editor.toShader
+import me.altered.platformer.engine.graphics.toShader
 import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.graphics.drawOval
