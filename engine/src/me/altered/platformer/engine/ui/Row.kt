@@ -9,9 +9,9 @@ import kotlin.math.min
 class Row(
     name: String = "Row",
     parent: Node? = null,
-    width: Size = wrap,
-    height: Size = expand,
-    padding: Insets = none,
+    width: Size = wrap(),
+    height: Size = expand(),
+    padding: Insets = padding(),
     anchor: Vector2f = Vector2f(0.0f, 0.0f),
     children: Iterable<Node> = emptyList(),
 ) : UiNode(name, parent, width, height, padding, anchor) {

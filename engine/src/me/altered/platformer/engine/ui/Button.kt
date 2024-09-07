@@ -15,13 +15,13 @@ class Button(
     parent: Node? = null,
     width: Size = 128.px,
     height: Size = 32.px,
-    padding: Insets = none,
+    padding: Insets = padding(),
     anchor: Vector2f = Vector2f(0.0f, 0.0f),
     var onClick: () -> Unit = {},
     enabled: Boolean = true,
 ) : UiNode(text, parent, width, height, padding, anchor) {
 
-    private val textNode = +Text(text, width = expand, height = wrap, anchor = Vector2f(0.5f, 0.5f))
+    private val textNode = +Text(text, width = expand(), height = wrap(), anchor = Vector2f(0.5f, 0.5f))
 
     var text by textNode::text
 

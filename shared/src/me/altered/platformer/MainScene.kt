@@ -12,7 +12,7 @@ import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
-import me.altered.platformer.engine.ui.all
+import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.level.rectangle
 import me.altered.platformer.level.Player
 import me.altered.platformer.level.ellipse
@@ -123,7 +123,7 @@ class MainScene : Node("main") {
 
     private val button = +Button(
         text = "hello world",
-        padding = all(16.0f),
+        padding = padding(16.0f),
         anchor = Vector2f(0.1f, 0.1f),
         onClick = { tree?.scene = EditorScene() }
     )

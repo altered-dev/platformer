@@ -16,9 +16,9 @@ import org.jetbrains.skia.shaper.Shaper
 class Text(
     text: String = "Text",
     parent: Node? = null,
-    width: Size = wrap,
-    height: Size = wrap,
-    padding: Insets = none,
+    width: Size = wrap(),
+    height: Size = wrap(),
+    padding: Insets = padding(),
     anchor: Vector2f = Vector2f(0.0f, 0.0f),
     color: Color = Color.Black,
 ) : UiNode(text, parent, width, height, padding, anchor) {

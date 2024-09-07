@@ -23,9 +23,6 @@ import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Box
 import me.altered.platformer.engine.ui.Text
-import me.altered.platformer.engine.ui.all
-import me.altered.platformer.engine.ui.each
-import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.px
 import me.altered.platformer.engine.graphics.contains
 import me.altered.platformer.engine.graphics.drawOval
@@ -34,6 +31,8 @@ import me.altered.platformer.engine.graphics.emptyBrush
 import me.altered.platformer.engine.graphics.offset
 import me.altered.platformer.engine.graphics.solid
 import me.altered.platformer.engine.graphics.transform
+import me.altered.platformer.engine.ui.expand
+import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.timeline.const
 import me.altered.platformer.engine.util.logged
 import me.altered.platformer.engine.util.observable
@@ -79,25 +78,25 @@ class EditorScene : Node2D("editor") {
     private val objPane = +Box(
         name = "objPane",
         width = 256.px,
-        height = expand,
-        padding = all(16.0f),
+        height = expand(),
+        padding = padding(16.0f),
         background = Color(0xFF333333),
     )
 
-    private val treeText = objPane + Text("", padding = each(left = 16.0f, top = 16.0f), color = Color.White)
+    private val treeText = objPane + Text("", padding = padding(left = 16.0f, top = 16.0f), color = Color.White)
 
     private val inspector = +Box(
         name = "inspector",
         width = 256.px,
-        height = expand,
-        padding = all(16.0f),
+        height = expand(),
+        padding = padding(16.0f),
         anchor = Vector2f(1.0f, 0.0f),
         background = Color(0xFF333333),
     )
-    private val scaleText = inspector + Text("scale: ${scale.x}", padding = each(top = 16.0f), color = Color.White)
-    private val timeText = inspector + Text("time: ${world.time}", padding = each(top = 40.0f), color = Color.White)
-    private val fpsText = inspector + Text("fps: $fps", padding = each(top = 64.0f), color = Color.White)
-    private val toolText = inspector + Text("tool: $tool", padding = each(top = 88.0f), color = Color.White)
+    private val scaleText = inspector + Text("scale: ${scale.x}", padding = padding(top = 16.0f), color = Color.White)
+    private val timeText = inspector + Text("time: ${world.time}", padding = padding(top = 40.0f), color = Color.White)
+    private val fpsText = inspector + Text("fps: $fps", padding = padding(top = 64.0f), color = Color.White)
+    private val toolText = inspector + Text("tool: $tool", padding = padding(top = 88.0f), color = Color.White)
 
     override fun ready() {
         world.position.set(

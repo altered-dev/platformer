@@ -31,6 +31,7 @@ class EllipseNode(
             sx = obj.width.eval(time),
             sy = obj.height.eval(time),
         )
+        // the toShader call is very expensive, needs caching
         fillPaint.shader = obj.fill.eval(time).toShader()
         strokePaint.shader = obj.stroke.eval(time).toShader()
         strokePaint.strokeWidth = obj.strokeWidth.eval(time)

@@ -12,9 +12,9 @@ import org.jetbrains.skia.PaintMode
 open class Box(
     name: String = "Box",
     parent: Node? = null,
-    width: Size = expand,
-    height: Size = expand,
-    padding: Insets = none,
+    width: Size = expand(),
+    height: Size = expand(),
+    padding: Insets = padding(),
     anchor: Vector2f = Vector2f(0.0f, 0.0f),
     // TODO: replace with Shader
     background: Color = Color.Transparent,

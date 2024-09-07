@@ -14,16 +14,16 @@ data class Insets(
         get() = left + right
 }
 
-val none: Insets
-    get() = Insets(0.0f, 0.0f, 0.0f, 0.0f)
+fun padding() = Insets(0.0f, 0.0f, 0.0f, 0.0f)
 
-fun all(size: Float) = Insets(size, size, size, size)
+fun padding(all: Float) = Insets(all, all, all, all)
 
-fun vertical(size: Float) = Insets(0.0f, size, 0.0f, size)
+fun padding(
+    horizontal: Float = 0.0f,
+    vertical: Float = 0.0f,
+) = Insets(horizontal, vertical, horizontal, vertical)
 
-fun horizontal(size: Float) = Insets(size, 0.0f, size, 0.0f)
-
-fun each(
+fun padding(
     left: Float = 0.0f,
     top: Float = 0.0f,
     right: Float = 0.0f,

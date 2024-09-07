@@ -4,19 +4,21 @@ import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.ui.Text
-import me.altered.platformer.engine.ui.each
 import me.altered.platformer.engine.graphics.drawCircle
 import me.altered.platformer.engine.graphics.scale
+import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.timeline.Easing
 import org.jetbrains.skia.Canvas
 
 class EasingScene : CanvasNode("easings") {
 
     private val texts = easings.mapIndexed { index, (name, easing) ->
-        +Text(name, padding = each(left = 16.0f + (index % 6) * 140.8f, top = 16.0f + (index / 6) * 192.0f))
+        +Text(name, padding = padding(left = 16.0f + (index % 6) * 140.8f, top = 16.0f + (index / 6) * 192.0f))
     }
 
     private val paint = Paint {
+        isAntiAlias = true
+        isDither = true
         color = Color.Black
     }
 

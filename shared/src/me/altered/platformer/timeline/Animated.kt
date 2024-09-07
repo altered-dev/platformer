@@ -11,12 +11,15 @@ import kotlin.jvm.JvmName
 /**
  * An expression defined by a set of keyframes, which are being interpolated between.
  *
- * @param keyframes a list of keyframes, **sorted by time**.
- * [ArrayList] is used because it is known to have random access.
+ * When the list of keyframes is immutable, the expression is considered stable.
  */
 @Serializable
 sealed class Animated<T> : Expression<T> {
 
+    /**
+     * The list of keyframes, **sorted by time**.
+     * [ArrayList] is used because it is known to have efficient random access.
+     */
     abstract val keyframes: ArrayList<Keyframe<T>>
 
     @Transient
@@ -46,7 +49,7 @@ sealed class Animated<T> : Expression<T> {
     private fun compute(time: Float): T {
         val (to, higher, easing) = keyframes[index]
         if (to <= time || index <= 0) return higher.eval(time)
-        val (from, lower, _) = keyframes[index - 1]
+        val (from, lower) = keyframes[index - 1]
         val t = easing.easeSafe(alerp(from, to, time))
         return animate(lower.eval(time), higher.eval(time), t)
     }

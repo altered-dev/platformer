@@ -14,9 +14,9 @@ import kotlin.math.min
 open class UiNode(
     name: String = "UiNode",
     parent: Node? = null,
-    var width: Size = expand,
-    var height: Size = expand,
-    var padding: Insets = none,
+    var width: Size = expand(),
+    var height: Size = expand(),
+    var padding: Insets = padding(),
     val anchor: Vector2f = Vector2f(0.0f, 0.0f),
 ) : CanvasNode(name, parent) {
 
