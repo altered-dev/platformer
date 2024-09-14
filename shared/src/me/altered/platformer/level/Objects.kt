@@ -17,11 +17,11 @@ import me.altered.platformer.timeline.const
  */
 inline fun world(
     name: String = "World",
-    size: Float = 1.0f,
-    offset: Vector2f = Vector2f(),
+    scale: Float = 1.0f,
+    position: Vector2f = Vector2f(),
     builder: WorldContext.() -> Unit,
 ): World {
-    return World(name, null, size, offset).apply(builder)
+    return World(name, null, scale, position).apply(builder)
 }
 
 fun ObjectContainer.rectangle(

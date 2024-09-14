@@ -4,8 +4,6 @@ import me.altered.koml.Vector2f
 import me.altered.platformer.editor.EditorScene
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.graphics.Color
-import me.altered.platformer.level.data.linear
-import me.altered.platformer.level.data.solid
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
@@ -14,27 +12,23 @@ import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Text
 import me.altered.platformer.engine.ui.padding
-import me.altered.platformer.level.rectangle
 import me.altered.platformer.level.Player
-import me.altered.platformer.level.ellipse
-import me.altered.platformer.level.group
+import me.altered.platformer.level.data.linear
+import me.altered.platformer.level.data.solid
+import me.altered.platformer.level.rectangle
 import me.altered.platformer.level.world
 import me.altered.platformer.timeline.Easing
 import me.altered.platformer.timeline.animated
 import me.altered.platformer.timeline.at
 import me.altered.platformer.timeline.const
 import me.altered.platformer.timeline.with
-import org.jetbrains.skia.Rect
 
 class MainScene : Node("main") {
 
     private var timeDirection = 0.0f
     private var fps = 0.0f
 
-    private val world = +world(
-        size = 0.05f,
-    ) {
-
+    private val world = +world {
         rectangle(
             name = "floor",
             x = const(0.0f),
@@ -69,8 +63,7 @@ class MainScene : Node("main") {
         )
     }
 
-    private val grid = world + Grid(Rect(-100.0f, -100.0f, 100.0f, 100.0f))
-
+    private val grid = world + Grid()
     private val player = world + Player()
 
     private val time = +Text("time: 0", anchor = Vector2f(0.05f, 0.05f))

@@ -11,14 +11,15 @@ import me.altered.platformer.level.node.eval
 class World(
     name: String = "World",
     parent: Node? = null,
-    size: Float = 1.0f,
-    offset: Vector2f = Vector2f(),
+    var scale: Float = 1.0f,
+    val position: Vector2f = Vector2f(),
 ) : Viewport(name, parent), WorldContext {
 
-    override var size: Float = size
-        get() = field * (window?.height?.toFloat() ?: 1.0f)
-
-    val position = offset
+    override var size: Float
+        get() = scale * (window?.height?.toFloat() ?: 1.0f) * 0.05f
+        set(value) {
+            scale = value * 20.0f / (window?.height?.toFloat() ?: 1.0f)
+        }
 
     override val offset: Vector2f
         get() = window?.let { window ->

@@ -1,20 +1,19 @@
 package me.altered.platformer.editor
 
+import me.altered.koml.Vector2f
+import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.graphics.Paint
-import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.graphics.drawLine
-import me.altered.platformer.engine.node.aspectRatio
+import me.altered.platformer.engine.node.Viewport
+import me.altered.platformer.engine.node2d.Node2D
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
-import org.jetbrains.skia.Rect
 import kotlin.math.roundToInt
 
 class Grid(
-    private val bounds: Rect,
+    var step: Float = 1.0f,
 ) : Node2D("grid") {
-
-    var step = 1.0f
 
     private val originPaint = Paint {
         isAntiAlias = true
@@ -31,19 +30,14 @@ class Grid(
     }
 
     override fun draw(canvas: Canvas) {
-        val height = viewport?.size ?: return
-        val width = height * (window?.aspectRatio ?: return)
+        val viewport = viewport ?: return
+        val window = window ?: return
+        val (left, top) = Vector2f().screenToWorld(viewport)
+        val (right, bottom) = Vector2f(window.width.toFloat(), window.height.toFloat()).screenToWorld(viewport)
 
         canvas
-            .drawLine(0.0f, height * -0.5f, 0.0f, height * 0.5f, originPaint)
-            .drawLine(width * -0.5f, 0.0f, width * 0.5f, 0.0f, originPaint)
-
-        val offset = -globalPosition
-
-        val left = width * -0.5f + offset.x
-        val right = width * 0.5f + offset.x
-        val top = height * -0.5f + offset.y
-        val bottom = height * 0.5f + offset.y
+            .drawLine(left, 0.0f, right, 0.0f, originPaint)
+            .drawLine(0.0f, top, 0.0f, bottom, originPaint)
 
         val step = step
         var dx = (left / step).roundToInt() * step
@@ -57,6 +51,10 @@ class Grid(
             dy += step
         }
         canvas.translate(-0.5f, -0.5f)
+    }
+
+    private fun Vector2fc.screenToWorld(world: Viewport): Vector2fc {
+        return (this - world.offset) / world.size
     }
 
     override fun debugDraw(canvas: Canvas) = Unit
