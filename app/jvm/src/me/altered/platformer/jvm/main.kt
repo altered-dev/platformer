@@ -15,7 +15,7 @@ fun main() {
             isVsyncEnabled = true,
         )
     )
-    val window = Window("Hello, world!", null, 20.0f)
+    val window = Window("Hello, world!")
     val tree = SceneTree(window)
     val listener = InputListener(tree)
     tree.scene = MainScene()
@@ -24,8 +24,9 @@ fun main() {
         listener.listenSkiaLayer(skiaLayer)
         window.attachSkiaLayer(skiaLayer)
         skiaLayer.needRedraw()
-        window.width = 1280
-        window.height = 720
+        window.setSize(1280, 720)
+//        window.width = 1280
+//        window.height = 720
 //        window.pack()
         window.isVisible = true
     }

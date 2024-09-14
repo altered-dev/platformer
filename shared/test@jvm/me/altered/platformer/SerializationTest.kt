@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import me.altered.platformer.engine.graphics.emptyBrush
+import me.altered.platformer.level.data.emptyBrush
 import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.timeline.Constant
 import me.altered.platformer.timeline.const

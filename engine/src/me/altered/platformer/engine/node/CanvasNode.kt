@@ -21,8 +21,8 @@ open class CanvasNode(
         protected val debugPaint = Paint {
             isAntiAlias = true
             mode = PaintMode.STROKE
-            strokeWidth = 2.0f
-            color = Color.Red.copy(a = 0x80)
+            strokeWidth = 0.0f
+            color = Color.Red//.copy(a = 0x80)
         }
     }
 }

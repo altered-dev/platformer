@@ -3,7 +3,7 @@ junit = "5.10.3"
 skiko = "0.8.8"
 coroutines = "1.8.0"
 serialization = "1.7.1"
-kotlin = "2.0.10"
+kotlin = "2.0.20"
 android = "8.5.0"
 
 [libraries]

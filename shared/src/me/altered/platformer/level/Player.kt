@@ -28,7 +28,7 @@ class Player(
     private val acceleration = Vector2f(0.0f, Gravity)
     private val velocity = Vector2f()
     private val input = Vector2f()
-    private val radius = 10.0f
+    private val radius = 0.5f
     private val rect = Rect(-radius, -radius, radius, radius)
 
     private val paint = Paint {
@@ -83,7 +83,7 @@ class Player(
         canvas.drawRect(rect, paint)
         canvas.translate(-position)
         lastCollisions.forEach { col ->
-            canvas.drawCircle(col.x, col.y, 2.0f, colPaint)
+            canvas.drawCircle(col.x, col.y, 0.05f, colPaint)
         }
     }
 
@@ -106,7 +106,7 @@ class Player(
             return if (abs(num) < Epsilon) 0.0f else withSign(num)
         }
 
-        private const val UNIT = 50.0f
+        private const val UNIT = 2.5f
 
         private const val Gravity = 36.0f * UNIT
 

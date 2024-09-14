@@ -3,9 +3,9 @@ package me.altered.platformer.timeline
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import me.altered.koml.lerp
-import me.altered.platformer.engine.graphics.Brush
-import me.altered.platformer.engine.graphics.emptyBrush
-import me.altered.platformer.engine.graphics.solid
+import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.emptyBrush
+import me.altered.platformer.level.data.solid
 import kotlin.jvm.JvmName
 
 /**
@@ -23,30 +23,17 @@ sealed class Animated<T> : Expression<T> {
     abstract val keyframes: ArrayList<Keyframe<T>>
 
     @Transient
-    private var lastTime = Float.NaN
-    @Transient
-    private var lastValue: T? = null
-    @Transient
     private var index = 0
 
     abstract fun animate(from: T, to: T, t: Float): T
 
-    @Suppress("UNCHECKED_CAST")
     final override fun eval(time: Float): T {
-        if (time == lastTime) return lastValue as T
-        lastTime = time
-
         while (index > 0 && keyframes[index - 1].time > time) {
             index--
         }
         while (index < keyframes.size - 1 && keyframes[index].time < time) {
             index++
         }
-
-        return compute(time).also { lastValue = it }
-    }
-
-    private fun compute(time: Float): T {
         val (to, higher, easing) = keyframes[index]
         if (to <= time || index <= 0) return higher.eval(time)
         val (from, lower) = keyframes[index - 1]

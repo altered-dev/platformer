@@ -27,9 +27,9 @@ import me.altered.platformer.engine.ui.px
 import me.altered.platformer.engine.graphics.contains
 import me.altered.platformer.engine.graphics.drawOval
 import me.altered.platformer.engine.graphics.drawRect
-import me.altered.platformer.engine.graphics.emptyBrush
+import me.altered.platformer.level.data.emptyBrush
 import me.altered.platformer.engine.graphics.offset
-import me.altered.platformer.engine.graphics.solid
+import me.altered.platformer.level.data.solid
 import me.altered.platformer.engine.graphics.transform
 import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.padding
@@ -99,7 +99,7 @@ class EditorScene : Node2D("editor") {
     private val toolText = inspector + Text("tool: $tool", padding = padding(top = 88.0f), color = Color.White)
 
     override fun ready() {
-        world.position.set(
+        world.offset.set(
             x = (window?.width ?: 0) * 0.25f,
             y = (window?.height ?: 0) * 0.75f,
         )
@@ -145,25 +145,25 @@ class EditorScene : Node2D("editor") {
             event scrolledWith Modifier.Control -> {
                 val oldPos = mousePos.screenToWorld()
                 when {
-                    event.dy < 0 -> world.scale *= 1.1f
-                    event.dy > 0 -> world.scale /= 1.1f
+                    event.dy < 0 -> world.size *= 1.1f
+                    event.dy > 0 -> world.size /= 1.1f
                 }
                 val newPos = mousePos.screenToWorld()
-                world.position += (newPos - oldPos) * world.scale
+                world.offset += (newPos - oldPos) * world.size
             }
             event.scrolled() -> {
-                world.position.x += event.dx
-                world.position.y += event.dy
+                world.offset.x += event.dx
+                world.offset.y += event.dy
             }
             event pressed Modifier.Control + Key.N0 -> {
-                world.scale.set(1.0f, 1.0f)
+                world.size = 1.0f
             }
 
             // objects
             event.cursorMoved() -> {
                 if (middleDragging) {
-                    world.position.x += event.x - mousePos.x
-                    world.position.y += event.y - mousePos.y
+                    world.offset.x += event.x - mousePos.x
+                    world.offset.y += event.y - mousePos.y
                 }
                 mousePos.set(event.x, event.y)
                 hovered = world.objects.findLast { mousePos.screenToWorld() in it.bounds.offset(it.position) }
@@ -195,7 +195,7 @@ class EditorScene : Node2D("editor") {
     override fun update(delta: Float) {
         fps = 1.0f / delta
         world.time += timeDirection * delta
-        scaleText.text = "scale: ${world.scale.x}"
+        scaleText.text = "scale: ${world.size}"
         timeText.text = "time: ${world.time}"
     }
 
@@ -322,11 +322,11 @@ class EditorScene : Node2D("editor") {
     }
 
     private fun Vector2fc.screenToWorld(): Vector2fc {
-        return (this - world.position) / world.scale
+        return (this - world.offset) / world.size
     }
 
     private fun Vector2fc.worldToScreen(): Vector2fc {
-        return this * world.scale + world.position
+        return this * world.size + world.offset
     }
 
     enum class Tool { Pointer, Rectangle, Ellipse }

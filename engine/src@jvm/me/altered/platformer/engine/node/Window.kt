@@ -30,12 +30,14 @@ actual class Window actual constructor(
         get() = frame.isVisible
         set(value) { frame.isVisible = value }
 
+    fun setSize(width: Int, height: Int) = frame.setSize(width, height)
+
     actual var width: Int
-        get() = frame.width
+        get() = frame.contentPane.width
         set(value) = frame.setSize(value, height)
 
     actual var height: Int
-        get() = frame.height
+        get() = frame.contentPane.height
         set(value) = frame.setSize(width, value)
 
     actual fun attachSkiaLayer(layer: SkiaLayer) {

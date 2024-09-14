@@ -13,3 +13,6 @@ private fun StringBuilder.prettyString(node: Node, indent: Int) {
 }
 
 fun prettyPrint(node: Node) = Logger.d(node.toString(), prettyString(node))
+
+val Window.aspectRatio: Float
+    get() = width.toFloat() / height

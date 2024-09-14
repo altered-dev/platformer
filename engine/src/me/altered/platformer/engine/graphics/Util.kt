@@ -3,6 +3,7 @@
 package me.altered.platformer.engine.graphics
 
 import me.altered.koml.Vector2fc
+import me.altered.platformer.engine.node.Viewport
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Insets
 import org.jetbrains.skia.Canvas
@@ -41,6 +42,10 @@ fun Canvas.transform(node: Node2D) = this
     .rotate(node.rotation)
     .scale(node.scale)
     .skew(node.skew)
+
+fun Canvas.transform(node: Viewport) = this
+    .translate(node.offset)
+    .scale(node.size)
 
 fun Rect.offset(vec: Vector2fc) = offset(vec.x, vec.y)
 

@@ -1,7 +1,8 @@
-package me.altered.platformer.engine.graphics
+package me.altered.platformer.level.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.altered.platformer.engine.graphics.Color
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Shader

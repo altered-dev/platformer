@@ -12,7 +12,7 @@ import org.jetbrains.skiko.SkiaLayer
 expect class Window(
     name: String = "Window",
     parent: Node? = null,
-    viewportSize: Float,
+    viewportSize: Float = 1.0f,
     offset: Vector2f = Vector2f(),
 ) : Viewport {
 

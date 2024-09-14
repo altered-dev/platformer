@@ -1,7 +1,8 @@
 package me.altered.platformer.level
 
-import me.altered.platformer.engine.graphics.Brush
-import me.altered.platformer.engine.graphics.emptyBrush
+import me.altered.koml.Vector2f
+import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.emptyBrush
 import me.altered.platformer.level.data.Ellipse
 import me.altered.platformer.level.data.Group
 import me.altered.platformer.level.data.Rectangle
@@ -14,8 +15,13 @@ import me.altered.platformer.timeline.const
 /**
  * Creates a [World] object, adding objects specified in the builder.
  */
-inline fun world(name: String = "World", builder: WorldContext.() -> Unit): World {
-    return World(name).apply(builder)
+inline fun world(
+    name: String = "World",
+    size: Float = 1.0f,
+    offset: Vector2f = Vector2f(),
+    builder: WorldContext.() -> Unit,
+): World {
+    return World(name, null, size, offset).apply(builder)
 }
 
 fun ObjectContainer.rectangle(

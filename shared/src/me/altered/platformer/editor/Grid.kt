@@ -4,6 +4,7 @@ import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.graphics.drawLine
+import me.altered.platformer.engine.node.aspectRatio
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
@@ -12,6 +13,8 @@ import kotlin.math.roundToInt
 class Grid(
     private val bounds: Rect,
 ) : Node2D("grid") {
+
+    var step = 1.0f
 
     private val originPaint = Paint {
         isAntiAlias = true
@@ -28,20 +31,21 @@ class Grid(
     }
 
     override fun draw(canvas: Canvas) {
-        val offset = -globalPosition
-        val scale = globalScale
-
-        val left = offset.x / scale.x
-        val right = (this.bounds.width + offset.x) / scale.x
-        val top = offset.y / scale.y
-        val bottom = (this.bounds.height + offset.y) / scale.y
+        val height = viewport?.size ?: return
+        val width = height * (window?.aspectRatio ?: return)
 
         canvas
-            .translate(0.5f, 0.5f)
-            .drawLine(left, 0.0f, right, 0.0f, originPaint)
-            .drawLine(0.0f, top, 0.0f, bottom, originPaint)
+            .drawLine(0.0f, height * -0.5f, 0.0f, height * 0.5f, originPaint)
+            .drawLine(width * -0.5f, 0.0f, width * 0.5f, 0.0f, originPaint)
 
-        val step = 50.0f
+        val offset = -globalPosition
+
+        val left = width * -0.5f + offset.x
+        val right = width * 0.5f + offset.x
+        val top = height * -0.5f + offset.y
+        val bottom = height * 0.5f + offset.y
+
+        val step = step
         var dx = (left / step).roundToInt() * step
         while (dx < right) {
             canvas.drawLine(dx, top, dx, bottom, gridPaint)
@@ -54,4 +58,6 @@ class Grid(
         }
         canvas.translate(-0.5f, -0.5f)
     }
+
+    override fun debugDraw(canvas: Canvas) = Unit
 }

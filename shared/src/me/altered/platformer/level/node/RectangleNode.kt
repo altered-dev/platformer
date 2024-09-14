@@ -2,11 +2,12 @@ package me.altered.platformer.level.node
 
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
-import me.altered.platformer.engine.graphics.toShader
+import me.altered.platformer.level.data.toShader
 import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.graphics.drawRRect
 import me.altered.platformer.engine.graphics.offset
+import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Rectangle
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
@@ -21,21 +22,21 @@ class RectangleNode(
     private val strokePaint = Paint { mode = PaintMode.STROKE }
     private var cornerRadius = 0.0f
 
-    override fun eval(time: Float) {
+    override fun TimeContext.eval() {
         val obj = obj ?: return
         position.set(
-            x = obj.x.eval(time),
-            y = obj.y.eval(time),
+            x = obj.x.value,
+            y = obj.y.value,
         )
-        rotation = obj.rotation.eval(time)
+        rotation = obj.rotation.value
         bounds = baseBounds.scale(
-            sx = obj.width.eval(time),
-            sy = obj.height.eval(time),
+            sx = obj.width.value,
+            sy = obj.height.value,
         )
-        cornerRadius = obj.cornerRadius.eval(time)
-        fillPaint.shader = obj.fill.eval(time).toShader()
-        strokePaint.shader = obj.stroke.eval(time).toShader()
-        strokePaint.strokeWidth = obj.strokeWidth.eval(time)
+        cornerRadius = obj.cornerRadius.value
+        fillPaint.shader = obj.fill.value.toShader()
+        strokePaint.shader = obj.stroke.value.toShader()
+        strokePaint.strokeWidth = obj.strokeWidth.value
     }
 
     override fun collide(position: Vector2fc, radius: Float, onCollision: (point: Vector2fc) -> Unit) {

@@ -29,10 +29,6 @@ value class Constant<out T>(private val value: T) : Expression<T> {
 
         override val descriptor: SerialDescriptor = serializer.descriptor
 
-        init {
-            println(dataSerializer)
-        }
-
         override fun serialize(encoder: Encoder, value: Constant<T>) {
             encoder.encodeSerializableValue(serializer, Surrogate(value.value))
         }
