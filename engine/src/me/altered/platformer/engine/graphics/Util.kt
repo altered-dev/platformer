@@ -5,7 +5,7 @@ package me.altered.platformer.engine.graphics
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.node.Viewport
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.ui.Insets
+import me.altered.platformer.engine.ui.UiNode
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.RRect
 import org.jetbrains.skia.Rect
@@ -47,13 +47,10 @@ fun Canvas.transform(node: Viewport) = this
     .translate(node.offset)
     .scale(node.size)
 
+fun Canvas.transform(node: UiNode) = this
+    .translate(node.bounds.left, node.bounds.top)
+
 fun Rect.offset(vec: Vector2fc) = offset(vec.x, vec.y)
-
-fun Rect.inset(insets: Insets) =
-    Rect.makeLTRB(left + insets.left, top + insets.top, right - insets.right, bottom - insets.bottom)
-
-fun Rect.outset(insets: Insets) =
-    Rect.makeLTRB(left - insets.left, top - insets.top, right + insets.right, bottom + insets.bottom)
 
 fun Rect.contains(x: Float, y: Float): Boolean {
     return x in left..right && y in top..bottom

@@ -2,10 +2,7 @@ package me.altered.platformer.editor
 
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
-import me.altered.platformer.engine.graphics.contains
-import me.altered.platformer.engine.graphics.drawCircle
-import me.altered.platformer.engine.graphics.offset
-import me.altered.platformer.engine.graphics.transform
+import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Middle
 import me.altered.platformer.engine.input.Modifier
@@ -15,27 +12,69 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.ui.Text
-import me.altered.platformer.engine.util.logged
+import me.altered.platformer.engine.ui.Box
+import me.altered.platformer.engine.ui.Column
+import me.altered.platformer.engine.ui.Row
+import me.altered.platformer.engine.ui.center
+import me.altered.platformer.engine.ui.end
+import me.altered.platformer.engine.ui.expand
+import me.altered.platformer.engine.ui.padding
+import me.altered.platformer.engine.ui.px
+import me.altered.platformer.engine.ui.start
+import me.altered.platformer.engine.ui.wrap
 import me.altered.platformer.level.World
-import me.altered.platformer.level.node.ObjectNode
-import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Shader
 
 class EditorScene : Node2D("editor") {
 
-    private var timeDirection = 0.0f
     private val mousePos = Vector2f()
-    private var leftDragging = false
     private var middleDragging = false
-    private var lastStart: Vector2f? = null
 
     private val world = +World()
     private val grid = world + Grid()
 
-    private var hovered: ObjectNode<*>? by logged(null)
-    private var selected: ObjectNode<*>? by logged(null)
+    private val row = +Row(
+        name = "test",
+        width = 500.px,
+        height = wrap(),
+        padding = padding(all = 10.0f),
+        horizontalAlignment = end,
+        verticalAlignment = center,
+        spacing = 10.0f,
+        fill = Shader.makeColor(Color.Blue.value),
+    )
 
-    private val offsetText = +Text("offset: ")
+    private val child1 = row + Box(
+        name = "child1",
+        width = 100.px,
+        height = expand(),
+        fill = Shader.makeColor(Color.Red.value),
+    )
+
+    private val column = row + Column(
+        name = "column",
+        width = 100.px,
+        height = 500.px,
+        padding = padding(all = 10.0f),
+        horizontalAlignment = center,
+        verticalAlignment = center,
+        spacing = 50.0f,
+        fill = Shader.makeColor(Color.Red.value),
+    )
+
+    private val child2 = column + Box(
+        name = "child2",
+        width = expand(),
+        height = 200.px,
+        fill = Shader.makeColor(Color.Green.value),
+    )
+
+    private val child3 = column + Box(
+        name = "child3",
+        width = expand(fraction = 0.2f),
+        height = 100.px,
+        fill = Shader.makeColor(Color.Green.value),
+    )
 
     override fun input(event: InputEvent) {
         when {
@@ -51,27 +90,16 @@ class EditorScene : Node2D("editor") {
                 }
                 val newPos = mousePos.screenToWorld()
                 world.position += (newPos - oldPos) * world.size
-                offsetText.text = "offset: ${world.position} size: ${world.size}"
             }
             event.cursorMoved() -> {
                 if (middleDragging) {
                     world.position.x += event.x - mousePos.x
                     world.position.y += event.y - mousePos.y
-                    offsetText.text = "offset: ${world.position} size: ${world.size}"
                 }
                 mousePos.set(event.x, event.y)
-                hovered = world.objects.findLast { mousePos.screenToWorld() in it.bounds.offset(it.position) }
                 middleDragging
             }
         }
-    }
-
-    override fun draw(canvas: Canvas) {
-//        canvas.drawCircle(mousePos.x, mousePos.y, 2.0f, debugPaint)
-
-        canvas.transform(world)
-        val mousePos = mousePos.screenToWorld()
-        canvas.drawCircle(mousePos.x, mousePos.y, 0.05f, debugPaint)
     }
 
     private fun Vector2fc.screenToWorld(): Vector2fc {

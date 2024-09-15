@@ -9,14 +9,15 @@ import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import kotlin.math.max
 
-class Box(
-    name: String = "Box",
+class Column(
+    name: String = "Row",
     parent: Node? = null,
     var width: Size = expand(),
     var height: Size = expand(),
     var padding: Insets = padding(),
     var horizontalAlignment: Alignment = start,
     var verticalAlignment: Alignment = start,
+    var spacing: Float = 0.0f,
     fill: Shader = Shader.makeEmpty(),
     stroke: Shader = Shader.makeEmpty(),
     strokeWidth: Float = 0.0f,
@@ -41,33 +42,33 @@ class Box(
         var (measuredHeight, childHeight) = measureSelf(this.height, height, padding.vertical)
 
         var maxWidth = 0.0f
-        var maxHeight = 0.0f
+        var totalHeight = 0.0f
 
-        val measured = children.map { child ->
-            if (child !is UiNode) return@map null
+        val measured = uiChildren.map { child ->
             val (w, h) = child.measure(childWidth, childHeight)
             maxWidth = max(maxWidth, w)
-            maxHeight = max(maxHeight, h)
+            totalHeight += h
             w to h
-        }
+        }.toList()
+        totalHeight += spacing * (measured.size - 1).coerceAtLeast(0)
 
         wrapSelf(this.width, maxWidth, padding.horizontal)?.let { measuredWidth = it }
-        wrapSelf(this.height, maxHeight, padding.vertical)?.let { measuredHeight = it }
+        wrapSelf(this.height, totalHeight, padding.vertical)?.let { measuredHeight = it }
 
-        children.forEachIndexed { index, child ->
-            if (child !is UiNode) return@forEachIndexed
-            val (w, h) = measured[index] ?: return@forEachIndexed
+        var y = when (verticalAlignment) {
+            Alignment.Start -> padding.top
+            Alignment.Center -> (measuredHeight + padding.top - padding.bottom - totalHeight) * 0.5f
+            Alignment.End -> measuredHeight - padding.bottom - totalHeight
+        }
+        uiChildren.forEachIndexed { index, child ->
+            val (w, h) = measured[index]
             val x = when (horizontalAlignment) {
                 Alignment.Start -> padding.left
                 Alignment.Center -> (measuredWidth + padding.left - padding.right - w) * 0.5f
                 Alignment.End -> measuredWidth - padding.right - w
             }
-            val y = when (verticalAlignment) {
-                Alignment.Start -> padding.top
-                Alignment.Center -> (measuredHeight + padding.top - padding.bottom - h) * 0.5f
-                Alignment.End -> measuredHeight - padding.bottom - h
-            }
             child.bounds = Rect.makeXYWH(x, y, w, h)
+            y += h + spacing
         }
 
         isMeasured = true

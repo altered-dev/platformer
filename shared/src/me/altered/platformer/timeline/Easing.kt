@@ -2,6 +2,7 @@ package me.altered.platformer.timeline
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -32,6 +33,39 @@ sealed interface Easing {
      * @see ease
      */
     fun easeSafe(value: Float): Float = ease(value.coerceIn(0.0f, 1.0f))
+
+    @Serializable
+    @SerialName("bezier")
+    data class Bezier(
+        val a: Float,
+        val b: Float,
+        val c: Float,
+        val d: Float,
+    ) : Easing {
+        override fun ease(value: Float): Float {
+            if (value <= 0.0f || value >= 1.0f) return value
+            var start = 0.0f
+            var end = 1.0f
+            while (true) {
+                val mid = (start + end) * 0.5f
+                val est = evaluateCubic(a, c, mid)
+                if ((value - est).absoluteValue < 0.001f) {
+                    return evaluateCubic(b, d, mid)
+                }
+                if (est < value) {
+                    start = mid
+                } else {
+                    end = mid
+                }
+            }
+        }
+
+        private fun evaluateCubic(a: Float, b: Float, m: Float): Float {
+            return 3 * a * (1 - m) * (1 - m) * m +
+                    3 * b * (1 - m) * m * m +
+                    m * m * m
+        }
+    }
 
     @Serializable
     @SerialName("linear")

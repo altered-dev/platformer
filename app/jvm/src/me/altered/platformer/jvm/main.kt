@@ -1,6 +1,6 @@
 package me.altered.platformer.jvm
 
-import me.altered.platformer.MainScene
+import me.altered.platformer.editor.EditorScene
 import me.altered.platformer.engine.input.InputListener
 import me.altered.platformer.engine.loop.SceneTree
 import me.altered.platformer.engine.node.Window
@@ -15,10 +15,10 @@ fun main() {
             isVsyncEnabled = true,
         )
     )
-    val window = Window("Hello, world!")
+    val window = Window("very platformer game indeed")
     val tree = SceneTree(window)
     val listener = InputListener(tree)
-    tree.scene = MainScene()
+    tree.scene = EditorScene()
     skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, tree)
     invokeLater {
         listener.listenSkiaLayer(skiaLayer)

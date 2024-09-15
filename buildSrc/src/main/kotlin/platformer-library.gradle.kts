@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     `kotlin-multiplatform`
     `android-library`
@@ -18,6 +22,10 @@ kotlin {
     iosArm64()
     iosX64()
     iosSimulatorArm64()
+
+    compilerOptions.freeCompilerArgs.addAll(
+        "-Xexpect-actual-classes",
+    )
 
     sourceSets {
         commonMain { platformerLayout() }

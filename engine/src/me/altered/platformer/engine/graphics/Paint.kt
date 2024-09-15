@@ -52,7 +52,7 @@ interface Paint {
     fun hasNothingToDraw(): Boolean
 }
 
-inline fun Paint(builder: Paint.() -> Unit): Paint = PaintDelegate(org.jetbrains.skia.Paint()).apply(builder)
+inline fun Paint(builder: Paint.() -> Unit = {}): Paint = PaintDelegate(org.jetbrains.skia.Paint()).apply(builder)
 
 @JvmInline
 value class PaintDelegate(override val nativePaint: org.jetbrains.skia.Paint) : Paint {

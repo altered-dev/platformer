@@ -1,6 +1,5 @@
 package me.altered.platformer
 
-import me.altered.koml.Vector2f
 import me.altered.platformer.editor.EditorScene
 import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.graphics.Color
@@ -9,9 +8,6 @@ import me.altered.platformer.engine.input.Key
 import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.ui.Button
-import me.altered.platformer.engine.ui.Text
-import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.level.Player
 import me.altered.platformer.level.data.linear
 import me.altered.platformer.level.data.solid
@@ -66,21 +62,9 @@ class MainScene : Node("main") {
     private val grid = world + Grid()
     private val player = world + Player()
 
-    private val time = +Text("time: 0", anchor = Vector2f(0.05f, 0.05f))
-    private val fpsText = +Text("fps: 0", anchor = Vector2f(0.05f, 0.075f))
-
-    private val button = +Button(
-        text = "hello world",
-        padding = padding(16.0f),
-        anchor = Vector2f(0.1f, 0.1f),
-        onClick = { tree?.scene = EditorScene() }
-    )
-
     override fun update(delta: Float) {
         fps = 1.0f / delta
         world.time = (world.time + timeDirection * delta).coerceAtLeast(0.0f)
-        time.text = "time: ${world.time}"
-        fpsText.text = "fps: $fps"
     }
 
     override fun input(event: InputEvent) {
@@ -91,9 +75,6 @@ class MainScene : Node("main") {
             event released Key.Left -> timeDirection += 1
             event pressed Key.E -> {
                 tree?.scene = EditorScene()
-            }
-            event pressed Key.Q -> {
-                tree?.scene = EasingScene()
             }
             event pressed Key.T -> {
                 player.position.set(0.0f, 0.0f)

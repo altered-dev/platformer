@@ -8,9 +8,9 @@ import me.altered.platformer.engine.node.Viewport
 import me.altered.platformer.engine.node.Window
 import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.ui.UiNode
 import me.altered.platformer.engine.util.currentTimeMillis
 import me.altered.platformer.engine.graphics.transform
+import me.altered.platformer.engine.ui.UiNode
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate
@@ -101,9 +101,11 @@ open class SceneTree(
             is Viewport -> canvas.transform(node)
             is Node2D -> canvas.transform(node)
             is UiNode -> {
-                if (node.needsLayout || (bounds != currentBounds && node.parent !is UiNode)) {
-                    node.layout(bounds)
+                if (!node.isMeasured) {
+                    val (w, h) = node.measure(bounds.width, bounds.height)
+                    node.bounds = Rect.makeWH(w, h)
                 }
+                canvas.transform(node)
             }
         }
 

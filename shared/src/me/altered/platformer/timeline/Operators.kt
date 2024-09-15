@@ -3,7 +3,7 @@ package me.altered.platformer.timeline
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Unary<T, TR> : Expression<TR> {
+sealed class Unary<T, out TR> : Expression<TR> {
     abstract val expression: Expression<T>
 
     abstract fun transform(value: T): TR
@@ -12,7 +12,7 @@ sealed class Unary<T, TR> : Expression<TR> {
 }
 
 @Serializable
-sealed class Binary<L, R, T> : Expression<T> {
+sealed class Binary<L, R, out T> : Expression<T> {
     abstract val left: Expression<L>
     abstract val right: Expression<R>
 
