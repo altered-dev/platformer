@@ -1,40 +1,24 @@
 package me.altered.platformer.engine.ui
 
-import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.graphics.drawRect
 import me.altered.platformer.engine.node.Node
 import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import kotlin.math.max
 
-class Box(
+open class Box(
     name: String = "Box",
     parent: Node? = null,
-    var width: Size = expand(),
-    var height: Size = expand(),
+    width: Size = expand(),
+    height: Size = expand(),
     var padding: Insets = padding(),
     var horizontalAlignment: Alignment = start,
     var verticalAlignment: Alignment = start,
     fill: Shader = Shader.makeEmpty(),
     stroke: Shader = Shader.makeEmpty(),
     strokeWidth: Float = 0.0f,
-) : UiNode(name, parent) {
-
-    private val fillPaint = Paint {
-        mode = PaintMode.FILL
-        shader = fill
-    }
-    private val strokePaint = Paint {
-        mode = PaintMode.STROKE
-        shader = stroke
-        this.strokeWidth = strokeWidth
-    }
-
-    var fill by fillPaint::shader
-    var stroke by strokePaint::shader
-    var strokeWidth by strokePaint::strokeWidth
+) : UiNode(name, parent, width, height, fill, stroke, strokeWidth) {
 
     override fun measure(width: Float, height: Float): Pair<Float, Float> {
         var (measuredWidth, childWidth) = measureSelf(this.width, width, padding.horizontal)
@@ -68,6 +52,7 @@ class Box(
                 Alignment.End -> measuredHeight - padding.bottom - h
             }
             child.bounds = Rect.makeXYWH(x, y, w, h)
+            child.globalBounds = child.bounds.offset(globalBounds.left, globalBounds.top)
         }
 
         isMeasured = true

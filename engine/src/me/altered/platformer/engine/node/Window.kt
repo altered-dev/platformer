@@ -1,6 +1,7 @@
 package me.altered.platformer.engine.node
 
 import me.altered.koml.Vector2f
+import me.altered.platformer.engine.graphics.Color
 import org.jetbrains.skiko.SkiaLayer
 
 /**
@@ -9,12 +10,7 @@ import org.jetbrains.skiko.SkiaLayer
  *
  * The node that controls the game's window. Usually is the tree root above the scene.
  */
-expect class Window(
-    name: String = "Window",
-    parent: Node? = null,
-    viewportSize: Float = 1.0f,
-    offset: Vector2f = Vector2f(),
-) : Viewport {
+expect class Window : Viewport {
 
     override val window: Window
 
@@ -36,6 +32,11 @@ expect class Window(
      * TODO: fix the difference on the platforms
      */
     var height: Int
+
+    /**
+     * The clear color of the canvas.
+     */
+    var background: Color
 
     /**
      * Provides the Skia layer to the platform's application framework.

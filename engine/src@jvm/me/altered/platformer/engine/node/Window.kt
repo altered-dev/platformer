@@ -1,15 +1,17 @@
 package me.altered.platformer.engine.node
 
 import me.altered.koml.Vector2f
+import me.altered.platformer.engine.graphics.Color
 import org.jetbrains.skiko.SkiaLayer
 import javax.swing.JFrame
 import javax.swing.WindowConstants
 
-actual class Window actual constructor(
-    name: String,
-    parent: Node?,
-    viewportSize: Float,
-    offset: Vector2f,
+actual class Window(
+    name: String = "Window",
+    parent: Node? = null,
+    viewportSize: Float = 1.0f,
+    offset: Vector2f = Vector2f(),
+    actual var background: Color = Color.White,
 ) : Viewport(name, parent, viewportSize, offset) {
 
     private val frame = JFrame(name).apply {

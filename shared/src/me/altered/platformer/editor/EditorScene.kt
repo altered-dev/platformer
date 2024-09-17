@@ -13,6 +13,7 @@ import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.engine.ui.Box
+import me.altered.platformer.engine.ui.Button
 import me.altered.platformer.engine.ui.Column
 import me.altered.platformer.engine.ui.Row
 import me.altered.platformer.engine.ui.center
@@ -22,6 +23,7 @@ import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.engine.ui.px
 import me.altered.platformer.engine.ui.start
 import me.altered.platformer.engine.ui.wrap
+import me.altered.platformer.engine.util.Logger
 import me.altered.platformer.level.World
 import org.jetbrains.skia.Shader
 
@@ -69,11 +71,11 @@ class EditorScene : Node2D("editor") {
         fill = Shader.makeColor(Color.Green.value),
     )
 
-    private val child3 = column + Box(
-        name = "child3",
-        width = expand(fraction = 0.2f),
-        height = 100.px,
-        fill = Shader.makeColor(Color.Green.value),
+    private val button = column + Button(
+        name = "Click me!",
+        onClick = { Logger.d(TAG, "omg i clicked") },
+        padding = padding(all = 10.0f),
+        fill = Shader.makeColor(Color.White.value),
     )
 
     override fun input(event: InputEvent) {
@@ -108,5 +110,10 @@ class EditorScene : Node2D("editor") {
 
     private fun Vector2fc.worldToScreen(): Vector2fc {
         return this * world.size + world.offset
+    }
+
+    companion object {
+
+        private const val TAG = "EditorScene"
     }
 }

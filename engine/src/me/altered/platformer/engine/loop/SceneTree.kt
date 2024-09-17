@@ -1,5 +1,6 @@
 package me.altered.platformer.engine.loop
 
+import me.altered.platformer.engine.graphics.clear
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
 import me.altered.platformer.engine.node.CanvasNode
@@ -67,7 +68,7 @@ open class SceneTree(
         if (targetFps <= 0 || deltaFps >= 1) {
             update((now - frameTime) * 0.001f, scene)
             frameTime = now
-            canvas.clear(0xFFFFFFFF.toInt())
+            canvas.clear(root.background)
             val bounds = Rect.makeWH(width.toFloat(), height.toFloat())
             draw(canvas, bounds, scene)
             currentBounds = bounds
@@ -104,6 +105,7 @@ open class SceneTree(
                 if (!node.isMeasured) {
                     val (w, h) = node.measure(bounds.width, bounds.height)
                     node.bounds = Rect.makeWH(w, h)
+                    node.globalBounds = node.bounds
                 }
                 canvas.transform(node)
             }
