@@ -19,9 +19,7 @@ open class Button(
     strokeWidth: Float = 0.0f,
 ) : Row(name, parent, width, height, padding, horizontalAlignment, verticalAlignment, spacing, fill, stroke, strokeWidth) {
 
-    private val text = +Text(name, fill = Shader.makeColor(Color.Black.value), stroke = Shader.makeColor(Color.Black.value)).apply {
-        maxLines = 1
-    }
+    private val text = +Text(name, fill = Shader.makeColor(Color.Black.value))
 
     override var name by text::name
 

@@ -1,7 +1,6 @@
 package me.altered.platformer.editor
 
 import me.altered.koml.Vector2f
-import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Middle
 import me.altered.platformer.engine.input.Modifier
@@ -11,19 +10,7 @@ import me.altered.platformer.engine.input.pressed
 import me.altered.platformer.engine.input.released
 import me.altered.platformer.engine.input.scrolledWith
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.ui.Box
-import me.altered.platformer.engine.ui.Button
-import me.altered.platformer.engine.ui.Column
-import me.altered.platformer.engine.ui.Row
-import me.altered.platformer.engine.ui.center
-import me.altered.platformer.engine.ui.end
-import me.altered.platformer.engine.ui.expand
-import me.altered.platformer.engine.ui.padding
-import me.altered.platformer.engine.ui.px
-import me.altered.platformer.engine.ui.wrap
-import me.altered.platformer.engine.util.Logger
 import me.altered.platformer.level.World
-import org.jetbrains.skia.Shader
 
 class EditorScene : Node2D("editor") {
 
@@ -33,51 +20,7 @@ class EditorScene : Node2D("editor") {
     private val world = +World()
     private val grid = world + Grid()
 
-    private val row = +Row(
-        name = "test",
-        width = 500.px,
-        height = wrap(),
-        padding = padding(all = 10.0f),
-        horizontalAlignment = end,
-        verticalAlignment = center,
-        spacing = 10.0f,
-        fill = Shader.makeColor(Color.Blue.value),
-    )
-
-    private val child1 = row + Box(
-        name = "child1",
-        width = 100.px,
-        height = expand(),
-        fill = Shader.makeColor(Color.Red.value),
-    )
-
-    private val column = row + Column(
-        name = "column",
-        width = 100.px,
-        height = 500.px,
-        padding = padding(all = 10.0f),
-        horizontalAlignment = center,
-        verticalAlignment = center,
-        spacing = 50.0f,
-        fill = Shader.makeColor(Color.Red.value),
-    )
-
-    private val child2 = column + Box(
-        name = "child2",
-        width = expand(),
-        height = 200.px,
-        fill = Shader.makeColor(Color.Green.value),
-    )
-
-    private val button = column + Button(
-        name = "Click me!",
-        onClick = { button ->
-            Logger.d(TAG, "omg i clicked")
-            button.name = "Clicked!"
-        },
-        padding = padding(all = 10.0f),
-        fill = Shader.makeColor(Color.Green.value),
-    )
+    private val topPanel = +TopPanel()
 
     override fun input(event: InputEvent) {
         when {
