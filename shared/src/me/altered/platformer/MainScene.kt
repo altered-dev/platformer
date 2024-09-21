@@ -13,11 +13,11 @@ import me.altered.platformer.level.data.linear
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.rectangle
 import me.altered.platformer.level.world
-import me.altered.platformer.timeline.Easing
-import me.altered.platformer.timeline.animated
-import me.altered.platformer.timeline.at
-import me.altered.platformer.timeline.const
-import me.altered.platformer.timeline.with
+import me.altered.platformer.expression.Easing
+import me.altered.platformer.expression.animated
+import me.altered.platformer.expression.at
+import me.altered.platformer.expression.const
+import me.altered.platformer.expression.with
 
 class MainScene : Node("main") {
 

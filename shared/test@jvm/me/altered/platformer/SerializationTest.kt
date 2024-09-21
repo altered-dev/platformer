@@ -14,9 +14,9 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import me.altered.platformer.level.data.emptyBrush
 import me.altered.platformer.level.data.Rectangle
-import me.altered.platformer.timeline.Constant
-import me.altered.platformer.timeline.const
-import me.altered.platformer.timeline.plus
+import me.altered.platformer.expression.Constant
+import me.altered.platformer.expression.const
+import me.altered.platformer.expression.plus
 import kotlin.test.Test
 
 @OptIn(ExperimentalSerializationApi::class)

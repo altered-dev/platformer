@@ -8,7 +8,8 @@ import org.jetbrains.skiko.SkikoRenderDelegate
 @Deprecated("Replace with SceneTree.", ReplaceWith("SceneTree()", "me.altered.platformer.engine.loop.SceneTree"), DeprecationLevel.ERROR)
 object SceneManager : SkikoRenderDelegate, InputHandler {
 
-    var scene: Node = EmptyNode
+    var scene: Node
+        get() = error("Replace with SceneTree.")
         set(value) {
             error("Replace with SceneTree.")
         }

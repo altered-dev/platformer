@@ -59,3 +59,11 @@ fun Rect.contains(x: Float, y: Float): Boolean {
 operator fun Rect.contains(vec: Vector2fc): Boolean {
     return vec.x in left..right && vec.y in top..bottom
 }
+
+operator fun Rect.component1() = left
+
+operator fun Rect.component2() = top
+
+operator fun Rect.component3() = right
+
+operator fun Rect.component4() = bottom

@@ -1,5 +1,8 @@
 package me.altered.platformer.engine.node
 
+import me.altered.koml.Vector2f
+import me.altered.koml.Vector2fc
+import me.altered.platformer.engine.graphics.emptyRect
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.loop.SceneTree
 import me.altered.platformer.engine.util.Logger
@@ -8,6 +11,7 @@ import me.altered.platformer.engine.util.e
 import me.altered.platformer.engine.util.i
 import me.altered.platformer.engine.util.v
 import me.altered.platformer.engine.util.w
+import org.jetbrains.skia.Rect
 
 open class Node(
     open var name: String = "Node",
@@ -228,6 +232,38 @@ open class Node(
     open fun destroy() = Unit
 
     fun finalize() = destroy()
+
+    /**
+     * Translates a point in screen coordinates to where this point is in viewport coordinates.
+     */
+    fun Vector2fc.screenToWorld(): Vector2fc {
+        val viewport = viewport ?: return Vector2f()
+        return (this - viewport.offset) / viewport.size
+    }
+
+    /**
+     * Translates a point in viewport coordinates to where this point is in screen coordinates.
+     */
+    fun Vector2fc.worldToScreen(): Vector2fc {
+        val viewport = viewport ?: return Vector2f()
+        return this * viewport.size + viewport.offset
+    }
+
+    /**
+     * Translates a rect in screen coordinates to where this rect is in viewport coordinates.
+     */
+    fun Rect.screenToWorld(): Rect {
+        val viewport = viewport ?: return emptyRect()
+        return offset(-viewport.offset.x, -viewport.offset.y).scale(1.0f / viewport.size)
+    }
+
+    /**
+     * Translates a rect in viewport coordinates to where this rect is in screen coordinates.
+     */
+    fun Rect.worldToScreen(): Rect {
+        val viewport = viewport ?: return emptyRect()
+        return scale(viewport.size).offset(viewport.offset.x, viewport.offset.y)
+    }
 
     fun Logger.v(message: Any?) = v(name, message)
 

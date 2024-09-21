@@ -1,4 +1,4 @@
-package me.altered.platformer.timeline
+package me.altered.platformer.expression
 
 class Range<T : Comparable<T>>(
     val start: Expression<T>,

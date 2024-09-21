@@ -1,11 +1,13 @@
 package me.altered.platformer.editor
 
 import me.altered.koml.Vector2f
-import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.graphics.Paint
+import me.altered.platformer.engine.graphics.component1
+import me.altered.platformer.engine.graphics.component2
+import me.altered.platformer.engine.graphics.component3
+import me.altered.platformer.engine.graphics.component4
 import me.altered.platformer.engine.graphics.drawLine
-import me.altered.platformer.engine.node.Viewport
 import me.altered.platformer.engine.node2d.Node2D
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.PaintMode
@@ -30,10 +32,7 @@ class Grid(
     }
 
     override fun draw(canvas: Canvas) {
-        val viewport = viewport ?: return
-        val window = window ?: return
-        val (left, top) = Vector2f().screenToWorld(viewport)
-        val (right, bottom) = Vector2f(window.width.toFloat(), window.height.toFloat()).screenToWorld(viewport)
+        val (left, top, right, bottom) = viewport?.windowBounds ?: return
 
         canvas
             .drawLine(left, 0.0f, right, 0.0f, originPaint)
@@ -51,10 +50,6 @@ class Grid(
             dy += step
         }
         canvas.translate(-0.5f, -0.5f)
-    }
-
-    private fun Vector2fc.screenToWorld(world: Viewport): Vector2fc {
-        return (this - world.offset) / world.size
     }
 
     override fun debugDraw(canvas: Canvas) = Unit

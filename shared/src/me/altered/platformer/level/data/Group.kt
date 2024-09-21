@@ -2,7 +2,7 @@ package me.altered.platformer.level.data
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.altered.platformer.timeline.Expression
+import me.altered.platformer.expression.Expression
 
 @Serializable
 @SerialName("group")

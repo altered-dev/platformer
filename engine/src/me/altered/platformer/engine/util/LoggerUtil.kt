@@ -39,3 +39,5 @@ inline fun Logger.e(tag: String, lazyMessage: () -> Any?) {
         e(tag, lazyMessage())
     }
 }
+
+inline fun <T> T.andLog(tag: String): T = also { Logger.d(tag, this) }

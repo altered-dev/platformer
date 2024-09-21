@@ -1,6 +1,6 @@
 package me.altered.platformer.level
 
-import me.altered.platformer.timeline.Expression
+import me.altered.platformer.expression.Expression
 import kotlin.reflect.KProperty
 
 interface TimeContext {

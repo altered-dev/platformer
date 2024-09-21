@@ -14,6 +14,8 @@ open class Vector2f(
     override var y: Float = 0.0f,
 ) : Vector2fc {
 
+    constructor(x: Number, y: Number = 0.0f) : this(x.toFloat(), y.toFloat())
+
     override val length: Float
         get() = sqrt(x * x + y * y)
     override val lengthSquared: Float

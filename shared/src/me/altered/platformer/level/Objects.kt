@@ -9,8 +9,8 @@ import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.GroupNode
 import me.altered.platformer.level.node.RectangleNode
-import me.altered.platformer.timeline.Expression
-import me.altered.platformer.timeline.const
+import me.altered.platformer.expression.Expression
+import me.altered.platformer.expression.const
 
 /**
  * Creates a [World] object, adding objects specified in the builder.

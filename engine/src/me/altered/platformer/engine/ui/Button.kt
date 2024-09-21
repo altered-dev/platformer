@@ -7,19 +7,21 @@ import org.jetbrains.skia.Shader
 open class Button(
     name: String = "Button",
     parent: Node? = null,
-    var onClick: () -> Unit = {},
+    var onClick: (Button) -> Unit = {},
     width: Size = wrap(min = 72.0f),
     height: Size = wrap(min = 36.0f),
     padding: Insets = padding(),
-    horizontalAlignment: Alignment = start,
-    verticalAlignment: Alignment = start,
+    horizontalAlignment: Alignment = center,
+    verticalAlignment: Alignment = center,
     spacing: Float = 0.0f,
     fill: Shader = Shader.makeEmpty(),
     stroke: Shader = Shader.makeEmpty(),
     strokeWidth: Float = 0.0f,
 ) : Row(name, parent, width, height, padding, horizontalAlignment, verticalAlignment, spacing, fill, stroke, strokeWidth) {
 
-    private val text = +Text(name, fill = Shader.makeColor(Color.Black.value))
+    private val text = +Text(name, fill = Shader.makeColor(Color.Black.value), stroke = Shader.makeColor(Color.Black.value)).apply {
+        maxLines = 1
+    }
 
     override var name by text::name
 
@@ -29,7 +31,7 @@ open class Button(
 
     override fun onClick(clicked: Boolean) {
         if (isHovered && !clicked) {
-            onClick()
+            onClick(this)
         }
     }
 }

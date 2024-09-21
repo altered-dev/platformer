@@ -1,4 +1,4 @@
-package me.altered.platformer.timeline
+package me.altered.platformer.expression
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,9 +9,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * A set of smoothing functions for animation interpolation.
- *
- * NOTE: this is not an enum because there is a possibility of custom easings in the future.
+ * A smoothing function for animation interpolation.
  */
 @Serializable
 sealed interface Easing {

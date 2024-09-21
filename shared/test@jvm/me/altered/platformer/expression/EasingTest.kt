@@ -1,4 +1,4 @@
-package me.altered.platformer.timeline
+package me.altered.platformer.expression
 
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Named.named

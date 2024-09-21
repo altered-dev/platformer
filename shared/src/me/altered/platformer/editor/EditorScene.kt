@@ -1,7 +1,6 @@
 package me.altered.platformer.editor
 
 import me.altered.koml.Vector2f
-import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Middle
@@ -21,7 +20,6 @@ import me.altered.platformer.engine.ui.end
 import me.altered.platformer.engine.ui.expand
 import me.altered.platformer.engine.ui.padding
 import me.altered.platformer.engine.ui.px
-import me.altered.platformer.engine.ui.start
 import me.altered.platformer.engine.ui.wrap
 import me.altered.platformer.engine.util.Logger
 import me.altered.platformer.level.World
@@ -73,9 +71,12 @@ class EditorScene : Node2D("editor") {
 
     private val button = column + Button(
         name = "Click me!",
-        onClick = { Logger.d(TAG, "omg i clicked") },
+        onClick = { button ->
+            Logger.d(TAG, "omg i clicked")
+            button.name = "Clicked!"
+        },
         padding = padding(all = 10.0f),
-        fill = Shader.makeColor(Color.White.value),
+        fill = Shader.makeColor(Color.Green.value),
     )
 
     override fun input(event: InputEvent) {
@@ -102,14 +103,6 @@ class EditorScene : Node2D("editor") {
                 middleDragging
             }
         }
-    }
-
-    private fun Vector2fc.screenToWorld(): Vector2fc {
-        return (this - world.offset) / world.size
-    }
-
-    private fun Vector2fc.worldToScreen(): Vector2fc {
-        return this * world.size + world.offset
     }
 
     companion object {

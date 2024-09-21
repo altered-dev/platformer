@@ -1,4 +1,4 @@
-package me.altered.platformer.timeline
+package me.altered.platformer.expression
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
