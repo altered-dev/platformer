@@ -61,20 +61,50 @@ class Player(
         lastCollisions.clear()
         // handle collisions
         var isOnFloor = false
+        var isCrushed = false
+        var leftCollision: Vector2fc? = null
+        var rightCollision: Vector2fc? = null
+
         world.collide(position, radius) { col ->
             lastCollisions += col
-            // TODO: better floor/wall detection
-            if (col.y - position.y > radius * 0.25f) isOnFloor = true
+            val overlap = radius - (position - col).length
             val mv = position - col
             val norm = mv.normalize(radius - mv.length)
-            if (!norm.isNaN()) position += norm
+            val directionToPlayer = (position - col).normalize()
+
+            // TODO: better floor/wall detection
+            if (col.y - position.y > radius * 0.25f) isOnFloor = true
+
+            if (col.x < position.x) {
+                leftCollision = col
+            } else if (col.x > position.x) {
+                rightCollision = col
+            }
+
+            if (!norm.isNaN() && overlap > 0) {
+                position += directionToPlayer * overlap
+            }
         }
 
-        // stop the player from falling through the floor
-        // also jump
+        if (leftCollision != null && rightCollision != null) {
+            val horizontalDistance = abs(leftCollision!!.x - rightCollision!!.x)
+            if (horizontalDistance < radius * 2) {  // Adjust this threshold based on player size
+                isCrushed = true
+            }
+        }
+
+        // Stop the player from falling through the floor
+        // Also jump if on the floor
         if (isOnFloor) {
             velocity.y = input.y * JumpForce
         }
+
+        if (isCrushed) die()
+    }
+
+    private fun die() {
+        position.set(0.0f, 0.0f)
+        println("Player is crushed!")
     }
 
     private val colPaint = Paint { color = Color.Yellow }
