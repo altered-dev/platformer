@@ -94,7 +94,8 @@ open class Vector2f(
         return this
     }
 
-    fun add(other: Vector2fc) = add(other, this)
+    fun add(other: Vector2fc): Vector2f = add(other, this)
+    fun add(x: Float, y: Float): Vector2f = add(x, y, this)
     operator fun plusAssign(other: Vector2fc) { add(other, this) }
 
     override fun add(other: Vector2fc, dest: Vector2f): Vector2f {
@@ -103,7 +104,14 @@ open class Vector2f(
         return dest
     }
 
+    override fun add(x: Float, y: Float, dest: Vector2f): Vector2f {
+        dest.x = this.x + x
+        dest.y = this.y + y
+        return dest
+    }
+
     fun sub(other: Vector2fc): Vector2f = sub(other, this)
+    fun sub(x: Float, y: Float): Vector2f = sub(x, y, this)
     operator fun minusAssign(other: Vector2fc) { sub(other, this) }
 
     override fun sub(other: Vector2fc, dest: Vector2f): Vector2f {
@@ -112,12 +120,25 @@ open class Vector2f(
         return dest
     }
 
+    override fun sub(x: Float, y: Float, dest: Vector2f): Vector2f {
+        dest.x = this.x - x
+        dest.y = this.y - y
+        return dest
+    }
+
     fun mul(other: Vector2fc): Vector2f = mul(other, this)
+    fun mul(x: Float, y: Float): Vector2f = mul(x, y, this)
     operator fun timesAssign(other: Vector2fc) { mul(other, this) }
 
     override fun mul(other: Vector2fc, dest: Vector2f): Vector2f {
         dest.x = x * other.x
         dest.y = y * other.y
+        return dest
+    }
+
+    override fun mul(x: Float, y: Float, dest: Vector2f): Vector2f {
+        dest.x = this.x * x
+        dest.y = this.y * y
         return dest
     }
 
@@ -142,11 +163,18 @@ open class Vector2f(
     }
 
     fun frc(other: Vector2fc): Vector2f = frc(other, this)
+    fun frc(x: Float, y: Float): Vector2f = frc(x, y, this)
     operator fun divAssign(other: Vector2fc) { frc(other, this) }
 
     override fun frc(other: Vector2fc, dest: Vector2f): Vector2f {
         dest.x = x / other.x
         dest.y = y / other.y
+        return dest
+    }
+
+    override fun frc(x: Float, y: Float, dest: Vector2f): Vector2f {
+        dest.x = this.x / x
+        dest.y = this.y / y
         return dest
     }
 

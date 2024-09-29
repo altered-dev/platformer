@@ -33,7 +33,24 @@ value class Color(val value: Int) {
 
     constructor(value: Long) : this(value.toInt())
 
+    /**
+     * Creates a color value out of a hex formatted string.
+     *
+     * @param hex a string formatted as `#AARRGGBB`.
+     */
     constructor(hex: String) : this(hex.hexToInt(hexFormat))
+
+    /**
+     * Creates a color value out of the [r], [g], [b] and [a] components.
+     *
+     * Only the 8 least significant bits of the numbers are used.
+     */
+    constructor(r: Int, g: Int, b: Int, a: Int = 255) : this(
+        a and 0xFF shl 24
+                or (r and 0xFF shl 16)
+                or (g and 0xFF shl 8)
+                or (b and 0xFF)
+    )
 
     fun copy() = Color(value)
 
@@ -82,17 +99,4 @@ value class Color(val value: Int) {
             number.prefix = "#"
         }
     }
-}
-
-fun Color(r: Int, g: Int, b: Int, a: Int = 255): Color {
-    require(a in 0..255) { "alpha is out of 0..255 range: $a" }
-    require(r in 0..255) { "red is out of 0..255 range: $a" }
-    require(g in 0..255) { "green is out of 0..255 range: $a" }
-    require(b in 0..255) { "blue is out of 0..255 range: $a" }
-    return Color(
-            a and 0xFF shl 24
-        or (r and 0xFF shl 16)
-        or (g and 0xFF shl 8)
-        or (b and 0xFF)
-    )
 }

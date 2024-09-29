@@ -22,7 +22,6 @@ sealed class ObjectNode<O : Object>(
         set(_) = Unit
 
     var bounds = baseBounds
-        protected set
 
     /**
      * Evaluates the underlying object and applies the results to the node.

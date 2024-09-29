@@ -1,5 +1,6 @@
 package me.altered.platformer.engine.node
 
+import kotlinx.coroutines.flow.first
 import me.altered.koml.Vector2f
 import me.altered.koml.Vector2fc
 import me.altered.platformer.engine.graphics.emptyRect
@@ -232,6 +233,10 @@ open class Node(
     open fun destroy() = Unit
 
     fun finalize() = destroy()
+
+    protected suspend fun waitNextFrame(): Float {
+        return tree?.frameFlow?.first() ?: 0.0f
+    }
 
     /**
      * Translates a point in screen coordinates to where this point is in viewport coordinates.

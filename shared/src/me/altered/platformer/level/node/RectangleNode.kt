@@ -20,7 +20,7 @@ class RectangleNode(
 
     private val fillPaint = Paint { mode = PaintMode.FILL }
     private val strokePaint = Paint { mode = PaintMode.STROKE }
-    private var cornerRadius = 0.0f
+    var cornerRadius = 0.0f
 
     override fun TimeContext.eval() {
         val obj = obj ?: return

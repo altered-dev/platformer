@@ -67,3 +67,5 @@ operator fun Rect.component2() = top
 operator fun Rect.component3() = right
 
 operator fun Rect.component4() = bottom
+
+fun RRect.spread(spread: Float) = RRect.makeComplexLTRB(left - spread, top - spread, right + spread, bottom + spread, FloatArray(radii.size) { radii[it] + spread })

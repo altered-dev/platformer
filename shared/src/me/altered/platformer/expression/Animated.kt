@@ -1,5 +1,6 @@
 package me.altered.platformer.expression
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import me.altered.koml.lerp
@@ -18,9 +19,8 @@ sealed class Animated<T> : Expression<T> {
 
     /**
      * The list of keyframes, **sorted by time**.
-     * [ArrayList] is used because it is known to have efficient random access.
      */
-    abstract val keyframes: ArrayList<Keyframe<T>>
+    abstract val keyframes: List<Keyframe<T>>
 
     @Transient
     private var index = 0
@@ -42,11 +42,15 @@ sealed class Animated<T> : Expression<T> {
     }
 }
 
-class AnimatedFloat(override val keyframes: ArrayList<Keyframe<Float>>) : Animated<Float>() {
+@Serializable
+@SerialName("animatedFloat")
+class AnimatedFloat(override val keyframes: List<Keyframe<Float>>) : Animated<Float>() {
     override fun animate(from: Float, to: Float, t: Float): Float = lerp(from, to, t)
 }
 
-class AnimatedBrush(override val keyframes: ArrayList<Keyframe<Brush>>) : Animated<Brush>() {
+@Serializable
+@SerialName("animatedBrush")
+class AnimatedBrush(override val keyframes: List<Keyframe<Brush>>) : Animated<Brush>() {
     override fun animate(from: Brush, to: Brush, t: Float): Brush {
         // TODO: support gradient animations
         if (from !is Brush.Solid || to !is Brush.Solid) return emptyBrush()
@@ -57,9 +61,9 @@ class AnimatedBrush(override val keyframes: ArrayList<Keyframe<Brush>>) : Animat
 @JvmName("animatedFloat")
 fun animated(
     vararg keyframes: Keyframe<Float>,
-): Expression<Float> = AnimatedFloat(arrayListOf(*keyframes))
+): Expression<Float> = AnimatedFloat(keyframes.sortedBy { it.time })
 
 @JvmName("animatedBrush")
 fun animated(
     vararg keyframes: Keyframe<Brush>,
-): Expression<Brush> = AnimatedBrush(arrayListOf(*keyframes))
+): Expression<Brush> = AnimatedBrush(keyframes.sortedBy { it.time })

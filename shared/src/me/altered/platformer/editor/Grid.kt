@@ -1,6 +1,5 @@
 package me.altered.platformer.editor
 
-import me.altered.koml.Vector2f
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.graphics.Paint
 import me.altered.platformer.engine.graphics.component1
@@ -49,7 +48,6 @@ class Grid(
             canvas.drawLine(left, dy, right, dy, gridPaint)
             dy += step
         }
-        canvas.translate(-0.5f, -0.5f)
     }
 
     override fun debugDraw(canvas: Canvas) = Unit

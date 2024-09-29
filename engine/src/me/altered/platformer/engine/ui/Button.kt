@@ -10,6 +10,7 @@ open class Button(
     var onClick: (Button) -> Unit = {},
     width: Size = wrap(min = 72.0f),
     height: Size = wrap(min = 36.0f),
+    cornerRadius: Float = 0.0f,
     padding: Insets = padding(),
     horizontalAlignment: Alignment = center,
     verticalAlignment: Alignment = center,
@@ -17,14 +18,14 @@ open class Button(
     fill: Shader = Shader.makeEmpty(),
     stroke: Shader = Shader.makeEmpty(),
     strokeWidth: Float = 0.0f,
-) : Row(name, parent, width, height, padding, horizontalAlignment, verticalAlignment, spacing, fill, stroke, strokeWidth) {
+) : Row(name, parent, width, height, cornerRadius, padding, horizontalAlignment, verticalAlignment, spacing, fill, stroke, strokeWidth) {
 
     private val text = +Text(name, fill = Shader.makeColor(Color.Black.value))
 
     override var name by text::name
 
     override fun onHover(hovered: Boolean) {
-        stroke = if (hovered) Shader.makeColor(Color.Black.value) else Shader.makeEmpty()
+        stroke = if (hovered) Shader.makeColor(Color(0xFF262626).value) else Shader.makeEmpty()
     }
 
     override fun onClick(clicked: Boolean) {

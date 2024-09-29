@@ -1,6 +1,13 @@
 package me.altered.platformer.engine.loop
 
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import me.altered.platformer.engine.graphics.clear
+import me.altered.platformer.engine.graphics.transform
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.InputHandler
 import me.altered.platformer.engine.node.CanvasNode
@@ -9,9 +16,8 @@ import me.altered.platformer.engine.node.Viewport
 import me.altered.platformer.engine.node.Window
 import me.altered.platformer.engine.node.prettyPrint
 import me.altered.platformer.engine.node2d.Node2D
-import me.altered.platformer.engine.util.currentTimeMillis
-import me.altered.platformer.engine.graphics.transform
 import me.altered.platformer.engine.ui.UiNode
+import me.altered.platformer.engine.util.currentTimeMillis
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Rect
 import org.jetbrains.skiko.SkikoRenderDelegate
@@ -19,6 +25,13 @@ import org.jetbrains.skiko.SkikoRenderDelegate
 open class SceneTree(
     val root: Window,
 ) : SkikoRenderDelegate, InputHandler {
+
+    val coroutineScope = CoroutineScope(CoroutineName("SceneTree") + SupervisorJob())
+
+    internal val frameFlow = MutableSharedFlow<Float>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     init {
         @Suppress("LeakingThis")
@@ -66,7 +79,9 @@ open class SceneTree(
         }
 
         if (targetFps <= 0 || deltaFps >= 1) {
-            update((now - frameTime) * 0.001f, scene)
+            val delta = (now - frameTime) * 0.001f
+            update(delta, scene)
+            frameFlow.tryEmit(delta)
             frameTime = now
             canvas.clear(root.background)
             val bounds = Rect.makeWH(width.toFloat(), height.toFloat())
@@ -132,7 +147,10 @@ open class SceneTree(
         node.input(event)
     }
 
-    fun destroy() = destroy(scene)
+    fun destroy() {
+        destroy(scene)
+        coroutineScope.cancel()
+    }
 
     private fun destroy(node: Node?) {
         if (node == null) return
