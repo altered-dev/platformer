@@ -51,6 +51,9 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.navigation.compose)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)

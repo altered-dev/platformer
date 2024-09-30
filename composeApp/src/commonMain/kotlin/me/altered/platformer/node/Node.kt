@@ -1,6 +1,7 @@
 package me.altered.platformer.node
 
 import androidx.annotation.CallSuper
+import androidx.compose.ui.input.key.KeyEvent
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -12,6 +13,8 @@ open class Node(
     init {
         @Suppress("LeakingThis")
         parent?.addChild(this)
+        // temporary to debug accidental recompositions
+        println("${this::class.simpleName} '$name' created")
     }
 
     private var _parent: Node? = parent
@@ -181,6 +184,9 @@ open class Node(
      */
     @CallSuper
     open fun physicsUpdate(delta: Float) = Unit
+
+    @CallSuper
+    open fun onKeyEvent(event: KeyEvent) = false
 
     /**
      * Called when the node is about to be destroyed, usually via GC or when the game is closing.

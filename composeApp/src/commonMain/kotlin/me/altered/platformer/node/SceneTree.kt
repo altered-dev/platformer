@@ -1,8 +1,10 @@
 package me.altered.platformer.node
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.key.KeyEvent
+import me.altered.platformer.graphics.transform
+import me.altered.platformer.level.World
 
 class SceneTree(
     root: Node,
@@ -23,22 +25,17 @@ class SceneTree(
 
     init {
         root.tree = this
+        ready(root)
+        println("tree created, root = $root")
     }
 
-    fun update(delta: Float) = update(delta, root)
+    internal fun update(delta: Float) = update(delta, root)
 
-    fun physicsUpdate(delta: Float) = physicsUpdate(delta, root)
+    internal fun physicsUpdate(delta: Float) = physicsUpdate(delta, root)
 
-    @Composable
-    fun Content(
-        modifier: Modifier = Modifier,
-    ) {
-        Box(
-            modifier = modifier,
-        ) {
-            Content(root)
-        }
-    }
+    internal fun onKeyEvent(event: KeyEvent) = onKeyEvent(event, root)
+
+    internal fun draw(scope: DrawScope) = scope.draw(root)
 
     private fun ready(node: Node) {
         node.children.forEach { ready(it) }
@@ -55,14 +52,24 @@ class SceneTree(
         node.children.forEach { physicsUpdate(delta, it) }
     }
 
-    @Composable
-    private fun Content(node: Node) {
-        if (node is ComposeNode) {
-            node.Content {
-                node.children.forEach { Content(it) }
+    private fun onKeyEvent(event: KeyEvent, node: Node): Boolean {
+        return node.children.any { onKeyEvent(event, it) }
+            || node.onKeyEvent(event)
+    }
+
+    private fun DrawScope.draw(node: Node) {
+        withTransform({
+            when (node) {
+                is Node2D -> transform(node)
+                is World -> transform(node)
             }
-        } else {
-            node.children.forEach { Content(it) }
+        }) {
+            if (node is CanvasNode) {
+                with(node) { draw() }
+            }
+            node.children.forEach {
+                draw(it)
+            }
         }
     }
 }
