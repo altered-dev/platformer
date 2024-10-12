@@ -102,6 +102,11 @@ interface Vector2fc {
     fun mul(other: Vector2fc, dest: Vector2f = Vector2f()): Vector2f
     fun frc(other: Vector2fc, dest: Vector2f = Vector2f()): Vector2f
 
+    fun add(x: Float = 0.0f, y: Float = 0.0f, dest: Vector2f = Vector2f()): Vector2f
+    fun sub(x: Float = 0.0f, y: Float = 0.0f, dest: Vector2f = Vector2f()): Vector2f
+    fun mul(x: Float = 0.0f, y: Float = 0.0f, dest: Vector2f = Vector2f()): Vector2f
+    fun frc(x: Float = 0.0f, y: Float = 0.0f, dest: Vector2f = Vector2f()): Vector2f
+
     operator fun times(scalar: Float): Vector2fc = mul(scalar)
     operator fun div(scalar: Float): Vector2fc = frc(scalar)
 

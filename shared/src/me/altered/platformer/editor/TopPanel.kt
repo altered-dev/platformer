@@ -28,15 +28,17 @@ class TopPanel : Row(
                 } else {
                     Shader.makeEmpty()
                 }
+
             }
         }
 
     private val tools = Tool.entries.associateWith { tool ->
         +Button(
             name = tool.name.substring(0, 1),
+            onClick = { this.tool = tool },
             width = 36.px,
             height = 36.px,
-            onClick = { this.tool = tool }
+            cornerRadius = 4.0f,
         )
     }
 

@@ -4,7 +4,6 @@ import me.altered.platformer.engine.node.Node
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.FontMgr
 import org.jetbrains.skia.Shader
-import org.jetbrains.skia.paragraph.Alignment
 import org.jetbrains.skia.paragraph.FontCollection
 import org.jetbrains.skia.paragraph.Paragraph
 import org.jetbrains.skia.paragraph.ParagraphBuilder
@@ -23,13 +22,12 @@ class Text(
 
     private val textStyle = TextStyle().apply {
         foreground = fillPaint.nativePaint
-        fontSize = 16.0f
-        setFontFamily("JetBrains Mono")
+        fontSize = 12.0f
+        setFontFamily("Inter")
     }
 
     private val style = ParagraphStyle().apply {
         textStyle = this@Text.textStyle
-        alignment = Alignment.CENTER
     }
 
     private val collection = FontCollection().apply {

@@ -1,4 +1,5 @@
 rootProject.name = "platformer"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
@@ -23,5 +24,6 @@ include(
     ":app:macos",
     ":engine",
     ":koml",
-    ":shared"
+    ":shared",
+    ":composeApp",
 )

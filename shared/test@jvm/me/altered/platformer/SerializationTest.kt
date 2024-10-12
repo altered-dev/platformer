@@ -56,7 +56,7 @@ class SerializationTest {
 
     @Test
     fun testExpression() {
-        encodeAndDecode(Constant(100.0f))
+        encodeAndDecode(const(100.0f))
         encodeAndDecode(
             Rectangle(
                 name = "wow",

@@ -1,8 +1,11 @@
 package me.altered.platformer.engine.ui
 
+import me.altered.platformer.engine.graphics.drawRRect
 import me.altered.platformer.engine.graphics.drawRect
+import me.altered.platformer.engine.graphics.spread
 import me.altered.platformer.engine.node.Node
 import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.RRect
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import kotlin.math.max
@@ -12,6 +15,7 @@ open class Column(
     parent: Node? = null,
     width: Size = expand(),
     height: Size = expand(),
+    var cornerRadius: Float = 0.0f,
     var padding: Insets = padding(),
     var horizontalAlignment: Alignment = start,
     var verticalAlignment: Alignment = start,
@@ -61,10 +65,10 @@ open class Column(
     }
 
     override fun draw(canvas: Canvas) {
-        val rect = Rect.makeWH(bounds.width, bounds.height)
+        val rect = RRect.makeXYWH(0.0f, 0.0f, bounds.width, bounds.height, cornerRadius)
         canvas
-            .drawRect(rect, fillPaint)
-            .drawRect(rect, strokePaint)
+            .drawRRect(rect, fillPaint)
+            .drawRRect(rect.spread(-0.5f), strokePaint)
         // temporary
         isMeasured = false
     }

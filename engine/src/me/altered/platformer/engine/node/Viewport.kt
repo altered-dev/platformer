@@ -14,9 +14,8 @@ open class Viewport(
     @Suppress("LeakingThis")
     final override val viewport: Viewport = this
 
-    val windowBounds: Rect
-        get() {
-            val window = window ?: return emptyRect()
-            return Rect.makeWH(window.width.toFloat(), window.height.toFloat()).screenToWorld()
-        }
+    val windowBounds: Rect get() {
+        val window = window ?: return emptyRect()
+        return Rect.makeWH(window.width.toFloat(), window.height.toFloat()).screenToWorld()
+    }
 }

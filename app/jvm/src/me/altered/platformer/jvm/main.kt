@@ -24,7 +24,7 @@ fun main() {
         listener.listenSkiaLayer(skiaLayer)
         window.attachSkiaLayer(skiaLayer)
         skiaLayer.needRedraw()
-        window.setSize(1280, 720)
+        window.setSize(1920, 1080)
 //        window.width = 1280
 //        window.height = 720
 //        window.pack()
