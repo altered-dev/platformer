@@ -58,20 +58,45 @@ class Player(
         lastCollisions.clear()
         // handle collisions
         var isOnFloor = false
+        var isCrushed = false
+        var leftCollision: Offset? = null
+        var rightCollision: Offset? = null
+
         world.collide(position, radius) { col ->
             lastCollisions += col
             // TODO: better floor/wall detection
             if (col.y - position.y > radius * 0.25f) isOnFloor = true
-            val mv = position - col
+            val overlap = radius - (position - col).getDistance()
+            val mv = (position - col).normalize(1.0f)
             val norm = mv.normalize(radius - mv.getDistance())
-            if (norm.isValid() && norm.isSpecified) position += norm
+            if (norm.isValid() && overlap > 0) position += mv * overlap
+
+            if (col.x < position.x) {
+                leftCollision = col
+            } else if (col.x > position.x) {
+                rightCollision = col
+            }
         }
+
+        if (leftCollision != null && rightCollision != null) {
+            val horizontalDistance = abs(leftCollision!!.x - rightCollision!!.x)
+            if (horizontalDistance < radius * 2) {
+                isCrushed = true
+            }
+        }
+
+        if (isCrushed) die()
 
         // stop the player from falling through the floor
         // also jump
         if (isOnFloor) {
             velocity = velocity.copy(y = input.y * JumpForce)
         }
+    }
+
+    private fun die() {
+        position = Offset.Zero
+        println("Player is crushed!")
     }
 
     override fun DrawScope.draw() {
@@ -86,15 +111,15 @@ class Player(
     override fun onKeyEvent(event: KeyEvent): Boolean {
         return when (event.type) {
             KeyEventType.KeyDown -> when (event.key) {
-                Key.A -> { input = input.copy(x = input.x - 1); true }
-                Key.D -> { input = input.copy(x = input.x + 1); true }
-                Key.Spacebar -> { input = input.copy(y = input.y - 1); true }
+                Key.A -> { input = input.copy(x = -1f); true }
+                Key.D -> { input = input.copy(x = 1f); true }
+                Key.Spacebar -> { input = input.copy(y = -1f); true }
                 else -> false
             }
             KeyEventType.KeyUp -> when (event.key) {
-                Key.A -> { input = input.copy(x = input.x + 1); true }
-                Key.D -> { input = input.copy(x = input.x - 1); true }
-                Key.Spacebar -> { input = input.copy(y = input.y + 1); true }
+                Key.A -> { if (input.x < 0) input = input.copy(x = 0f); true }
+                Key.D -> { if (input.x > 0) input = input.copy(x = 0f); true }
+                Key.Spacebar -> { if (input.y < 0) input = input.copy(y = 0f); true }
                 else -> false
             }
             else -> false
