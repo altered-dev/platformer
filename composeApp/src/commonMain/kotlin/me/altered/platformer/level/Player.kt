@@ -36,61 +36,66 @@ class Player(
     private val lastCollisions = mutableListOf<Offset>()
 
     override fun physicsUpdate(delta: Float) {
-        // apply acceleration/deceleration based on player input
-        if (abs(velocity.x) < Epsilon) {
-            velocity = velocity.copy(x = 0.0f)
-        }
-        acceleration = acceleration.copy(
-            x = when {
-                input.x == 0.0f -> -Deceleration.copySign(velocity.x)
-                velocity.x.sign != input.x.sign || abs(velocity.x) <= WalkSpeed -> input.x * Acceleration
-                else -> 0.0f
+        val subSteps = 5 // количество промежуточных шагов для точного отслеживания перемещения игрока
+        val subDelta = delta / subSteps
+
+        repeat(subSteps) {
+            // apply acceleration/deceleration based on player input
+            if (abs(velocity.x) < Epsilon) {
+                velocity = velocity.copy(x = 0.0f)
             }
-        )
-        velocity += acceleration * delta
-        velocity = Offset(
-            x = velocity.x.coerceIn(-MaxSpeed, MaxSpeed),
-            y = velocity.y.coerceIn(-MaxSpeed, MaxSpeed),
-        )
-        // apply velocity
-        position += velocity * delta
+            acceleration = acceleration.copy(
+                x = when {
+                    input.x == 0.0f -> -Deceleration.copySign(velocity.x)
+                    velocity.x.sign != input.x.sign || abs(velocity.x) <= WalkSpeed -> input.x * Acceleration
+                    else -> 0.0f
+                }
+            )
+            velocity += acceleration * subDelta
+            velocity = Offset(
+                x = velocity.x.coerceIn(-MaxSpeed, MaxSpeed),
+                y = velocity.y.coerceIn(-MaxSpeed, MaxSpeed),
+            )
+            // apply velocity
+            position += velocity * subDelta
 
-        lastCollisions.clear()
-        // handle collisions
-        var isOnFloor = false
-        var isCrushed = false
-        var leftCollision: Offset? = null
-        var rightCollision: Offset? = null
+            lastCollisions.clear()
+            // handle collisions
+            var isOnFloor = false
+            var isCrushed = false
+            var leftCollision: Offset? = null
+            var rightCollision: Offset? = null
 
-        world.collide(position, radius) { col ->
-            lastCollisions += col
-            // TODO: better floor/wall detection
-            if (col.y - position.y > radius * 0.25f) isOnFloor = true
-            val overlap = radius - (position - col).getDistance()
-            val mv = (position - col).normalize(1.0f)
-            val norm = mv.normalize(radius - mv.getDistance())
-            if (norm.isValid() && overlap > 0) position += mv * overlap
+            world.collide(position, radius) { col ->
+                lastCollisions += col
+                // TODO: better floor/wall detection
+                if (col.y - position.y > radius * 0.25f) isOnFloor = true
+                val overlap = radius - (position - col).getDistance()
+                val mv = (position - col).normalize(1.0f)
+                val norm = mv.normalize(radius - mv.getDistance())
+                if (norm.isValid() && overlap > 0) position += mv * overlap
 
-            if (col.x < position.x) {
-                leftCollision = col
-            } else if (col.x > position.x) {
-                rightCollision = col
+                if (col.x < position.x) {
+                    leftCollision = col
+                } else if (col.x > position.x) {
+                    rightCollision = col
+                }
             }
-        }
 
-        if (leftCollision != null && rightCollision != null) {
-            val horizontalDistance = abs(leftCollision!!.x - rightCollision!!.x)
-            if (horizontalDistance < radius * 2) {
-                isCrushed = true
+            if (leftCollision != null && rightCollision != null) {
+                val horizontalDistance = abs(leftCollision!!.x - rightCollision!!.x)
+                if (horizontalDistance < radius * 2) {
+                    isCrushed = true
+                }
             }
-        }
 
-        if (isCrushed) die()
+            if (isCrushed) die()
 
-        // stop the player from falling through the floor
-        // also jump
-        if (isOnFloor) {
-            velocity = velocity.copy(y = input.y * JumpForce)
+            // stop the player from falling through the floor
+            // also jump
+            if (isOnFloor) {
+                velocity = velocity.copy(y = input.y * JumpForce)
+            }
         }
     }
 
