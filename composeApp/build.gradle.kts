@@ -110,3 +110,7 @@ compose.desktop {
         }
     }
 }
+
+compose.resources {
+    packageOfResClass = "me.altered.platformer"
+}

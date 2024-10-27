@@ -185,7 +185,6 @@ open class Node(
     @CallSuper
     open fun physicsUpdate(delta: Float) = Unit
 
-    @CallSuper
     open fun onKeyEvent(event: KeyEvent) = false
 
     /**

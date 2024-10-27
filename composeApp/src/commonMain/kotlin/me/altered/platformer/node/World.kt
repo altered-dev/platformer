@@ -2,6 +2,7 @@ package me.altered.platformer.node
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableLongStateOf
@@ -14,6 +15,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalInspectionMode
 import kotlinx.coroutines.isActive
 
 /**
@@ -44,6 +46,11 @@ fun World(
     targetFps: Float = 0.0f,
     targetUps: Float = 60.0f,
 ) {
+    // do not render in preview mode
+    if (LocalInspectionMode.current) {
+        return Spacer(modifier)
+    }
+
     val tree = remember(root) { SceneTree(root) }
     var initialTime by remember { mutableLongStateOf(0L) }
     val focusRequester = FocusRequester()
@@ -83,7 +90,7 @@ fun World(
         modifier = modifier
             // FIXME: prevent key event repetition
             .onKeyEvent { tree.onKeyEvent(it) }
-            .onFocusChanged { println("focus state: $it") }
+            .onFocusChanged { println("[${tree.root.name}] focus state: $it") }
             .focusRequester(focusRequester)
             .focusable(),
     ) {

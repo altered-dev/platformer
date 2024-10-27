@@ -36,7 +36,7 @@ class EditorScene : Node("editor") {
 
     private val world = +World()
 
-    private val grid = world + Grid()
+//    private val grid = world + Grid()
     private val selection = +Selection()
 
     private val topPanel = +TopPanel()

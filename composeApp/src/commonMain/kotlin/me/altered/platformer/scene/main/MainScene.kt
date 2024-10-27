@@ -1,4 +1,4 @@
-package me.altered.platformer
+package me.altered.platformer.scene.main
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope

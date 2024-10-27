@@ -1,7 +1,7 @@
 package me.altered.platformer
 
 import me.altered.platformer.editor.EditorScene
-import me.altered.platformer.editor.Grid
+//import me.altered.platformer.editor.Grid
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.input.InputEvent
 import me.altered.platformer.engine.input.Key
@@ -59,7 +59,7 @@ class MainScene : Node("main") {
         )
     }
 
-    private val grid = world + Grid()
+//    private val grid = world + Grid()
     private val player = world + Player()
 
     override fun update(delta: Float) {
