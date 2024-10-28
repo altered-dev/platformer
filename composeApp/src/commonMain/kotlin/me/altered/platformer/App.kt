@@ -12,7 +12,7 @@ fun App() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = MainScreen,
+        startDestination = EditorScreen,
     ) {
         composable<MainScreen> {
             MainScreen(

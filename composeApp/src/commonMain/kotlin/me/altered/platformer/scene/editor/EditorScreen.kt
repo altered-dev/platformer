@@ -2,6 +2,7 @@ package me.altered.platformer.scene.editor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.toSize
 import kotlinx.serialization.Serializable
 import me.altered.platformer.node.World
 
@@ -30,7 +32,7 @@ fun EditorScreen(
     onBackClick: () -> Unit = {},
 ) {
     val scene = remember { EditorScene() }
-    val (tool, setTool) = remember { mutableStateOf(Tool.CURSOR) }
+    val (tool, setTool) = remember { mutableStateOf(Tool.Cursor) }
 
     Column(
         modifier = Modifier
@@ -52,15 +54,25 @@ fun EditorScreen(
             Column(
                 modifier = Modifier.weight(1.0f),
             ) {
-                World(
-                    root = scene,
+                Box(
                     modifier = Modifier
                         .weight(1.0f)
                         .fillMaxWidth()
                         .border(1.dp, Color(0xFF262626), RoundedCornerShape(8.dp))
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color(0xFF576647)),
-                )
+                ) {
+                    World(
+                        root = scene,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    WorldOverlay(
+                        tool = tool,
+                        modifier = Modifier.fillMaxSize(),
+                        onMove = { scene.move(it) },
+                        onResize = { delta, position, size ->  scene.resize(delta, position, size.toSize()) },
+                    )
+                }
                 Timeline()
             }
             Inspector()

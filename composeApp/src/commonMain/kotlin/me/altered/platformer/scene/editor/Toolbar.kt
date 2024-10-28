@@ -40,6 +40,7 @@ import me.altered.platformer.undo
 fun Toolbar(
     selectedTool: Tool,
     onToolSelected: (Tool) -> Unit,
+    modifier: Modifier = Modifier,
     onUndoClick: () -> Unit = {},
     onRedoClick: () -> Unit = {},
     onCopyClick: () -> Unit = {},
@@ -49,7 +50,7 @@ fun Toolbar(
     onMenuClick: () -> Unit = {},
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 8.dp),
@@ -100,10 +101,10 @@ fun Toolbar(
 
 // TODO: move drawable resource elsewhere
 enum class Tool(val icon: DrawableResource) {
-    CURSOR(Res.drawable.cursor),
-    PEN(Res.drawable.pen),
-    RECTANGLE(Res.drawable.rectangle),
-    CIRCLE(Res.drawable.circle),
-    TRIANGLE(Res.drawable.triangle),
-    TEXT(Res.drawable.text),
+    Cursor(Res.drawable.cursor),
+    Pen(Res.drawable.pen),
+    Rectangle(Res.drawable.rectangle),
+    Circle(Res.drawable.circle),
+    Triangle(Res.drawable.triangle),
+    Text(Res.drawable.text),
 }
