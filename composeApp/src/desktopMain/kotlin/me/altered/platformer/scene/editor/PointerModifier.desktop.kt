@@ -23,7 +23,9 @@ actual fun Modifier.pointerEvents(
     onTertiaryStart: (Offset) -> Unit,
     onTertiaryEnd: () -> Unit,
     onTertiary: (Offset) -> Unit,
-    onScroll: (delta: Float, position: Offset, size: IntSize) -> Unit,
+    onScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit,
+    onCtrlScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit,
+    onMove: (position: Offset, size: IntSize) -> Unit,
 ): Modifier {
     return this
         .onDrag(
@@ -45,9 +47,15 @@ actual fun Modifier.pointerEvents(
             onDrag = onTertiary,
         )
         .onPointerEvent(PointerEventType.Scroll) { event ->
+            val change = event.changes.first()
             if (event.keyboardModifiers.isCtrlPressed) {
-                val change = event.changes.first()
-                onScroll(change.scrollDelta.y, change.position, size)
+                onCtrlScroll(change.scrollDelta, change.position, size)
+            } else {
+                onScroll(change.scrollDelta, change.position, size)
             }
+        }
+        .onPointerEvent(PointerEventType.Move) { event ->
+            val change = event.changes.first()
+            onMove(change.position, size)
         }
 }

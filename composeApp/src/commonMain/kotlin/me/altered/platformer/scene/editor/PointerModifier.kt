@@ -14,5 +14,7 @@ expect fun Modifier.pointerEvents(
     onTertiaryStart: (Offset) -> Unit = {},
     onTertiaryEnd: () -> Unit = {},
     onTertiary: (Offset) -> Unit = {},
-    onScroll: (delta: Float, position: Offset, size: IntSize) -> Unit = { _, _, _ -> },
+    onScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit = { _, _, _ -> },
+    onCtrlScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit = { _, _, _ -> },
+    onMove: (position: Offset, size: IntSize) -> Unit = { _, _ -> },
 ): Modifier

@@ -14,5 +14,7 @@ actual fun Modifier.pointerEvents(
     onTertiaryStart: (Offset) -> Unit,
     onTertiaryEnd: () -> Unit,
     onTertiary: (Offset) -> Unit,
-    onScroll: (delta: Float, position: Offset, size: IntSize) -> Unit,
+    onScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit,
+    onCtrlScroll: (delta: Offset, position: Offset, size: IntSize) -> Unit,
+    onMove: (position: Offset, size: IntSize) -> Unit,
 ): Modifier = Modifier

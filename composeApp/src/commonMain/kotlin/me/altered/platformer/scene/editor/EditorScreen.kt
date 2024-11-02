@@ -9,10 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -22,6 +26,14 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import kotlinx.serialization.Serializable
+import me.altered.platformer.expression.const
+import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.Rectangle
+import me.altered.platformer.level.data.emptyBrush
+import me.altered.platformer.level.data.solid
+import me.altered.platformer.level.node.EllipseNode
+import me.altered.platformer.level.node.ObjectNode
+import me.altered.platformer.level.node.RectangleNode
 import me.altered.platformer.node.World
 
 @Serializable
@@ -31,8 +43,54 @@ data object EditorScreen
 fun EditorScreen(
     onBackClick: () -> Unit = {},
 ) {
-    val scene = remember { EditorScene() }
+    val scene = remember {
+        EditorScene(
+            RectangleNode(
+                obj = Rectangle(
+                    name = "Rectangle",
+                    x = const(0.0f),
+                    y = const(0.0f),
+                    rotation = const(0.0f),
+                    width = const(1.0f),
+                    height = const(1.0f),
+                    cornerRadius = const(0.0f),
+                    fill = const(solid(0xFFFCBFB8)),
+                    stroke = const(emptyBrush()),
+                    strokeWidth = const(0.0f),
+                ),
+            ),
+            EllipseNode(
+                obj = Ellipse(
+                    name = "Ellipse",
+                    x = const(5.0f),
+                    y = const(3.0f),
+                    rotation = const(0.0f),
+                    width = const(1.0f),
+                    height = const(1.0f),
+                    fill = const(solid(0xFFFCBFB8)),
+                    stroke = const(emptyBrush()),
+                    strokeWidth = const(0.0f),
+                ),
+            ),
+            EllipseNode(
+                obj = Ellipse(
+                    name = "Ellipse",
+                    x = const(-8.0f),
+                    y = const(5.0f),
+                    rotation = const(0.0f),
+                    width = const(5.0f),
+                    height = const(3.5f),
+                    fill = const(solid(0xFFFCBFB8)),
+                    stroke = const(emptyBrush()),
+                    strokeWidth = const(0.0f),
+                ),
+            ),
+        )
+    }
     val (tool, setTool) = remember { mutableStateOf(Tool.Cursor) }
+    var hovered by remember { mutableStateOf<ObjectNode<*>?>(null) }
+    val selected = remember { mutableStateListOf<Pair<ObjectNode<*>, Rect>>() }
+    var bounds by remember { mutableStateOf<Rect?>(null) }
 
     Column(
         modifier = Modifier
@@ -68,14 +126,29 @@ fun EditorScreen(
                     )
                     WorldOverlay(
                         tool = tool,
+                        hoveredNode = hovered,
+                        hoveredBounds = bounds,
+                        selected = selected,
                         modifier = Modifier.fillMaxSize(),
-                        onMove = { scene.move(it) },
-                        onResize = { delta, position, size ->  scene.resize(delta, position, size.toSize()) },
+                        onDrag = { scene.move(it) },
+                        onResize = { delta, position, size -> scene.resize(delta, position, size.toSize()) },
+                        onHover = { position, size ->
+                            val (h, b) = scene.hover(position, size.toSize()) ?: (null to null)
+                            hovered = h
+                            bounds = b
+                        },
+                        onSelect = {
+                            println("selecting $hovered")
+                            selected.clear()
+                            hovered?.let { selected += (it to bounds!!) }
+                        }
                     )
                 }
                 Timeline()
             }
-            Inspector()
+            Inspector(
+                objects = selected,
+            )
         }
     }
 }

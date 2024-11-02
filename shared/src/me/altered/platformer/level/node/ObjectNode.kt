@@ -8,7 +8,11 @@ import me.altered.koml.scaleAround
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node2d.Node2D
 import me.altered.platformer.level.TimeContext
+import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.Group
 import me.altered.platformer.level.data.Object
+import me.altered.platformer.level.data.Polygon
+import me.altered.platformer.level.data.Rectangle
 import org.jetbrains.skia.Rect
 import kotlin.jvm.JvmStatic
 
@@ -55,3 +59,13 @@ sealed class ObjectNode<O : Object>(
 fun ObjectNode<*>.eval(timeContext: TimeContext) {
     timeContext.run { eval() }
 }
+
+@Suppress("unchecked_cast")
+@Throws(IllegalArgumentException::class)
+fun <O : Object> O.toNode(): ObjectNode<O> = when (this) {
+    is Ellipse -> EllipseNode(this)
+    is Group -> GroupNode(this)
+    is Polygon -> TODO("no polygon node yet")
+    is Rectangle -> RectangleNode(this)
+    else -> throw IllegalArgumentException("Unknown object type")
+} as ObjectNode<O>

@@ -57,7 +57,7 @@ fun Toolbar(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SelectorRow(modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)) {
+        SelectorRow {
             Tool.entries.forEach { tool ->
                 SelectorButton(
                     selected = tool == selectedTool,

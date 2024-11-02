@@ -44,7 +44,7 @@ sealed class ObjectNode<O : Object>(
 
     companion object {
         @JvmStatic
-        protected val baseBounds = Rect(-0.5f, -0.5f, 0.5f, 0.5f)
+        val baseBounds = Rect(-0.5f, -0.5f, 0.5f, 0.5f)
     }
 }
 
