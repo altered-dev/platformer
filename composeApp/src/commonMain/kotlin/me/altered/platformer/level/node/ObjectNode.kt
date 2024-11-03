@@ -15,6 +15,7 @@ import kotlin.jvm.JvmStatic
 sealed class ObjectNode<O : Object>(
     open var obj: O? = null,
     parent: Node? = null,
+    val id: ULong = globalId++,
 ) : Node2D(obj?.name ?: "ObjectNode", parent) {
 
     var bounds = baseBounds
@@ -48,6 +49,9 @@ sealed class ObjectNode<O : Object>(
     companion object {
         @JvmStatic
         val baseBounds = Rect(-0.5f, -0.5f, 0.5f, 0.5f)
+
+        // TODO: replace with a better system
+        private var globalId = 0UL
     }
 }
 

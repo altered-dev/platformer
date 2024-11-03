@@ -3,10 +3,8 @@ package me.altered.platformer.scene.editor
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -42,13 +40,12 @@ fun WorldOverlay(
         else -> Modifier
             .pan(onPan, onZoom)
     }
-
     Canvas(
         modifier = modifier then canvasModifier,
     ) {
-        drawSelectionRect(selectionRectState)
         drawHoveredRect(hoveredNode, worldToScreen)
         drawSelectedRect(selected, worldToScreen)
+        drawSelectionRect(selectionRectState)
     }
 }
 

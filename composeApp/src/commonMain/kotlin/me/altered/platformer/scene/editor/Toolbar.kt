@@ -6,21 +6,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import me.altered.platformer.ui.IconButton
-import me.altered.platformer.ui.SelectorButton
-import me.altered.platformer.ui.SelectorRow
-import me.altered.platformer.ui.Separator
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import me.altered.platformer.Res
 import me.altered.platformer.circle
 import me.altered.platformer.copy
@@ -34,7 +27,13 @@ import me.altered.platformer.rectangle
 import me.altered.platformer.redo
 import me.altered.platformer.text
 import me.altered.platformer.triangle
+import me.altered.platformer.ui.IconButton
+import me.altered.platformer.ui.SelectorButton
+import me.altered.platformer.ui.SelectorRow
+import me.altered.platformer.ui.Separator
 import me.altered.platformer.undo
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Toolbar(
@@ -68,9 +67,11 @@ fun Toolbar(
             }
         }
         Spacer(modifier = Modifier.weight(1.0f))
-        Text(
+        BasicText(
             text = "my level lol",
-            color = Color(0xFF999999), // TODO: to style
+            style = TextStyle(
+                color = Color(0xFF999999), // TODO: to style
+            ),
         )
         Spacer(modifier = Modifier.weight(1.0f))
         IconButton(onClick = onUndoClick) {

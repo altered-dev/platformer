@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -42,8 +40,8 @@ data object EditorScreen
 fun EditorScreen(
     onBackClick: () -> Unit = {},
 ) {
-    val scene = remember {
-        EditorScene(
+    val objs = remember {
+        listOf(
             RectangleNode(
                 obj = Rectangle(
                     name = "Rectangle",
@@ -86,9 +84,12 @@ fun EditorScreen(
             ),
         )
     }
+
+    val scene = remember { EditorScene(*objs.toTypedArray()) }
     val (tool, setTool) = remember { mutableStateOf(Tool.Cursor) }
     var hovered by remember { mutableStateOf<ObjectNode<*>?>(null) }
-    val selected = remember { mutableStateListOf<ObjectNode<*>>() }
+    val selectionState = rememberObjectSelectionState()
+    val selected = selectionState.selection.mapNotNull { id -> objs.find { it.id == id } }
 
     Column(
         modifier = Modifier
@@ -106,7 +107,10 @@ fun EditorScreen(
             onToolSelected = setTool,
         )
         Row {
-            NodeTree()
+            NodeTree(
+                objects = objs,
+                state = selectionState
+            )
             Column(
                 modifier = Modifier.weight(1.0f),
             ) {
@@ -134,10 +138,7 @@ fun EditorScreen(
                         onHover = { position, size ->
                             hovered = scene.hover(position, size)
                         },
-                        onSelect = {
-                            selected.clear()
-                            hovered?.let { selected += it }
-                        }
+                        onSelect = { hovered?.id?.let { selectionState.selectSingle(it) } ?: selectionState.deselect() }
                     )
                 }
                 Timeline()

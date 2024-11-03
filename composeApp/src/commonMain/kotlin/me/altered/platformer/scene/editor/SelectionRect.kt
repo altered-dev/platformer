@@ -18,6 +18,9 @@ class SelectionRectState(
 ) {
 
     var rect by mutableStateOf(initial)
+
+    val isSelecting: Boolean
+        get() = rect != null
 }
 
 @Composable
