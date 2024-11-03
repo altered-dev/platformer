@@ -19,6 +19,9 @@ sealed class ObjectNode<O : Object>(
 
     var bounds = baseBounds
 
+    val globalBounds: Rect
+        get() = bounds.translate(globalPosition)
+
     /**
      * Evaluates the underlying object and applies the results to the node.
      * Must not be called before [ready], otherwise might yield unexpected results or failures.

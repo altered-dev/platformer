@@ -24,7 +24,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import kotlinx.serialization.Serializable
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Ellipse
@@ -89,8 +88,7 @@ fun EditorScreen(
     }
     val (tool, setTool) = remember { mutableStateOf(Tool.Cursor) }
     var hovered by remember { mutableStateOf<ObjectNode<*>?>(null) }
-    val selected = remember { mutableStateListOf<Pair<ObjectNode<*>, Rect>>() }
-    var bounds by remember { mutableStateOf<Rect?>(null) }
+    val selected = remember { mutableStateListOf<ObjectNode<*>>() }
 
     Column(
         modifier = Modifier
@@ -127,20 +125,18 @@ fun EditorScreen(
                     WorldOverlay(
                         tool = tool,
                         hoveredNode = hovered,
-                        hoveredBounds = bounds,
                         selected = selected,
+                        worldToScreen = { scene.worldToScreen(this, it) },
+                        screenToWorld = { scene.screenToWorld(this, it) },
                         modifier = Modifier.fillMaxSize(),
-                        onDrag = { scene.move(it) },
-                        onResize = { delta, position, size -> scene.resize(delta, position, size.toSize()) },
+                        onPan = { scene.pan(it) },
+                        onZoom = { delta, position, size -> scene.zoom(delta, position, size) },
                         onHover = { position, size ->
-                            val (h, b) = scene.hover(position, size.toSize()) ?: (null to null)
-                            hovered = h
-                            bounds = b
+                            hovered = scene.hover(position, size)
                         },
                         onSelect = {
-                            println("selecting $hovered")
                             selected.clear()
-                            hovered?.let { selected += (it to bounds!!) }
+                            hovered?.let { selected += it }
                         }
                     )
                 }

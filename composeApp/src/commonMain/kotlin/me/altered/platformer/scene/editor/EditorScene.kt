@@ -1,10 +1,8 @@
 package me.altered.platformer.scene.editor
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
-import me.altered.platformer.geometry.scale
 import me.altered.platformer.level.World
 import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.node.CanvasNode
@@ -20,11 +18,11 @@ class EditorScene(
         world.addChildren(objs.asIterable())
     }
 
-    fun move(offset: Offset) {
+    fun pan(offset: Offset) {
         world.position += offset
     }
 
-    fun resize(delta: Offset, cursorPos: Offset, size: Size) {
+    fun zoom(delta: Offset, cursorPos: Offset, size: Size) {
         if (delta.y == 0.0f) return
         val cursorDistance = cursorPos - (world.position + size.center)
         val scaleFrom = world.scale
@@ -35,11 +33,9 @@ class EditorScene(
         world.position += cursorDistance * (1 - world.scale / scaleFrom)
     }
 
-    fun hover(cursorPos: Offset, size: Size): Pair<ObjectNode<*>, Rect>? {
+    fun hover(cursorPos: Offset, size: Size): ObjectNode<*>? {
         val cursorDistance = screenToWorld(cursorPos, size)
-        val obj = world.objects.findLast { cursorDistance in it.bounds.translate(it.globalPosition) }
-            ?: return null
-        return obj to world.worldToScreen(obj.bounds.translate(obj.globalPosition), size)
+        return world.objects.findLast { cursorDistance in it.globalBounds }
     }
 
     fun place(obj: ObjectNode<*>) {

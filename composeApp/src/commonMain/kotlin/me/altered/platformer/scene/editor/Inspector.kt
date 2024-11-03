@@ -17,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import me.altered.platformer.geometry.scale
@@ -29,7 +28,7 @@ import me.altered.platformer.ui.TextField
 
 @Composable
 fun Inspector(
-    objects: List<Pair<ObjectNode<*>, Rect>>,
+    objects: List<ObjectNode<*>>,
 ) {
     Column(
         modifier = Modifier
@@ -38,7 +37,7 @@ fun Inspector(
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        objects.singleOrNull()?.let { (obj, _) ->
+        objects.singleOrNull()?.let { obj ->
             CommonInfo(obj)
             when (obj) {
                 is EllipseNode -> EllipseInfo(obj)
