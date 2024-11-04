@@ -11,7 +11,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.rememberTextMeasurer
 import kotlinx.serialization.Serializable
-import me.altered.platformer.node.World
+import me.altered.platformer.engine.node.World
 
 @Serializable
 data object MainScreen

@@ -2,6 +2,7 @@ package me.altered.platformer.expression
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.altered.platformer.engine.math.lerp
 
 @Serializable
 @SerialName("unaryMinus")

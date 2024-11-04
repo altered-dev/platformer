@@ -4,7 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import me.altered.platformer.node.Node2D
+import me.altered.platformer.engine.node.Node2D
 import kotlin.math.roundToInt
 
 class Grid(

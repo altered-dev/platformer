@@ -5,54 +5,80 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import me.altered.platformer.expression.const
+import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.Rectangle
+import me.altered.platformer.level.data.solid
+import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.ObjectNode
+import me.altered.platformer.level.node.RectangleNode
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
 fun WorldOverlay(
-    tool: Tool,
-    hoveredNode: ObjectNode<*>?,
-    selected: List<ObjectNode<*>>,
+    toolState: ToolState,
+    selectionState: SelectionState,
     worldToScreen: Offset.(size: Size) -> Offset,
     screenToWorld: Offset.(size: Size) -> Offset,
     modifier: Modifier,
     onPan: (Offset) -> Unit = {},
     onZoom: (delta: Offset, position: Offset, size: Size) -> Unit = { _, _, _ -> },
-    onHover: (position: Offset, size: Size) -> Unit = { _, _ -> },
-    onSelect: () -> Unit = {},
+    onHover: (position: Offset, size: Size) -> ObjectNode<*>? = { _, _ -> null },
+    onSelect: (rect: Rect, size: Size) -> List<ObjectNode<*>> = { _, _ -> emptyList() },
+    placeNode: (ObjectNode<*>) -> Unit = {},
 ) {
-    val selectionRectState = rememberSelectionRectState()
-
-    val canvasModifier = when (tool) {
+    val canvasModifier = when (val tool = toolState.tool) {
         Tool.Cursor -> Modifier
-            .pan(onPan, onZoom)
-            .hover(onHover)
-            .selectionRect(selectionRectState)
-            .pointerInput(Unit) {
-                detectTapGestures { onSelect() }
+            .hover { position, size -> selectionState.hovered = onHover(position, size) }
+            .selectionRect(
+                state = selectionState,
+                onSelect = { rect, size -> selectionState.selectAll(onSelect(rect, size)) },
+            )
+            .pointerInput(tool) {
+                detectTapGestures { selectionState.selectHovered() }
+            }
+        Tool.Rectangle -> Modifier
+            .pointerHoverIcon(PointerIcon.Crosshair)
+            .createDefaultObject(screenToWorld) { pos ->
+                val node = RectangleNode(rectangle(pos))
+                placeNode(node)
+                selectionState.selectSingle(node)
+                toolState.reset()
+            }
+        Tool.Circle -> Modifier
+            .pointerHoverIcon(PointerIcon.Crosshair)
+            .createDefaultObject(screenToWorld) { pos ->
+                val node = EllipseNode(ellipse(pos))
+                placeNode(node)
+                selectionState.selectSingle(node)
+                toolState.reset()
             }
         else -> Modifier
-            .pan(onPan, onZoom)
     }
+
     Canvas(
-        modifier = modifier then canvasModifier,
+        modifier = Modifier
+            .pan(onPan, onZoom)
+            .then(canvasModifier)
+            .then(modifier),
     ) {
-        drawHoveredRect(hoveredNode, worldToScreen)
-        drawSelectedRect(selected, worldToScreen)
-        drawSelectionRect(selectionRectState)
+        drawHoveredRect(selectionState.hovered, worldToScreen)
+        drawSelectedRect(selectionState.selection, worldToScreen)
+        drawSelectionRect(selectionState.rect)
     }
 }
 
-private fun DrawScope.drawSelectionRect(
-    state: SelectionRectState,
-) {
-    val rect = state.rect ?: return
+private fun DrawScope.drawSelectionRect(rect: Rect?) {
+    if (rect == null) return
     drawRect(Color(0xFF0D99FF), rect.topLeft, rect.size, 0.2f)
     drawRect(Color(0xFF0D99FF), rect.topLeft, rect.size, 1.0f, Stroke(2.0f))
 }
@@ -74,16 +100,16 @@ private fun DrawScope.drawSelectedRect(
     worldToScreen: Offset.(size: Size) -> Offset,
 ) {
     if (nodes.isEmpty()) return
-    var left = Float.NEGATIVE_INFINITY
-    var top = Float.NEGATIVE_INFINITY
-    var right = Float.POSITIVE_INFINITY
-    var bottom = Float.POSITIVE_INFINITY
+    var left = Float.POSITIVE_INFINITY
+    var top = Float.POSITIVE_INFINITY
+    var right = Float.NEGATIVE_INFINITY
+    var bottom = Float.NEGATIVE_INFINITY
     nodes.forEach { node ->
         val bounds = node.globalBounds
-        left = max(left, bounds.left)
-        top = max(top, bounds.top)
-        right = min(right, bounds.right)
-        bottom = min(bottom, bounds.bottom)
+        left = min(left, bounds.left)
+        top = min(top, bounds.top)
+        right = max(right, bounds.right)
+        bottom = max(bottom, bounds.bottom)
     }
 
     val topLeft = Offset(left, top).worldToScreen(size)
@@ -92,3 +118,28 @@ private fun DrawScope.drawSelectedRect(
 
     drawRect(Color.Blue, topLeft, size, style = Stroke())
 }
+
+private fun rectangle(position: Offset) = Rectangle(
+    name = "rect",
+    x = const(position.x),
+    y = const(position.y),
+    rotation = const(0.0f),
+    width = const(1.0f),
+    height = const(1.0f),
+    cornerRadius = const(0.0f),
+    fill = const(solid(0xFFFCBFB8)),
+    stroke = const(solid(0x00000000)),
+    strokeWidth = const(0.0f),
+)
+
+private fun ellipse(position: Offset) = Ellipse(
+    name = "circle",
+    x = const(position.x),
+    y = const(position.y),
+    rotation = const(0.0f),
+    width = const(1.0f),
+    height = const(1.0f),
+    fill = const(solid(0xFFFCBFB8)),
+    stroke = const(solid(0x00000000)),
+    strokeWidth = const(0.0f),
+)

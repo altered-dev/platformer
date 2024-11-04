@@ -6,6 +6,8 @@ import kotlinx.serialization.Transient
 import me.altered.platformer.level.data.Brush
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.engine.math.alerp
+import me.altered.platformer.engine.math.lerp
 import kotlin.jvm.JvmName
 
 /**

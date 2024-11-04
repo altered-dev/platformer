@@ -21,6 +21,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.foundation)
             implementation(compose.runtime)
+            api(libs.androidx.annotation)
             api(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.serialization.cbor)
             api(libs.kotlinx.serialization.json)

@@ -11,18 +11,17 @@ import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.GroupNode
+import me.altered.platformer.level.node.LevelNode
 import me.altered.platformer.level.node.RectangleNode
 
 /**
- * Creates a [World] object, adding objects specified in the builder.
+ * Creates a [LevelNode] object, adding objects specified in the builder.
  */
-inline fun world(
-    name: String = "World",
-    scale: Float = 1.0f,
-    position: Offset = Offset.Zero,
-    builder: WorldContext.() -> Unit,
-): World {
-    return World(name, null, scale, position).apply(builder)
+inline fun level(
+    name: String = "Level",
+    builder: ObjectContainer.() -> Unit,
+): LevelNode {
+    return LevelNode(name, null, mutableListOf()).apply(builder)
 }
 
 fun ObjectContainer.rectangle(

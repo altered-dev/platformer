@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Size
 import me.altered.platformer.level.ObjectContainer
 import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Group
-import me.altered.platformer.node.Node
+import me.altered.platformer.engine.node.Node
 
 class GroupNode(
     obj: Group? = null,

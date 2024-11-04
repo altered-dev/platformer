@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -41,19 +42,26 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun NodeTree(
     objects: List<ObjectNode<*>>,
-    state: ObjectSelectionState,
+    state: SelectionState,
 ) {
+    val source = remember { MutableInteractionSource() }
+    val hovered by source.collectIsHoveredAsState()
+    LaunchedEffect(Unit) {
+        if (hovered) state.hovered = null
+    }
     LazyColumn(
         modifier = Modifier
             .width(256.dp)
-            .fillMaxHeight(),
+            .fillMaxHeight()
+            .hoverable(source),
         contentPadding = PaddingValues(8.dp),
     ) {
         items(objects, key = { it.id }) {
             Node(
                 obj = it,
-                selected = it.id in state.selection,
-                onClick = { state.selectSingle(it.id) },
+                selected = it in state.selection,
+                onHover = { state.hovered = it },
+                onClick = { state.selectSingle(it) },
             )
         }
     }
@@ -63,10 +71,14 @@ fun NodeTree(
 private fun Node(
     obj: ObjectNode<*>,
     selected: Boolean,
+    onHover: () -> Unit,
     onClick: () -> Unit,
 ) {
     val source = remember { MutableInteractionSource() }
     val hovered by source.collectIsHoveredAsState()
+    LaunchedEffect(hovered) {
+        if (hovered) onHover()
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()

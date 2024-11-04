@@ -11,9 +11,9 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
-import me.altered.platformer.geometry.normalize
-import me.altered.platformer.node.Node
-import me.altered.platformer.node.Node2D
+import me.altered.platformer.engine.geometry.normalize
+import me.altered.platformer.engine.node.Node
+import me.altered.platformer.engine.node.Node2D
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.withSign

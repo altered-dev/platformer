@@ -7,11 +7,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import me.altered.platformer.geometry.scale
+import me.altered.platformer.engine.geometry.scale
 import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.data.toComposeBrush
-import me.altered.platformer.node.Node
+import me.altered.platformer.engine.node.Node
 
 class RectangleNode(
     obj: Rectangle? = null,

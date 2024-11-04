@@ -5,17 +5,24 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.drawscope.DrawTransform
-import me.altered.platformer.level.data.Object
-import me.altered.platformer.level.node.ObjectNode
-import me.altered.platformer.level.node.eval
-import me.altered.platformer.node.Node
+import me.altered.platformer.engine.node.CanvasTransformer
+import me.altered.platformer.engine.node.Node
+import me.altered.platformer.level.node.LevelNode
+import me.altered.platformer.scene.editor.Grid
 
+/**
+ * A node that represents a world space.
+ * Currently only accepts [Player], [LevelNode] and [Grid] objects as children.
+ */
 class World(
     name: String = "World",
     parent: Node? = null,
+    val level: LevelNode? = null,
+    val player: Player? = null,
+    val grid: Grid? = null,
     var scale: Float = 1.0f,
     var position: Offset = Offset.Zero,
-) : Node(name, parent), WorldContext {
+) : Node(name, parent), CanvasTransformer {
 
     var DrawTransform.scale: Float
         get() = scale(size)
@@ -26,33 +33,23 @@ class World(
     val DrawTransform.offset: Offset
         get() = offset(size)
 
-    val objects = children.asSequence().filterIsInstance<ObjectNode<*>>()
+    override val children = listOfNotNull(grid, level, player)
 
-    override var time: Float = 0.0f
-        set(value) {
-            if (field == value) return
-            field = value
-            objects.forEach { it.eval(this) }
-        }
-
-    override fun place(node: ObjectNode<*>) {
-        addChild(node)
+    init {
+        grid?.parent = this
+        level?.parent = this
+        player?.parent = this
     }
 
-    override fun remove(node: ObjectNode<*>) {
-        removeChild(node)
-    }
-
-    override fun reference(vararg path: String): Object {
-        TODO("reference class")
-    }
-
-    override fun ready() {
-        objects.forEach { println("ready $it"); it.eval(this) }
+    override fun DrawTransform.transform() {
+        val offset = offset
+        val scale = scale
+        translate(offset.x, offset.y)
+        scale(scale, scale, Offset.Zero)
     }
 
     fun collide(position: Offset, radius: Float, onCollision: (point: Offset) -> Unit) {
-        objects.forEach { it.collide(position, radius, onCollision) }
+        level?.objects?.forEach { it.collide(position, radius, onCollision) }
     }
 
     fun scale(size: Size): Float {

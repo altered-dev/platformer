@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,24 +20,21 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
+import me.altered.platformer.engine.node.World
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Ellipse
 import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.EllipseNode
-import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.level.node.RectangleNode
-import me.altered.platformer.node.World
-import me.altered.platformer.engine.graphics.Color.Companion as EngineColor
 
 @Serializable
 data object EditorScreen
 
 @Composable
 fun EditorScreen(
-    onBackClick: () -> Unit = {},
-) {
-    val objs = remember {
+    level: MutableLevelState = rememberMutableLevelState(
+        name = "My level",
         listOf(
             RectangleNode(
                 obj = Rectangle(
@@ -52,7 +46,7 @@ fun EditorScreen(
                     height = const(1.0f),
                     cornerRadius = const(0.0f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(EngineColor.Transparent)),
+                    stroke = const(solid(0x00000000)),
                     strokeWidth = const(0.0f),
                 ),
             ),
@@ -65,7 +59,7 @@ fun EditorScreen(
                     width = const(1.0f),
                     height = const(1.0f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(EngineColor.Transparent)),
+                    stroke = const(solid(0x00000000)),
                     strokeWidth = const(0.0f),
                 ),
             ),
@@ -78,18 +72,17 @@ fun EditorScreen(
                     width = const(5.0f),
                     height = const(3.5f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(EngineColor.Transparent)),
+                    stroke = const(solid(0x00000000)),
                     strokeWidth = const(0.0f),
                 ),
             ),
         )
-    }
-
-    val scene = remember { EditorScene(*objs.toTypedArray()) }
-    val (tool, setTool) = remember { mutableStateOf(Tool.Cursor) }
-    var hovered by remember { mutableStateOf<ObjectNode<*>?>(null) }
-    val selectionState = rememberObjectSelectionState()
-    val selected = selectionState.selection.mapNotNull { id -> objs.find { it.id == id } }
+    ),
+    onBackClick: () -> Unit = {},
+) {
+    val scene = remember(level) { EditorScene(level) }
+    val toolState = rememberToolState()
+    val selectionState = rememberSelectionState()
 
     Column(
         modifier = Modifier
@@ -103,13 +96,13 @@ fun EditorScreen(
             },
     ) {
         Toolbar(
-            selectedTool = tool,
-            onToolSelected = setTool,
+            levelName = level.name,
+            toolState = toolState,
         )
         Row {
             NodeTree(
-                objects = objs,
-                state = selectionState
+                objects = level.objects,
+                state = selectionState,
             )
             Column(
                 modifier = Modifier.weight(1.0f),
@@ -127,24 +120,22 @@ fun EditorScreen(
                         modifier = Modifier.fillMaxSize(),
                     )
                     WorldOverlay(
-                        tool = tool,
-                        hoveredNode = hovered,
-                        selected = selected,
+                        toolState = toolState,
+                        selectionState = selectionState,
                         worldToScreen = { scene.worldToScreen(this, it) },
                         screenToWorld = { scene.screenToWorld(this, it) },
                         modifier = Modifier.fillMaxSize(),
                         onPan = { scene.pan(it) },
                         onZoom = { delta, position, size -> scene.zoom(delta, position, size) },
-                        onHover = { position, size ->
-                            hovered = scene.hover(position, size)
-                        },
-                        onSelect = { hovered?.id?.let { selectionState.selectSingle(it) } ?: selectionState.deselect() }
+                        onHover = { position, size -> scene.hover(position, size) },
+                        onSelect = { rect, size -> scene.select(rect, size) },
+                        placeNode = { scene.place(it) }
                     )
                 }
                 Timeline()
             }
             Inspector(
-                objects = selected,
+                objects = selectionState.selection,
             )
         }
     }

@@ -1,28 +1,45 @@
 package me.altered.platformer.scene.editor
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.toSize
+import kotlin.math.max
+import kotlin.math.min
 
-expect fun Modifier.selectionRect(
-    state: SelectionRectState,
+fun Modifier.selectionRect(
+    state: SelectionState,
+    onSelect: (selection: Rect, size: Size) -> Unit,
     enabled: Boolean = true,
-): Modifier
-
-class SelectionRectState(
-    initial: Rect? = null,
-) {
-
-    var rect by mutableStateOf(initial)
-
-    val isSelecting: Boolean
-        get() = rect != null
+): Modifier = pointerInput(enabled) {
+    if (!enabled) return@pointerInput
+    var start: Offset = Offset.Unspecified
+    var end: Offset = Offset.Unspecified
+    detectDragGestures(
+        onDragStart = {
+            start = it
+            end = it
+            state.rect = Rect(it, it)
+        },
+        onDragEnd = {
+            state.rect = null
+            start = Offset.Unspecified
+            end = Offset.Unspecified
+        },
+        onDrag = { change, delta ->
+            change.consume()
+            end += delta
+            val newRect = Rect(
+                left = min(start.x, end.x),
+                top = min(start.y, end.y),
+                right = max(start.x, end.x),
+                bottom = max(start.y, end.y),
+            )
+            state.rect = newRect
+            onSelect(newRect, size.toSize())
+        }
+    )
 }
-
-@Composable
-fun rememberSelectionRectState(initial: Rect? = null) =
-    remember { SelectionRectState(initial) }

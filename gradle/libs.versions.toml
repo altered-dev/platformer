@@ -1,11 +1,12 @@
 [versions]
 android = "8.5.0"
-compose = "1.7.0-beta02"
+compose = "1.7.0"
 junit = "5.10.3"
 kotlin = "2.0.20"
 
 # AndroidX
-androidx-activity-compose = "1.9.2"
+androidx-activity-compose = "1.9.3"
+androidx-annotation = "1.9.1"
 androidx-navigation = "2.8.0-alpha10"
 
 # KotlinX
@@ -15,6 +16,7 @@ kotlinx-serialization = "1.7.1"
 [libraries]
 # AndroidX
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 
 # KotlinX

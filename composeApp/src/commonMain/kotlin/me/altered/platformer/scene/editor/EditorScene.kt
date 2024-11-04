@@ -1,22 +1,25 @@
 package me.altered.platformer.scene.editor
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import me.altered.platformer.level.World
 import me.altered.platformer.level.node.ObjectNode
-import me.altered.platformer.node.CanvasNode
+import me.altered.platformer.engine.node.CanvasNode
+import me.altered.platformer.level.node.LevelNode
 
 class EditorScene(
-    vararg objs: ObjectNode<*>,
+    level: MutableLevelState,
 ) : CanvasNode("editor") {
 
-    private val world = +World()
-    private val grid = world + Grid()
-
-    init {
-        world.addChildren(objs.asIterable())
-    }
+    private val world = +World(
+        level = LevelNode(
+            name = level.name,
+            objects = level.objects,
+        ),
+        grid = Grid(),
+    )
 
     fun pan(offset: Offset) {
         world.position += offset
@@ -35,11 +38,16 @@ class EditorScene(
 
     fun hover(cursorPos: Offset, size: Size): ObjectNode<*>? {
         val cursorDistance = screenToWorld(cursorPos, size)
-        return world.objects.findLast { cursorDistance in it.globalBounds }
+        return world.level?.objects?.findLast { cursorDistance in it.globalBounds }
     }
 
-    fun place(obj: ObjectNode<*>) {
+    fun select(rect: Rect, size: Size): List<ObjectNode<*>> {
+        val rect = world.screenToWorld(rect, size)
+        return world.level?.objects?.filter { it.globalBounds.overlaps(rect) }.orEmpty()
+    }
 
+    fun place(node: ObjectNode<*>) {
+        world.level?.place(node)
     }
 
     fun screenToWorld(vec: Offset, size: Size) = world.screenToWorld(vec, size)

@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import me.altered.platformer.geometry.scale
+import me.altered.platformer.engine.geometry.scale
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.GroupNode
 import me.altered.platformer.level.node.ObjectNode

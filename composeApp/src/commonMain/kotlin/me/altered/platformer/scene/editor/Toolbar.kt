@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +38,8 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Toolbar(
-    selectedTool: Tool,
-    onToolSelected: (Tool) -> Unit,
+    levelName: String,
+    toolState: ToolState,
     modifier: Modifier = Modifier,
     onUndoClick: () -> Unit = {},
     onRedoClick: () -> Unit = {},
@@ -59,8 +60,8 @@ fun Toolbar(
         SelectorRow {
             Tool.entries.forEach { tool ->
                 SelectorButton(
-                    selected = tool == selectedTool,
-                    onClick = { onToolSelected(tool) },
+                    selected = tool == toolState.tool,
+                    onClick = { toolState.tool = tool },
                 ) {
                     Icon(painterResource(tool.icon), null)
                 }
@@ -68,7 +69,7 @@ fun Toolbar(
         }
         Spacer(modifier = Modifier.weight(1.0f))
         BasicText(
-            text = "my level lol",
+            text = levelName,
             style = TextStyle(
                 color = Color(0xFF999999), // TODO: to style
             ),
@@ -101,6 +102,7 @@ fun Toolbar(
 }
 
 // TODO: move drawable resource elsewhere
+@Immutable
 enum class Tool(val icon: DrawableResource) {
     Cursor(Res.drawable.cursor),
     Pen(Res.drawable.pen),
