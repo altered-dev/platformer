@@ -13,8 +13,6 @@ open class Node(
     init {
         @Suppress("LeakingThis")
         parent?.addChild(this)
-        // temporary to debug accidental recompositions
-        println("${this::class.simpleName} '$name' created")
     }
 
     private var _parent: Node? = parent

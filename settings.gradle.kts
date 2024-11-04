@@ -18,12 +18,6 @@ dependencyResolutionManagement {
 }
 
 include(
-    ":app:android",
-    ":app:ios",
-    ":app:jvm",
-    ":app:macos",
     ":engine",
-    ":koml",
-    ":shared",
     ":composeApp",
 )

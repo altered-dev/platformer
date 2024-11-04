@@ -26,12 +26,12 @@ import kotlinx.serialization.Serializable
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Ellipse
 import me.altered.platformer.level.data.Rectangle
-import me.altered.platformer.level.data.emptyBrush
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.level.node.RectangleNode
 import me.altered.platformer.node.World
+import me.altered.platformer.engine.graphics.Color.Companion as EngineColor
 
 @Serializable
 data object EditorScreen
@@ -52,7 +52,7 @@ fun EditorScreen(
                     height = const(1.0f),
                     cornerRadius = const(0.0f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(emptyBrush()),
+                    stroke = const(solid(EngineColor.Transparent)),
                     strokeWidth = const(0.0f),
                 ),
             ),
@@ -65,7 +65,7 @@ fun EditorScreen(
                     width = const(1.0f),
                     height = const(1.0f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(emptyBrush()),
+                    stroke = const(solid(EngineColor.Transparent)),
                     strokeWidth = const(0.0f),
                 ),
             ),
@@ -78,7 +78,7 @@ fun EditorScreen(
                     width = const(5.0f),
                     height = const(3.5f),
                     fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(emptyBrush()),
+                    stroke = const(solid(EngineColor.Transparent)),
                     strokeWidth = const(0.0f),
                 ),
             ),

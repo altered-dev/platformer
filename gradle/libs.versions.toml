@@ -3,7 +3,6 @@ android = "8.5.0"
 compose = "1.7.0-beta02"
 junit = "5.10.3"
 kotlin = "2.0.20"
-skiko = "0.8.14"
 
 # AndroidX
 androidx-activity-compose = "1.9.2"
@@ -14,27 +13,6 @@ kotlinx-coroutines = "1.8.1"
 kotlinx-serialization = "1.7.1"
 
 [libraries]
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
-
-# Skiko
-# TODO: remove
-skiko = { group = "org.jetbrains.skiko", name = "skiko", version.ref = "skiko" }
-
-skiko-jvm = { group = "org.jetbrains.skiko", name = "skiko-awt", version.ref = "skiko" }
-skiko-jvm-windows = { group = "org.jetbrains.skiko", name = "skiko-awt-runtime-windows-x64", version.ref = "skiko" }
-skiko-jvm-linux-x64 = { group = "org.jetbrains.skiko", name = "skiko-awt-runtime-linux-x64", version.ref = "skiko" }
-skiko-jvm-linux-arm64 = { group = "org.jetbrains.skiko", name = "skiko-awt-runtime-linux-arm64", version.ref = "skiko" }
-skiko-jvm-macos-x64 = { group = "org.jetbrains.skiko", name = "skiko-awt-runtime-macos-x64", version.ref = "skiko" }
-skiko-jvm-macos-arm64 = { group = "org.jetbrains.skiko", name = "skiko-awt-runtime-macos-arm64", version.ref = "skiko" }
-
-skiko-ios-x64 = { group = "org.jetbrains.skiko", name = "skiko-iosx64", version.ref = "skiko" }
-skiko-ios-arm64 = { group = "org.jetbrains.skiko", name = "skiko-iosarm64", version.ref = "skiko" }
-skiko-macos-x64 = { group = "org.jetbrains.skiko", name = "skiko-macosx64", version.ref = "skiko" }
-skiko-macos-arm64 = { group = "org.jetbrains.skiko", name = "skiko-macosarm64", version.ref = "skiko" }
-skiko-android = { group = "org.jetbrains.skiko", name = "skiko-android", version.ref = "skiko" }
-skiko-android-x64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-x64", version.ref = "skiko" }
-skiko-android-arm64 = { group = "org.jetbrains.skiko", name = "skiko-android-runtime-arm64", version.ref = "skiko" }
-
 # AndroidX
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
@@ -46,9 +24,10 @@ kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
-# Plugins
-android-plugin = { module = "com.android.tools.build:gradle", version.ref = "android" }
-compose-plugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose" }
-compose-compiler-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
-kotlin-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+[plugins]
+android = { id = "com.android.application", version.ref = "android" }
+android-library = { id = "com.android.library", version.ref = "android" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

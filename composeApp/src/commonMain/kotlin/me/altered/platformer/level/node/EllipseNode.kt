@@ -8,9 +8,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import me.altered.platformer.geometry.normalize
 import me.altered.platformer.geometry.scale
-import me.altered.platformer.geometry.toComposeBrush
 import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.toComposeBrush
 import me.altered.platformer.node.Node
 
 class EllipseNode(

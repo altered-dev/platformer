@@ -3,7 +3,7 @@ package me.altered.platformer.geometry
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import me.altered.koml.deg2rad
+import me.altered.platformer.expression.deg2rad
 import kotlin.math.cos
 import kotlin.math.sin
 
