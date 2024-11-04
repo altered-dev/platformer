@@ -50,6 +50,14 @@ class EditorScene(
         world.level?.place(node)
     }
 
+    fun remove(node: ObjectNode<*>) {
+        world.level?.remove(node)
+    }
+
+    fun removeAll(nodes: List<ObjectNode<*>>) {
+        world.level?.removeAll(nodes)
+    }
+
     fun screenToWorld(vec: Offset, size: Size) = world.screenToWorld(vec, size)
 
     fun worldToScreen(vec: Offset, size: Size) = world.worldToScreen(vec, size)

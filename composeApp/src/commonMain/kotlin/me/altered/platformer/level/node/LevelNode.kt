@@ -1,10 +1,6 @@
 package me.altered.platformer.level.node
 
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.withTransform
-import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
-import me.altered.platformer.engine.node.transform
 import me.altered.platformer.level.ObjectContainer
 import me.altered.platformer.level.TimeContext
 
@@ -37,5 +33,9 @@ open class LevelNode(
 
     override fun remove(node: ObjectNode<*>) {
         objects -= node
+    }
+
+    fun removeAll(nodes: List<ObjectNode<*>>) {
+        objects -= nodes.toSet()
     }
 }

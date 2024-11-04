@@ -89,8 +89,19 @@ fun EditorScreen(
             .fillMaxSize()
             .background(Color(0xFF333333))
             .onKeyEvent { event ->
-                if (event.type == KeyEventType.KeyDown && event.key == Key.Escape) {
-                    onBackClick()
+                if (event.type == KeyEventType.KeyDown) {
+                    when (event.key) {
+                        Key.Delete, Key.Backspace -> {
+                            scene.removeAll(selectionState.selection)
+                            selectionState.deselect()
+                            true
+                        }
+                        Key.Escape -> {
+                            onBackClick()
+                            true
+                        }
+                        else -> false
+                    }
                     true
                 } else false
             },
