@@ -46,6 +46,11 @@ class EditorScene(
         return world.level?.objects?.filter { it.globalBounds.overlaps(rect) }.orEmpty()
     }
 
+    fun drag(nodes: List<ObjectNode<*>>, delta: Offset, size: Size) {
+        val delta = delta / world.scale(size)
+        nodes.forEach { it.position += delta }
+    }
+
     fun place(node: ObjectNode<*>) {
         world.level?.place(node)
     }

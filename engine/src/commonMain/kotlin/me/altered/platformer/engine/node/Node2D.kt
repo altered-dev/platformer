@@ -58,7 +58,7 @@ open class Node2D(
 
     override fun DrawTransform.transform() {
         translate(position.x, position.y)
-        rotate(rotation)
+        rotate(rotation, Offset.Zero)
         scale(scale.width, scale.height)
     }
 }

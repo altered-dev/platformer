@@ -72,7 +72,7 @@ fun TextField(
         decorator = {
             Row(
                 modifier = Modifier
-                    .padding(10.dp, 12.dp),
+                    .padding(horizontal = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

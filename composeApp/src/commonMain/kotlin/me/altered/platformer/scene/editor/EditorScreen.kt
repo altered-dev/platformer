@@ -21,63 +21,13 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
-import me.altered.platformer.expression.const
-import me.altered.platformer.level.data.Ellipse
-import me.altered.platformer.level.data.Rectangle
-import me.altered.platformer.level.data.solid
-import me.altered.platformer.level.node.EllipseNode
-import me.altered.platformer.level.node.RectangleNode
 
 @Serializable
 data object EditorScreen
 
 @Composable
 fun EditorScreen(
-    level: MutableLevelState = rememberMutableLevelState(
-        name = "My level",
-        listOf(
-            RectangleNode(
-                obj = Rectangle(
-                    name = "Rectangle",
-                    x = const(0.0f),
-                    y = const(0.0f),
-                    rotation = const(0.0f),
-                    width = const(1.0f),
-                    height = const(1.0f),
-                    cornerRadius = const(0.0f),
-                    fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(0x00000000)),
-                    strokeWidth = const(0.0f),
-                ),
-            ),
-            EllipseNode(
-                obj = Ellipse(
-                    name = "Ellipse",
-                    x = const(5.0f),
-                    y = const(3.0f),
-                    rotation = const(0.0f),
-                    width = const(1.0f),
-                    height = const(1.0f),
-                    fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(0x00000000)),
-                    strokeWidth = const(0.0f),
-                ),
-            ),
-            EllipseNode(
-                obj = Ellipse(
-                    name = "Ellipse",
-                    x = const(-8.0f),
-                    y = const(5.0f),
-                    rotation = const(0.0f),
-                    width = const(5.0f),
-                    height = const(3.5f),
-                    fill = const(solid(0xFFFCBFB8)),
-                    stroke = const(solid(0x00000000)),
-                    strokeWidth = const(0.0f),
-                ),
-            ),
-        )
-    ),
+    level: MutableLevelState = rememberMutableLevelState("My level"),
     onBackClick: () -> Unit = {},
 ) {
     val scene = remember(level) { EditorScene(level) }
@@ -89,21 +39,22 @@ fun EditorScreen(
             .fillMaxSize()
             .background(Color(0xFF333333))
             .onKeyEvent { event ->
-                if (event.type == KeyEventType.KeyDown) {
-                    when (event.key) {
-                        Key.Delete, Key.Backspace -> {
-                            scene.removeAll(selectionState.selection)
-                            selectionState.deselect()
-                            true
-                        }
-                        Key.Escape -> {
-                            onBackClick()
-                            true
-                        }
-                        else -> false
+                if (event.type != KeyEventType.KeyDown) return@onKeyEvent false
+                when (event.key) {
+                    Key.One -> toolState.tool = Tool.Cursor
+                    Key.Two -> toolState.tool = Tool.Pen
+                    Key.Three -> toolState.tool = Tool.Rectangle
+                    Key.Four -> toolState.tool = Tool.Circle
+                    Key.Five -> toolState.tool = Tool.Triangle
+                    Key.Six -> toolState.tool = Tool.Text
+                    Key.Delete, Key.Backspace -> {
+                        scene.removeAll(selectionState.selection)
+                        selectionState.deselect()
                     }
-                    true
-                } else false
+                    Key.Escape -> onBackClick()
+                    else -> return@onKeyEvent false
+                }
+                true
             },
     ) {
         Toolbar(
@@ -140,6 +91,7 @@ fun EditorScreen(
                         onZoom = { delta, position, size -> scene.zoom(delta, position, size) },
                         onHover = { position, size -> scene.hover(position, size) },
                         onSelect = { rect, size -> scene.select(rect, size) },
+                        onDrag = { delta, size -> scene.drag(selectionState.selection, delta, size) },
                         placeNode = { scene.place(it) }
                     )
                 }

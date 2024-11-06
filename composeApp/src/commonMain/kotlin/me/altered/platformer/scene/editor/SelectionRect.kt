@@ -12,25 +12,39 @@ import kotlin.math.min
 
 fun Modifier.selectionRect(
     state: SelectionState,
+    worldToScreen: Offset.(Size) -> Offset,
     onSelect: (selection: Rect, size: Size) -> Unit,
+    onDrag: (delta: Offset, size: Size) -> Unit,
     enabled: Boolean = true,
 ): Modifier = pointerInput(enabled) {
     if (!enabled) return@pointerInput
     var start: Offset = Offset.Unspecified
     var end: Offset = Offset.Unspecified
+    var isDragging = false
     detectDragGestures(
-        onDragStart = {
-            start = it
-            end = it
-            state.rect = Rect(it, it)
+        onDragStart = { pos ->
+            var rect = state.getSelectionRect(size.toSize(), worldToScreen)
+            isDragging = rect?.contains(pos) == true
+            if (isDragging) return@detectDragGestures
+            state.selectHovered()
+            rect = state.getSelectionRect(size.toSize(), worldToScreen)
+            isDragging = rect?.contains(pos) == true
+            if (isDragging) return@detectDragGestures
+            start = pos
+            end = pos
+            state.rect = Rect(pos, pos)
         },
         onDragEnd = {
+            isDragging = false
             state.rect = null
             start = Offset.Unspecified
             end = Offset.Unspecified
         },
         onDrag = { change, delta ->
             change.consume()
+            if (isDragging) {
+                return@detectDragGestures onDrag(delta, size.toSize())
+            }
             end += delta
             val newRect = Rect(
                 left = min(start.x, end.x),

@@ -34,6 +34,7 @@ fun WorldOverlay(
     onZoom: (delta: Offset, position: Offset, size: Size) -> Unit = { _, _, _ -> },
     onHover: (position: Offset, size: Size) -> ObjectNode<*>? = { _, _ -> null },
     onSelect: (rect: Rect, size: Size) -> List<ObjectNode<*>> = { _, _ -> emptyList() },
+    onDrag: (delta: Offset, size: Size) -> Unit = { _, _ -> },
     placeNode: (ObjectNode<*>) -> Unit = {},
 ) {
     val canvasModifier = when (val tool = toolState.tool) {
@@ -41,7 +42,9 @@ fun WorldOverlay(
             .hover { position, size -> selectionState.hovered = onHover(position, size) }
             .selectionRect(
                 state = selectionState,
+                worldToScreen = worldToScreen,
                 onSelect = { rect, size -> selectionState.selectAll(onSelect(rect, size)) },
+                onDrag = onDrag,
             )
             .pointerInput(tool) {
                 detectTapGestures { selectionState.selectHovered() }
@@ -72,7 +75,7 @@ fun WorldOverlay(
             .then(modifier),
     ) {
         drawHoveredRect(selectionState.hovered, worldToScreen)
-        drawSelectedRect(selectionState.selection, worldToScreen)
+        drawSelectedRect(selectionState, worldToScreen)
         drawSelectionRect(selectionState.rect)
     }
 }
@@ -96,27 +99,11 @@ private fun DrawScope.drawHoveredRect(
 }
 
 private fun DrawScope.drawSelectedRect(
-    nodes: List<ObjectNode<*>>,
+    state: SelectionState,
     worldToScreen: Offset.(size: Size) -> Offset,
 ) {
-    if (nodes.isEmpty()) return
-    var left = Float.POSITIVE_INFINITY
-    var top = Float.POSITIVE_INFINITY
-    var right = Float.NEGATIVE_INFINITY
-    var bottom = Float.NEGATIVE_INFINITY
-    nodes.forEach { node ->
-        val bounds = node.globalBounds
-        left = min(left, bounds.left)
-        top = min(top, bounds.top)
-        right = max(right, bounds.right)
-        bottom = max(bottom, bounds.bottom)
-    }
-
-    val topLeft = Offset(left, top).worldToScreen(size)
-    val bottomRight = Offset(right, bottom).worldToScreen(size)
-    val size = Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
-
-    drawRect(Color.Blue, topLeft, size, style = Stroke())
+    val rect = state.getSelectionRect(size, worldToScreen) ?: return
+    drawRect(Color.Blue, rect.topLeft, rect.size, style = Stroke())
 }
 
 private fun rectangle(position: Offset) = Rectangle(
