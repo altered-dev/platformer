@@ -21,6 +21,10 @@ class EditorScene(
         grid = Grid(),
     )
 
+    fun setTime(time: Float) {
+        world.level?.time = time
+    }
+
     fun pan(offset: Offset) {
         world.position += offset
     }

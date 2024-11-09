@@ -28,7 +28,7 @@ sealed class Animated<T> : Expression<T> {
 
     abstract fun animate(from: T, to: T, t: Float): T
 
-    final override fun eval(time: Float): T {
+    override fun eval(time: Float): T {
         while (index > 0 && keyframes[index - 1].time > time) {
             index--
         }

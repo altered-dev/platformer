@@ -9,18 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
+import me.altered.platformer.engine.ui.onDistinctKeyEvent
 
 @Serializable
 data object EditorScreen
@@ -30,16 +30,21 @@ fun EditorScreen(
     level: MutableLevelState = rememberMutableLevelState("My level"),
     onBackClick: () -> Unit = {},
 ) {
-    val scene = remember(level) { EditorScene(level) }
     val toolState = rememberToolState()
     val selectionState = rememberSelectionState()
+    val timelineState = rememberTimelineState()
+    val scene = remember(level) { EditorScene(level) }
+
+    LaunchedEffect(level) {
+        snapshotFlow { timelineState.time }
+            .collect { scene.setTime(it) }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF333333))
-            .onKeyEvent { event ->
-                if (event.type != KeyEventType.KeyDown) return@onKeyEvent false
+            .onDistinctKeyEvent { event ->
                 when (event.key) {
                     Key.One -> toolState.tool = Tool.Cursor
                     Key.Two -> toolState.tool = Tool.Pen
@@ -52,7 +57,7 @@ fun EditorScreen(
                         selectionState.deselect()
                     }
                     Key.Escape -> onBackClick()
-                    else -> return@onKeyEvent false
+                    else -> return@onDistinctKeyEvent false
                 }
                 true
             },
@@ -95,9 +100,13 @@ fun EditorScreen(
                         placeNode = { scene.place(it) }
                     )
                 }
-                Timeline()
+                Timeline(
+                    state = timelineState,
+                    selectionState = selectionState,
+                )
             }
             Inspector(
+                timelineState = timelineState,
                 objects = selectionState.selection,
             )
         }

@@ -2,11 +2,7 @@ package me.altered.platformer.engine.node
 
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
 import me.altered.platformer.engine.logger.Logger
 import me.altered.platformer.engine.logger.v
 
@@ -28,8 +24,6 @@ class SceneTree(
             ready(value)
         }
 
-    private val keySet = mutableSetOf<Key>()
-
     init {
         root.tree = this
         ready(root)
@@ -39,16 +33,7 @@ class SceneTree(
 
     internal fun physicsUpdate(delta: Float) = physicsUpdate(delta, root)
 
-    internal fun onKeyEvent(event: KeyEvent): Boolean {
-        if (event.type == KeyEventType.KeyDown && event.key in keySet) {
-            return false
-        }
-        when (event.type) {
-            KeyEventType.KeyDown -> keySet += event.key
-            KeyEventType.KeyUp -> keySet -= event.key
-        }
-        return onKeyEvent(event, root)
-    }
+    internal fun onKeyEvent(event: KeyEvent) = onKeyEvent(event, root)
 
     internal fun draw(scope: DrawScope) = scope.draw(root)
 

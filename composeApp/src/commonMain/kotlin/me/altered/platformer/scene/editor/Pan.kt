@@ -5,6 +5,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 
 expect fun Modifier.pan(
-    onPan: (delta: Offset) -> Unit,
-    onZoom: (delta: Offset, position: Offset, size: Size) -> Unit,
+    onPan: (delta: Offset) -> Unit = {},
+    onZoom: (delta: Offset, position: Offset, size: Size) -> Unit = { _, _, _ -> },
 ): Modifier

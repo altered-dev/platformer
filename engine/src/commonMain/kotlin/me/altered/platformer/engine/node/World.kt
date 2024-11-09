@@ -16,6 +16,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalInspectionMode
 import kotlinx.coroutines.isActive
+import me.altered.platformer.engine.ui.onDistinctKeyEvent
 
 /**
  * **WARNING!** When using composable state in nodes,
@@ -87,7 +88,7 @@ fun World(
 
     Canvas(
         modifier = modifier
-            .onKeyEvent { tree.onKeyEvent(it) }
+            .onDistinctKeyEvent { tree.onKeyEvent(it) }
             .focusRequester(focusRequester)
             .focusable(),
     ) {

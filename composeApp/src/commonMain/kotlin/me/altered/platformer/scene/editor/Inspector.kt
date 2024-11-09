@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,6 +36,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Inspector(
+    timelineState: TimelineState,
     objects: List<ObjectNode<*>>,
 ) {
     Column(
@@ -45,11 +47,11 @@ fun Inspector(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         objects.singleOrNull()?.let { obj ->
-            CommonInfo(obj)
+            CommonInfo(obj, timelineState)
             when (obj) {
-                is EllipseNode -> EllipseInfo(obj)
-                is GroupNode -> GroupInfo(obj)
-                is RectangleNode -> RectangleInfo(obj)
+                is EllipseNode -> EllipseInfo(obj, timelineState)
+                is GroupNode -> GroupInfo(obj, timelineState)
+                is RectangleNode -> RectangleInfo(obj, timelineState)
             }
         }
     }
@@ -58,13 +60,14 @@ fun Inspector(
 @Composable
 private fun CommonInfo(
     node: ObjectNode<*>,
+    timelineState: TimelineState,
     modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val xState = remember(node) { TextFieldState(node.position.x.toString()) }
-        val yState = remember(node) { TextFieldState(node.position.y.toString()) }
+        val xState = remember(timelineState.roundedTime) { TextFieldState(node.position.x.toString()) }
+        val yState = remember(timelineState.roundedTime) { TextFieldState(node.position.y.toString()) }
 
         BaseTextField(
             state = xState,
@@ -75,7 +78,17 @@ private fun CommonInfo(
                 it()
             },
         ) {
-            IconText("X")
+            IconText(
+                text = "X",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { x },
+                        value = { position.x },
+                    ),
+            )
         }
         BaseTextField(
             state = yState,
@@ -86,15 +99,25 @@ private fun CommonInfo(
                 it()
             },
         ) {
-            IconText("Y")
+            IconText(
+                text = "Y",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { y },
+                        value = { position.y },
+                    ),
+            )
         }
     }
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val wState = remember(node) { TextFieldState(node.bounds.width.toString()) }
-        val hState = remember(node) { TextFieldState(node.bounds.height.toString()) }
+        val wState = remember(timelineState.roundedTime) { TextFieldState(node.bounds.width.toString()) }
+        val hState = remember(timelineState.roundedTime) { TextFieldState(node.bounds.height.toString()) }
 
         BaseTextField(
             state = wState,
@@ -105,7 +128,17 @@ private fun CommonInfo(
                 it()
             },
         ) {
-            IconText("W")
+            IconText(
+                text = "W",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { width },
+                        value = { bounds.width },
+                    ),
+            )
         }
         BaseTextField(
             state = hState,
@@ -116,7 +149,17 @@ private fun CommonInfo(
                 it()
             },
         ) {
-            IconText("H")
+            IconText(
+                text = "H",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { height },
+                        value = { bounds.height },
+                    ),
+            )
         }
     }
 }
@@ -124,13 +167,14 @@ private fun CommonInfo(
 @Composable
 private fun EllipseInfo(
     node: EllipseNode,
+    timelineState: TimelineState,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(node) { TextFieldState(node.rotation.toString()) }
+        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
 
         BaseTextField(
             state = rState,
@@ -144,6 +188,14 @@ private fun EllipseInfo(
             Icon(
                 painter = painterResource(Res.drawable.angle),
                 contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { rotation },
+                        value = { rotation },
+                    ),
                 tint = Color(0xFFCCCCCC),
             )
         }
@@ -154,13 +206,14 @@ private fun EllipseInfo(
 @Composable
 private fun GroupInfo(
     node: GroupNode,
+    timelineState: TimelineState,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(node) { TextFieldState(node.rotation.toString()) }
+        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
 
         BaseTextField(
             state = rState,
@@ -174,6 +227,14 @@ private fun GroupInfo(
             Icon(
                 painter = painterResource(Res.drawable.angle),
                 contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { rotation },
+                        value = { rotation },
+                    ),
                 tint = Color(0xFFCCCCCC),
             )
         }
@@ -184,14 +245,15 @@ private fun GroupInfo(
 @Composable
 private fun RectangleInfo(
     node: RectangleNode,
+    timelineState: TimelineState,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(node) { TextFieldState(node.rotation.toString()) }
-        val cState = remember(node) { TextFieldState(node.cornerRadius.toString()) }
+        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
+        val cState = remember(timelineState.roundedTime) { TextFieldState(node.cornerRadius.toString()) }
 
         BaseTextField(
             state = rState,
@@ -205,6 +267,14 @@ private fun RectangleInfo(
             Icon(
                 painter = painterResource(Res.drawable.angle),
                 contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { rotation },
+                        value = { rotation },
+                    ),
                 tint = Color(0xFFCCCCCC),
             )
         }
@@ -220,6 +290,14 @@ private fun RectangleInfo(
             Icon(
                 painter = painterResource(Res.drawable.corner),
                 contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .addKeyframe(
+                        state = timelineState,
+                        node = node,
+                        expression = { cornerRadius },
+                        value = { cornerRadius },
+                    ),
                 tint = Color(0xFFCCCCCC),
             )
         }
@@ -227,9 +305,13 @@ private fun RectangleInfo(
 }
 
 @Composable
-private fun IconText(text: String) {
+private fun IconText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = text,
+        modifier = modifier,
         color = Color(0xFFCCCCCC),
         fontSize = 12.sp,
         textAlign = TextAlign.Center,
