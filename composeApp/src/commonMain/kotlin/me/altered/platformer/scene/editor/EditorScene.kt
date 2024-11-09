@@ -7,6 +7,8 @@ import androidx.compose.ui.geometry.center
 import me.altered.platformer.level.World
 import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.engine.node.CanvasNode
+import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.expression.const
 import me.altered.platformer.level.node.LevelNode
 
 class EditorScene(
@@ -52,7 +54,12 @@ class EditorScene(
 
     fun drag(nodes: List<ObjectNode<*>>, delta: Offset, size: Size) {
         val delta = delta / world.scale(size)
-        nodes.forEach { it.position += delta }
+        nodes.forEach { node ->
+            node.position += delta
+            val obj = node.obj ?: return@forEach
+            (obj.x as? AnimatedFloatState)?.staticValue = const(node.position.x)
+            (obj.y as? AnimatedFloatState)?.staticValue = const(node.position.y)
+        }
     }
 
     fun place(node: ObjectNode<*>) {

@@ -27,6 +27,8 @@ import me.altered.platformer.Res
 import me.altered.platformer.angle
 import me.altered.platformer.corner
 import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.expression.const
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.GroupNode
 import me.altered.platformer.level.node.ObjectNode
@@ -75,6 +77,7 @@ private fun CommonInfo(
             onKeyboardAction = {
                 val x = xState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.position = node.position.copy(x = x)
+                (node.obj?.x as? AnimatedFloatState)?.staticValue = const(x)
                 it()
             },
         ) {
@@ -96,6 +99,7 @@ private fun CommonInfo(
             onKeyboardAction = {
                 val y = yState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.position = node.position.copy(y = y)
+                (node.obj?.y as? AnimatedFloatState)?.staticValue = const(y)
                 it()
             },
         ) {
@@ -125,6 +129,7 @@ private fun CommonInfo(
             onKeyboardAction = {
                 val w = wState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.bounds = ObjectNode.baseBounds.scale(w, node.bounds.height)
+                (node.obj?.width as? AnimatedFloatState)?.staticValue = const(w)
                 it()
             },
         ) {
@@ -146,6 +151,7 @@ private fun CommonInfo(
             onKeyboardAction = {
                 val h = hState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.bounds = ObjectNode.baseBounds.scale(node.bounds.width, h)
+                (node.obj?.height as? AnimatedFloatState)?.staticValue = const(h)
                 it()
             },
         ) {
@@ -182,6 +188,7 @@ private fun EllipseInfo(
             onKeyboardAction = {
                 val r = rState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.rotation = r
+                (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
                 it()
             },
         ) {
@@ -221,6 +228,7 @@ private fun GroupInfo(
             onKeyboardAction = {
                 val r = rState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.rotation = r
+                (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
                 it()
             },
         ) {
@@ -261,6 +269,7 @@ private fun RectangleInfo(
             onKeyboardAction = {
                 val r = rState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.rotation = r
+                (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
                 it()
             },
         ) {
@@ -284,6 +293,7 @@ private fun RectangleInfo(
             onKeyboardAction = {
                 val c = cState.text.toString().toFloatOrNull() ?: return@BaseTextField
                 node.cornerRadius = c
+                (node.obj?.cornerRadius as? AnimatedFloatState)?.staticValue = const(c)
                 it()
             },
         ) {
