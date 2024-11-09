@@ -16,11 +16,11 @@ import me.altered.platformer.engine.node.Node
 class EllipseNode(
     obj: Ellipse? = null,
     parent: Node? = null,
-) : ObjectNode<Ellipse>(obj, parent) {
+) : ObjectNode<Ellipse>(obj, parent), ObjectNode.Filled, ObjectNode.Stroked {
 
-    private var fillBrush: Brush = SolidColor(Color.Transparent)
-    private var strokeBrush: Brush = SolidColor(Color.Transparent)
-    private var strokeWidth = 0.0f
+    override var fill: Brush = SolidColor(Color.Transparent)
+    override var stroke: Brush = SolidColor(Color.Transparent)
+    override var strokeWidth = 0.0f
 
     override fun TimeContext.eval() {
         val obj = obj ?: return
@@ -33,8 +33,8 @@ class EllipseNode(
             sx = obj.width.value,
             sy = obj.height.value,
         )
-        fillBrush = obj.fill.value.toComposeBrush()
-        strokeBrush = obj.stroke.value.toComposeBrush()
+        fill = obj.fill.value.toComposeBrush()
+        stroke = obj.stroke.value.toComposeBrush()
         strokeWidth = obj.strokeWidth.value
     }
 
@@ -53,7 +53,7 @@ class EllipseNode(
     }
 
     override fun DrawScope.draw() {
-        drawOval(fillBrush, bounds.topLeft, bounds.size)
-        drawOval(strokeBrush, bounds.topLeft, bounds.size, style = Stroke(strokeWidth))
+        drawOval(fill, bounds.topLeft, bounds.size)
+        drawOval(stroke, bounds.topLeft, bounds.size, style = Stroke(strokeWidth))
     }
 }

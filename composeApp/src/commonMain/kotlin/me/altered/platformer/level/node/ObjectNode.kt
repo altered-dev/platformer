@@ -3,6 +3,7 @@ package me.altered.platformer.level.node
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import me.altered.platformer.engine.geometry.div
 import me.altered.platformer.engine.geometry.rotateAround
 import me.altered.platformer.engine.geometry.scaleAround
@@ -45,6 +46,17 @@ sealed class ObjectNode<O : Object>(
     }
 
     override fun toString(): String = "${super.toString()} $obj"
+
+    interface Filled {
+
+        var fill: Brush
+    }
+
+    interface Stroked {
+
+        var stroke: Brush
+        var strokeWidth: Float
+    }
 
     companion object {
         @JvmStatic

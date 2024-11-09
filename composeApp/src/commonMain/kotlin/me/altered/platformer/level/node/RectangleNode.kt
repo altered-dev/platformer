@@ -16,11 +16,11 @@ import me.altered.platformer.engine.node.Node
 class RectangleNode(
     obj: Rectangle? = null,
     parent: Node? = null,
-) : ObjectNode<Rectangle>(obj, parent) {
+) : ObjectNode<Rectangle>(obj, parent), ObjectNode.Filled, ObjectNode.Stroked {
 
-    private var fillBrush: Brush = SolidColor(Color.Transparent)
-    private var strokeBrush: Brush = SolidColor(Color.Transparent)
-    private var strokeWidth = 0.0f
+    override var fill: Brush = SolidColor(Color.Transparent)
+    override var stroke: Brush = SolidColor(Color.Transparent)
+    override var strokeWidth = 0.0f
     var cornerRadius = 0.0f
 
     override fun TimeContext.eval() {
@@ -35,8 +35,8 @@ class RectangleNode(
             sy = obj.height.value,
         )
         cornerRadius = obj.cornerRadius.value
-        fillBrush = obj.fill.value.toComposeBrush()
-        strokeBrush = obj.stroke.value.toComposeBrush()
+        fill = obj.fill.value.toComposeBrush()
+        stroke = obj.stroke.value.toComposeBrush()
         strokeWidth = obj.strokeWidth.value
     }
 
@@ -54,7 +54,7 @@ class RectangleNode(
     }
 
     override fun DrawScope.draw() {
-        drawRoundRect(fillBrush, bounds.topLeft, bounds.size, CornerRadius(cornerRadius))
-        drawRoundRect(strokeBrush, bounds.topLeft, bounds.size, CornerRadius(cornerRadius), style = Stroke(strokeWidth))
+        drawRoundRect(fill, bounds.topLeft, bounds.size, CornerRadius(cornerRadius))
+        drawRoundRect(stroke, bounds.topLeft, bounds.size, CornerRadius(cornerRadius), style = Stroke(strokeWidth))
     }
 }

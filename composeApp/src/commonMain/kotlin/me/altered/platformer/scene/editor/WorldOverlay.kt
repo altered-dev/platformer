@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Ellipse
@@ -113,7 +114,7 @@ private fun rectangle(position: Offset) = Rectangle(
     width = AnimatedFloatState(const(1.0f)),
     height = AnimatedFloatState(const(1.0f)),
     cornerRadius = AnimatedFloatState(const(0.0f)),
-    fill = const(solid(0xFFFCBFB8)),
+    fill = AnimatedBrushState(const(solid(0xFFFCBFB8))),
     stroke = const(solid(0x00000000)),
     strokeWidth = AnimatedFloatState(const(0.0f)),
 )
@@ -125,7 +126,7 @@ private fun ellipse(position: Offset) = Ellipse(
     rotation = AnimatedFloatState(const(0.0f)),
     width = AnimatedFloatState(const(1.0f)),
     height = AnimatedFloatState(const(1.0f)),
-    fill = const(solid(0xFFFCBFB8)),
+    fill = AnimatedBrushState(const(solid(0xFFFCBFB8))),
     stroke = const(solid(0x00000000)),
     strokeWidth = AnimatedFloatState(const(0.0f)),
 )

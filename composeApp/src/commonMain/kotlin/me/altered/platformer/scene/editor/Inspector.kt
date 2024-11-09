@@ -1,5 +1,7 @@
 package me.altered.platformer.scene.editor
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -7,18 +9,27 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,8 +38,11 @@ import me.altered.platformer.Res
 import me.altered.platformer.angle
 import me.altered.platformer.corner
 import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.const
+import me.altered.platformer.level.data.Object
+import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.EllipseNode
 import me.altered.platformer.level.node.GroupNode
 import me.altered.platformer.level.node.ObjectNode
@@ -55,6 +69,11 @@ fun Inspector(
                 is GroupNode -> GroupInfo(obj, timelineState)
                 is RectangleNode -> RectangleInfo(obj, timelineState)
             }
+            if (obj is ObjectNode.Filled) {
+                (obj as? ObjectNode<Object.Filled>)?.let {
+                    FilledInfo(obj, timelineState)
+                }
+            }
         }
     }
 }
@@ -68,8 +87,8 @@ private fun CommonInfo(
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val xState = remember(timelineState.roundedTime) { TextFieldState(node.position.x.toString()) }
-        val yState = remember(timelineState.roundedTime) { TextFieldState(node.position.y.toString()) }
+        val xState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.position.x.toString()) }
+        val yState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.position.y.toString()) }
 
         BaseTextField(
             state = xState,
@@ -85,7 +104,14 @@ private fun CommonInfo(
                 text = "X",
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val x = (xState.text.toString().toFloatOrNull() ?: return@drag) + delta / 100.0f
+                        node.position = node.position.copy(x = x)
+                        (node.obj?.x as? AnimatedFloatState)?.staticValue = const(x)
+                        xState.setTextAndPlaceCursorAtEnd(x.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { x },
@@ -107,7 +133,14 @@ private fun CommonInfo(
                 text = "Y",
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val y = (yState.text.toString().toFloatOrNull() ?: return@drag) + delta / 100.0f
+                        node.position = node.position.copy(y = y)
+                        (node.obj?.y as? AnimatedFloatState)?.staticValue = const(y)
+                        yState.setTextAndPlaceCursorAtEnd(y.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { y },
@@ -120,8 +153,8 @@ private fun CommonInfo(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val wState = remember(timelineState.roundedTime) { TextFieldState(node.bounds.width.toString()) }
-        val hState = remember(timelineState.roundedTime) { TextFieldState(node.bounds.height.toString()) }
+        val wState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.bounds.width.toString()) }
+        val hState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.bounds.height.toString()) }
 
         BaseTextField(
             state = wState,
@@ -137,7 +170,14 @@ private fun CommonInfo(
                 text = "W",
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val w = (wState.text.toString().toFloatOrNull() ?: return@drag) + delta / 100.0f
+                        node.bounds = ObjectNode.baseBounds.scale(w, node.bounds.height)
+                        (node.obj?.width as? AnimatedFloatState)?.staticValue = const(w)
+                        wState.setTextAndPlaceCursorAtEnd(w.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { width },
@@ -159,7 +199,14 @@ private fun CommonInfo(
                 text = "H",
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val h = (hState.text.toString().toFloatOrNull() ?: return@drag) + delta / 100.0f
+                        node.bounds = ObjectNode.baseBounds.scale(node.bounds.width, h)
+                        (node.obj?.height as? AnimatedFloatState)?.staticValue = const(h)
+                        hState.setTextAndPlaceCursorAtEnd(h.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { height },
@@ -180,7 +227,7 @@ private fun EllipseInfo(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
+        val rState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
 
         BaseTextField(
             state = rState,
@@ -197,7 +244,14 @@ private fun EllipseInfo(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val r = (rState.text.toString().toFloatOrNull() ?: return@drag) + delta / 50.0f
+                        node.rotation = r
+                        (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
+                        rState.setTextAndPlaceCursorAtEnd(r.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { rotation },
@@ -220,7 +274,7 @@ private fun GroupInfo(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
+        val rState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
 
         BaseTextField(
             state = rState,
@@ -237,7 +291,14 @@ private fun GroupInfo(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val r = (rState.text.toString().toFloatOrNull() ?: return@drag) + delta / 50.0f
+                        node.rotation = r
+                        (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
+                        rState.setTextAndPlaceCursorAtEnd(r.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { rotation },
@@ -260,8 +321,8 @@ private fun RectangleInfo(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        val rState = remember(timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
-        val cState = remember(timelineState.roundedTime) { TextFieldState(node.cornerRadius.toString()) }
+        val rState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.rotation.toString()) }
+        val cState = remember(node.id, timelineState.roundedTime) { TextFieldState(node.cornerRadius.toString()) }
 
         BaseTextField(
             state = rState,
@@ -278,7 +339,14 @@ private fun RectangleInfo(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val r = (rState.text.toString().toFloatOrNull() ?: return@drag) + delta / 50.0f
+                        node.rotation = r
+                        (node.obj?.rotation as? AnimatedFloatState)?.staticValue = const(r)
+                        rState.setTextAndPlaceCursorAtEnd(r.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { rotation },
@@ -302,7 +370,14 @@ private fun RectangleInfo(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .addKeyframe(
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .drag(node.id) { delta ->
+                        val c = (cState.text.toString().toFloatOrNull() ?: return@drag) + delta / 100.0f
+                        node.cornerRadius = c
+                        (node.obj?.cornerRadius as? AnimatedFloatState)?.staticValue = const(c)
+                        cState.setTextAndPlaceCursorAtEnd(c.toString())
+                    }
+                    .floatKeyframe(
                         state = timelineState,
                         node = node,
                         expression = { cornerRadius },
@@ -311,6 +386,46 @@ private fun RectangleInfo(
                 tint = Color(0xFFCCCCCC),
             )
         }
+    }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+private val HexFormat = HexFormat {
+    upperCase = true
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+@Composable
+fun <N> FilledInfo(
+    node: N,
+    timelineState: TimelineState,
+    modifier: Modifier = Modifier,
+) where N : ObjectNode<Object.Filled>, N : ObjectNode.Filled {
+    val fillState = remember(node.id) { TextFieldState((node.fill as? SolidColor)?.value?.toArgb()?.toHexString(HexFormat) ?: "FFFFFFFF") }
+
+    BaseTextField(
+        state = fillState,
+        modifier = modifier.fillMaxWidth(),
+        onKeyboardAction = {
+            val fill = runCatching { fillState.text.toString().hexToInt(HexFormat) }.getOrElse { return@BaseTextField }
+            node.fill = SolidColor(Color(fill))
+            (node.obj?.fill as? AnimatedBrushState)?.staticValue = const(solid(fill.toLong()))
+            it()
+        },
+    ) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(2.dp))
+                .background(node.fill)
+                .pointerHoverIcon(PointerIcon.Hand)
+                .brushKeyframe(
+                    state = timelineState,
+                    node = node,
+                    expression = { fill },
+                    value = { solid((fill as? SolidColor)?.value?.toArgb() ?: 0) }
+                )
+        )
     }
 }
 
@@ -344,4 +459,13 @@ private fun BaseTextField(
         lineLimits = TextFieldLineLimits.SingleLine,
         icon = icon,
     )
+}
+
+private fun Modifier.drag(
+    key: Any?,
+    onDrag: (Float) -> Unit,
+) = pointerInput(key) {
+    detectHorizontalDragGestures { change, dragAmount ->
+        onDrag(dragAmount)
+    }
 }
