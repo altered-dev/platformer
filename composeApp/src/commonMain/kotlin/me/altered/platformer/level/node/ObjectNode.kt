@@ -3,7 +3,6 @@ package me.altered.platformer.level.node
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import me.altered.platformer.engine.geometry.div
 import me.altered.platformer.engine.geometry.rotateAround
 import me.altered.platformer.engine.geometry.scaleAround
@@ -11,6 +10,7 @@ import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Object
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.level.data.Brush
 import kotlin.jvm.JvmStatic
 
 sealed class ObjectNode<O : Object>(

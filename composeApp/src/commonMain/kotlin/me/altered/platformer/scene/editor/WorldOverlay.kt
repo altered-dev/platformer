@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.toSize
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.const
@@ -47,7 +48,11 @@ fun WorldOverlay(
                 onDrag = onDrag,
             )
             .pointerInput(tool) {
-                detectTapGestures { selectionState.selectHovered() }
+                detectTapGestures {
+                    if (!selectionState.selectHovered()) {
+                        onSelect(Rect(it, Size(1.0f, 1.0f)), size.toSize())
+                    }
+                }
             }
         Tool.Rectangle -> Modifier
             .pointerHoverIcon(PointerIcon.Crosshair)

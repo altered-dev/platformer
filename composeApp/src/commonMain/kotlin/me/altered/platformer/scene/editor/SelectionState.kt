@@ -50,8 +50,10 @@ class SelectionState {
         selection.addAll(nodes)
     }
 
-    fun selectHovered() {
-        hovered?.let { selectSingle(it) } ?: deselect()
+    fun selectHovered(): Boolean {
+        hovered?.let { selectSingle(it) }
+            ?: deselect().also { return false }
+        return true
     }
 
     fun deselect() {

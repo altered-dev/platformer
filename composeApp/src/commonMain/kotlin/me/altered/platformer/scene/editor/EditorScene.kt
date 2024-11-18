@@ -32,10 +32,11 @@ class EditorScene(
     }
 
     fun zoom(delta: Offset, cursorPos: Offset, size: Size) {
-        if (delta.y == 0.0f) return
+        if (delta == Offset.Zero) return
         val cursorDistance = cursorPos - (world.position + size.center)
         val scaleFrom = world.scale
         when {
+            delta.x != 0.0f -> world.scale *= delta.x
             delta.y > 0.0f -> world.scale /= 1.0f + delta.y * 0.1f
             delta.y < 0.0f -> world.scale *= 1.0f - delta.y * 0.1f
         }

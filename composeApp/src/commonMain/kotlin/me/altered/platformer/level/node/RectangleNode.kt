@@ -2,7 +2,6 @@ package me.altered.platformer.level.node
 
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -12,15 +11,29 @@ import me.altered.platformer.level.TimeContext
 import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.data.toComposeBrush
 import me.altered.platformer.engine.node.Node
+import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.solid
+import androidx.compose.ui.graphics.Brush as ComposeBrush
 
 class RectangleNode(
     obj: Rectangle? = null,
     parent: Node? = null,
 ) : ObjectNode<Rectangle>(obj, parent), ObjectNode.Filled, ObjectNode.Stroked {
 
-    override var fill: Brush = SolidColor(Color.Transparent)
-    override var stroke: Brush = SolidColor(Color.Transparent)
+    override var fill: Brush = solid(0)
+        set(value) {
+            field = value
+            _fill = value.toComposeBrush()
+        }
+    override var stroke: Brush = solid(0)
+        set(value) {
+            field = value
+            _stroke = value.toComposeBrush()
+        }
     override var strokeWidth = 0.0f
+
+    private var _fill: ComposeBrush = SolidColor(Color.Unspecified)
+    private var _stroke: ComposeBrush = SolidColor(Color.Unspecified)
     var cornerRadius = 0.0f
 
     override fun TimeContext.eval() {
@@ -35,8 +48,8 @@ class RectangleNode(
             sy = obj.height.value,
         )
         cornerRadius = obj.cornerRadius.value
-        fill = obj.fill.value.toComposeBrush()
-        stroke = obj.stroke.value.toComposeBrush()
+        fill = obj.fill.value
+        stroke = obj.stroke.value
         strokeWidth = obj.strokeWidth.value
     }
 
@@ -54,7 +67,7 @@ class RectangleNode(
     }
 
     override fun DrawScope.draw() {
-        drawRoundRect(fill, bounds.topLeft, bounds.size, CornerRadius(cornerRadius))
-        drawRoundRect(stroke, bounds.topLeft, bounds.size, CornerRadius(cornerRadius), style = Stroke(strokeWidth))
+        drawRoundRect(_fill, bounds.topLeft, bounds.size, CornerRadius(cornerRadius))
+        drawRoundRect(_stroke, bounds.topLeft, bounds.size, CornerRadius(cornerRadius), style = Stroke(strokeWidth))
     }
 }

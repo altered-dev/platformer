@@ -56,7 +56,7 @@ fun NodeTree(
             .hoverable(source),
         contentPadding = PaddingValues(8.dp),
     ) {
-        items(objects, key = { it.id }) {
+        items(objects, key = { it.id.toLong() }) {
             Node(
                 obj = it,
                 selected = it in state.selection,
