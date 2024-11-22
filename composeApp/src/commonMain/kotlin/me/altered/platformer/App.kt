@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import me.altered.platformer.scene.editor.EditorScreen
+import me.altered.platformer.scene.editor.EditorScreen2
 import me.altered.platformer.scene.main.MainScreen
 
 @Composable
@@ -20,7 +21,7 @@ fun App() {
             )
         }
         composable<EditorScreen> {
-            EditorScreen(
+            EditorScreen2(
                 onBackClick = { navController.popBackStack() },
             )
         }

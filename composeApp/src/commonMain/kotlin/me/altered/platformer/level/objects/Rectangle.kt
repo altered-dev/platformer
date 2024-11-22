@@ -1,0 +1,98 @@
+package me.altered.platformer.level.objects
+
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.expression.Expression
+import me.altered.platformer.expression.const
+import me.altered.platformer.expression.toAnimatedBrushState
+import me.altered.platformer.expression.toAnimatedFloatState
+import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.toComposeBrush
+import androidx.compose.ui.graphics.Brush as ComposeBrush
+
+@Serializable
+open class Rectangle(
+    override val id: Long,
+    override val name: String = "Rectangle",
+    override val x: Expression<Float> = const(0.0f),
+    override val y: Expression<Float> = const(0.0f),
+    override val rotation: Expression<Float> = const(0.0f),
+    open val cornerRadius: Expression<Float> = const(0.0f),
+    override val width: Expression<Float> = const(1.0f),
+    override val height: Expression<Float> = const(1.0f),
+    override val fill: List<Expression<Brush>> = emptyList(),
+    override val stroke: List<Expression<Brush>> = emptyList(),
+    override val strokeWidth: Expression<Float> = const(0.0f),
+    override val collisionFlags: CollisionFlags = CollisionFlags(false),
+    override val isDamaging: Boolean = false,
+) : Object,
+    Object.HasFill,
+    Object.HasStroke,
+    Object.HasCollision,
+    Object.Drawable
+{
+    @Transient
+    protected open var position = Offset.Zero
+    @Transient
+    protected open var _rotation = 0.0f
+    @Transient
+    protected open var _cornerRadius = 0.0f
+    @Transient
+    protected open var bounds = Rect.Zero
+    @Transient
+    protected open var _fill = emptyList<ComposeBrush>()
+    @Transient
+    protected open var _stroke = emptyList<ComposeBrush>()
+    @Transient
+    protected open var _strokeWidth = 0.0f
+
+    override fun DrawScope.draw() = withTransform({
+        translate(position.x, position.y)
+        rotate(_rotation, Offset.Zero)
+    }) {
+        _fill.forEach { brush ->
+            drawRoundRect(brush, bounds.topLeft, bounds.size, CornerRadius(_cornerRadius))
+        }
+        _stroke.forEach { brush ->
+            drawRoundRect(brush, bounds.topLeft, bounds.size, CornerRadius(_cornerRadius), style = Stroke(_strokeWidth))
+        }
+    }
+
+    override fun collide(position: Offset, radius: Float): List<CollisionInfo> {
+        TODO("Not yet implemented")
+    }
+
+    override fun eval(time: Float) {
+        position = Offset(x.eval(time), y.eval(time))
+        _rotation = rotation.eval(time)
+        _cornerRadius = cornerRadius.eval(time)
+        bounds = Object.baseBounds.scale(width.eval(time), height.eval(time))
+        _fill = fill.map { it.eval(time).toComposeBrush() }
+        _stroke = stroke.map { it.eval(time).toComposeBrush() }
+        _strokeWidth = strokeWidth.eval(time)
+    }
+
+    override fun toMutableObject() = MutableRectangle(
+        id = id,
+        name = name,
+        x = x.toAnimatedFloatState(),
+        y = y.toAnimatedFloatState(),
+        rotation = rotation.toAnimatedFloatState(),
+        cornerRadius = cornerRadius.toAnimatedFloatState(),
+        width = width.toAnimatedFloatState(),
+        height = height.toAnimatedFloatState(),
+        fill = fill.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
+        stroke = stroke.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
+        strokeWidth = strokeWidth.toAnimatedFloatState(),
+        collisionFlags = collisionFlags,
+        isDamaging = isDamaging,
+    )
+}

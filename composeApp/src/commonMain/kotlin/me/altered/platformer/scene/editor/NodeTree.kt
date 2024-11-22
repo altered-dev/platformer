@@ -31,45 +31,47 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import me.altered.platformer.Res
 import me.altered.platformer.circle
-import me.altered.platformer.group
-import me.altered.platformer.level.node.EllipseNode
-import me.altered.platformer.level.node.GroupNode
-import me.altered.platformer.level.node.ObjectNode
-import me.altered.platformer.level.node.RectangleNode
+import me.altered.platformer.level.objects.MutableEllipse
+import me.altered.platformer.level.objects.MutableLevel
+import me.altered.platformer.level.objects.MutableObject
+import me.altered.platformer.level.objects.MutableRectangle
 import me.altered.platformer.rectangle
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun NodeTree(
-    objects: List<ObjectNode<*>>,
-    state: SelectionState,
+    level: MutableLevel,
+    selectionState: SelectionState,
 ) {
     val source = remember { MutableInteractionSource() }
     val hovered by source.collectIsHoveredAsState()
-    LaunchedEffect(Unit) {
-        if (hovered) state.hovered = null
+    LaunchedEffect(hovered) {
+        if (hovered) selectionState.hovered2 = null
     }
     LazyColumn(
         modifier = Modifier
             .width(256.dp)
             .fillMaxHeight()
-            .hoverable(source),
+            .hoverable(source)
+            .clickable(source, null) {
+                selectionState.deselect()
+            },
         contentPadding = PaddingValues(8.dp),
     ) {
-        items(objects, key = { it.id.toLong() }) {
-            Node(
+        items(level.objects, key = { it.id }) {
+            Object(
                 obj = it,
-                selected = it in state.selection,
-                onHover = { state.hovered = it },
-                onClick = { state.selectSingle(it) },
+                selected = it in selectionState.selection2,
+                onHover = { selectionState.hovered2 = it },
+                onClick = { selectionState.selectSingle(it) },
             )
         }
     }
 }
 
 @Composable
-private fun Node(
-    obj: ObjectNode<*>,
+private fun Object(
+    obj: MutableObject,
     selected: Boolean,
     onHover: () -> Unit,
     onClick: () -> Unit,
@@ -94,9 +96,8 @@ private fun Node(
     ) {
         Icon(
             painter = when (obj) {
-                is EllipseNode -> painterResource(Res.drawable.circle)
-                is GroupNode -> painterResource(Res.drawable.group)
-                is RectangleNode -> painterResource(Res.drawable.rectangle)
+                is MutableRectangle -> painterResource(Res.drawable.rectangle)
+                is MutableEllipse -> painterResource(Res.drawable.circle)
             },
             contentDescription = null,
             tint = Color(0xFFCCCCCC),

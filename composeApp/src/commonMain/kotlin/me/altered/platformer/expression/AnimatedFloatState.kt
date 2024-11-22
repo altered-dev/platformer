@@ -6,7 +6,7 @@ import me.altered.platformer.level.data.Brush
 import me.altered.platformer.level.data.solid
 
 class AnimatedFloatState(
-    initial: Expression<Float>,
+    initial: Float,
     keyframes: List<Keyframe<Float>> = emptyList(),
 ) : AnimatedState<Float>(initial, keyframes) {
 
@@ -17,12 +17,12 @@ class AnimatedFloatState(
 
 fun Expression<Float>.toAnimatedFloatState() = when (this) {
     is AnimatedFloatState -> this
-    is AnimatedFloat -> AnimatedFloatState(keyframes.first().value, keyframes)
-    else -> AnimatedFloatState(this, emptyList())
+    is AnimatedFloat -> AnimatedFloatState(eval(0.0f), keyframes)
+    else -> AnimatedFloatState(eval(0.0f), listOf(Keyframe(0.0f, this)))
 }
 
 class AnimatedBrushState(
-    initial: Expression<Brush>,
+    initial: Brush,
     keyframes: List<Keyframe<Brush>> = emptyList(),
 ) : AnimatedState<Brush>(initial, keyframes) {
 
@@ -37,6 +37,6 @@ class AnimatedBrushState(
 
 fun Expression<Brush>.toAnimatedBrushState() = when (this) {
     is AnimatedBrushState -> this
-    is AnimatedBrush -> AnimatedBrushState(keyframes.first().value, keyframes)
-    else -> AnimatedBrushState(this, emptyList())
+    is AnimatedBrush -> AnimatedBrushState(eval(0.0f), keyframes)
+    else -> AnimatedBrushState(eval(0.0f), listOf(Keyframe(0.0f, this)))
 }

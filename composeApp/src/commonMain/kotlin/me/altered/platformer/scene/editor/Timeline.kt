@@ -30,9 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.altered.platformer.expression.AnimatedState
-import me.altered.platformer.level.data.Brush
-import me.altered.platformer.level.data.Object
-import me.altered.platformer.level.data.Rectangle
+import me.altered.platformer.level.objects.MutableObject
+import me.altered.platformer.level.objects.MutableRectangle
 import kotlin.math.roundToInt
 
 @Composable
@@ -102,15 +101,20 @@ fun Timeline(
         Canvas(
             modifier = Modifier.fillMaxSize(),
         ) {
-            selectionState.selection.forEach { node ->
-                val obj = node.obj ?: return@forEach
-                (obj.x as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 10.0f, timePos, step) }
-                (obj.y as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 20.0f, timePos, step) }
-                (obj.width as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 30.0f, timePos, step) }
-                (obj.height as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 40.0f, timePos, step) }
-                (obj.rotation as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 50.0f, timePos, step) }
-                ((obj as? Rectangle)?.cornerRadius as? AnimatedState<Float>)?.let { drawKeyframes(it, offset, 60.0f, timePos, step) }
-                ((obj as? Object.Filled)?.fill as? AnimatedState<Brush>)?.let { drawKeyframes(it, offset, 70.0f, timePos, step) }
+            selectionState.selection2.forEach { obj ->
+                drawKeyframes(obj.x, offset, 10.0f, timePos, step)
+                drawKeyframes(obj.y, offset, 20.0f, timePos, step)
+                drawKeyframes(obj.width, offset, 30.0f, timePos, step)
+                drawKeyframes(obj.height, offset, 40.0f, timePos, step)
+                drawKeyframes(obj.rotation, offset, 50.0f, timePos, step)
+                if (obj is MutableRectangle) {
+                    drawKeyframes(obj.cornerRadius, offset, 60.0f, timePos, step)
+                }
+                if (obj is MutableObject.HasFill) {
+                    obj.fill.forEachIndexed { index, fill ->
+                        drawKeyframes(fill, offset, 70.0f + index * 10.0f, timePos, step)
+                    }
+                }
             }
             drawLine(Color(0xFFB2FFB2), Offset(timePos, 0.0f), Offset(timePos, size.height))
         }

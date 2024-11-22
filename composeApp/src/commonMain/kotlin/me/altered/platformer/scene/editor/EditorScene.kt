@@ -58,8 +58,8 @@ class EditorScene(
         nodes.forEach { node ->
             node.position += delta
             val obj = node.obj ?: return@forEach
-            (obj.x as? AnimatedFloatState)?.staticValue = const(node.position.x)
-            (obj.y as? AnimatedFloatState)?.staticValue = const(node.position.y)
+//            (obj.x as? AnimatedFloatState)?.staticValue = const(node.position.x)
+//            (obj.y as? AnimatedFloatState)?.staticValue = const(node.position.y)
         }
     }
 

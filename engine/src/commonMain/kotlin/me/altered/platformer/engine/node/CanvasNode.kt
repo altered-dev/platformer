@@ -9,3 +9,5 @@ open class CanvasNode(
 
     open fun DrawScope.draw() = Unit
 }
+
+fun CanvasNode.draw(scope: DrawScope) = scope.draw()

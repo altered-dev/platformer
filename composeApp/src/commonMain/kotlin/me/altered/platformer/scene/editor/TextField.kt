@@ -8,13 +8,15 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -35,50 +37,43 @@ import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.ui.TextField
 
 @Composable
-fun <O : Object, N : ObjectNode<O>> FloatTextField(
-    node: N,
-    expression: O.() -> Expression<Float>,
-    value: N.() -> Float,
-    onValueChanged: N.(Float) -> Unit,
+fun FloatTextField(
+    state: AnimatedFloatState,
     timelineState: TimelineState,
     modifier: Modifier = Modifier,
     icon: @Composable BoxScope.() -> Unit = {},
 ) {
-    val state = remember(node, timelineState.roundedTime) { TextFieldState(node.value().toString()) }
-    val expr = node.obj?.expression() as? AnimatedFloatState
-
+    var floatState by remember(state.staticValue) { mutableFloatStateOf(state.staticValue.round()) }
     TextField(
-        state = state,
+        value = floatState.toString(),
+        onValueChange = { value -> value.toFloatOrNull()?.let { floatState = it } },
         modifier = modifier,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        onKeyboardAction = e@{
-            val value = state.text.toString().toFloatOrNull() ?: return@e
-            node.onValueChanged(value)
-            expr?.staticValue = const(value)
-            it()
-        },
-        lineLimits = TextFieldLineLimits.SingleLine,
+        keyboardActions = KeyboardActions(
+            onDone = {
+                state.staticValue = floatState
+                defaultKeyboardAction(ImeAction.Done)
+            },
+        ),
+        singleLine = true,
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerHoverIcon(PointerIcon.Hand)
-                .pointerInput(node.id) {
+                .pointerInput(state) {
                     detectHorizontalDragGestures e@{ _, delta ->
-                        val value = (state.text.toString().toFloatOrNull() ?: return@e) + delta / 100.0f
-                        node.onValueChanged(value)
-                        expr?.staticValue = const(value)
-                        state.setTextAndPlaceCursorAtEnd(value.toString())
+                        floatState = (floatState + delta / 100.0f).round()
+                        state.staticValue = floatState
                     }
                 }
-                .pointerInput(node.id) {
+                .pointerInput(state) {
                     detectTapGestures(
                         onDoubleTap = {
-                            expr?.addFrame(Keyframe(timelineState.roundedTime, const(node.value())))
-                        }
+                            state.addFrame(Keyframe(timelineState.roundedTime, const(state.staticValue)))
+                        },
                     )
-                },
-            contentAlignment = Alignment.Center,
+                }
         ) {
             icon()
         }
@@ -105,7 +100,7 @@ fun <O : Object, N : ObjectNode<O>> ColorTextField(
         onKeyboardAction = e@{
             val value = solid(runCatching { state.text.toString().hexToInt(HexFormat) }.getOrElse { return@e })
             node.onValueChanged(value)
-            expr?.staticValue = const(value)
+            expr?.staticValue = value
             it()
         },
         lineLimits = TextFieldLineLimits.SingleLine,

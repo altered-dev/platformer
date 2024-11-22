@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlin.math.roundToInt
 
 @Stable
 class TimelineState(
@@ -18,7 +17,7 @@ class TimelineState(
     var time by mutableStateOf(initialTime)
     var offset by mutableStateOf(initialOffset)
 
-    val roundedTime by derivedStateOf { (time * 100.0f).roundToInt() / 100.0f }
+    val roundedTime by derivedStateOf { time.round() }
 }
 
 @Composable

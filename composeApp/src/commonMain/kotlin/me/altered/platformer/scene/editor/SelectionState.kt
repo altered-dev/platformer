@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import me.altered.platformer.level.node.ObjectNode
+import me.altered.platformer.level.objects.MutableObject
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,17 +20,20 @@ class SelectionState {
     val selection = mutableStateListOf<ObjectNode<*>>()
     var hovered by mutableStateOf<ObjectNode<*>?>(null)
 
+    val selection2 = mutableStateListOf<MutableObject>()
+    var hovered2 by mutableStateOf<MutableObject?>(null)
+
     val isSelecting: Boolean
         get() = rect != null
 
     fun getSelectionRect(size: Size, worldToScreen: Offset.(Size) -> Offset): Rect? {
-        if (selection.isEmpty()) return null
+        if (selection2.isEmpty()) return null
         var left = Float.POSITIVE_INFINITY
         var top = Float.POSITIVE_INFINITY
         var right = Float.NEGATIVE_INFINITY
         var bottom = Float.NEGATIVE_INFINITY
-        selection.forEach { node ->
-            val bounds = node.globalBounds
+        selection2.forEach { obj ->
+            val bounds = obj.globalBounds
             left = min(left, bounds.left)
             top = min(top, bounds.top)
             right = max(right, bounds.right)
@@ -40,24 +44,43 @@ class SelectionState {
         return Rect(topLeft, bottomRight)
     }
 
-    fun selectSingle(node: ObjectNode<*>) {
-        selection.clear()
-        selection += node
+    fun getSelectionRect(): Rect? {
+        if (selection2.isEmpty()) return null
+        var left = Float.POSITIVE_INFINITY
+        var top = Float.POSITIVE_INFINITY
+        var right = Float.NEGATIVE_INFINITY
+        var bottom = Float.NEGATIVE_INFINITY
+        selection2.forEach { obj ->
+            val bounds = obj.globalBounds
+            left = min(left, bounds.left)
+            top = min(top, bounds.top)
+            right = max(right, bounds.right)
+            bottom = max(bottom, bounds.bottom)
+        }
+        val topLeft = Offset(left, top)
+        val bottomRight = Offset(right, bottom)
+        return Rect(topLeft, bottomRight)
     }
 
-    fun selectAll(nodes: Collection<ObjectNode<*>>) {
-        selection.clear()
-        selection.addAll(nodes)
+    fun selectSingle(obj: MutableObject?) {
+        selection2.clear()
+        if (obj == null) return
+        selection2 += obj
+    }
+
+    fun selectAll(objs: Collection<MutableObject>) {
+        selection2.clear()
+        selection2.addAll(objs)
     }
 
     fun selectHovered(): Boolean {
-        hovered?.let { selectSingle(it) }
+        hovered2?.let { selectSingle(it) }
             ?: deselect().also { return false }
         return true
     }
 
     fun deselect() {
-        selection.clear()
+        selection2.clear()
     }
 }
 

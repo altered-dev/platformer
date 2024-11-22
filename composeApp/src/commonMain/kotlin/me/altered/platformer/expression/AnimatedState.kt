@@ -6,13 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 
 abstract class AnimatedState<T>(
-    initial: Expression<T>,
-    keyframes: List<Keyframe<T>>,
+    initial: T,
+    keyframes: List<Keyframe<T>> = emptyList(),
 ) : Animated<T>() {
 
     private val _keyframes = keyframes.toMutableStateList()
     override val keyframes: List<Keyframe<T>> = _keyframes
 
+    /**
+     * The current value that is represented in the editor.
+     */
     var staticValue by mutableStateOf(initial)
 
     /**
@@ -24,11 +27,17 @@ abstract class AnimatedState<T>(
      * Creates an immutable expression from the animated state.
      * May mangle the state, but the overall expression value remains unchanged.
      */
-    fun toExpression(): Expression<T> = if (_keyframes.isEmpty()) staticValue else toAnimated()
+    fun toExpression(): Expression<T> = when (keyframes.size) {
+        0 -> const(staticValue)
+        1 -> keyframes.single().value
+        else -> toAnimated()
+    }
 
     override fun eval(time: Float): T {
-        return if (_keyframes.isEmpty()) staticValue.eval(time)
-        else super.eval(time)
+        return when (keyframes.size) {
+            0 -> staticValue
+            else -> super.eval(time).also { staticValue = it }
+        }
     }
 
     fun addFrame(keyframe: Keyframe<T>) {

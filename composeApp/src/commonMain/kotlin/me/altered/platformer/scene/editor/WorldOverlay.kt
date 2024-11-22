@@ -3,6 +3,8 @@ package me.altered.platformer.scene.editor
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -13,76 +15,148 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.toSize
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
-import me.altered.platformer.expression.const
-import me.altered.platformer.level.data.Ellipse
-import me.altered.platformer.level.data.Rectangle
 import me.altered.platformer.level.data.solid
-import me.altered.platformer.level.node.EllipseNode
-import me.altered.platformer.level.node.ObjectNode
-import me.altered.platformer.level.node.RectangleNode
+import me.altered.platformer.level.objects.MutableEllipse
+import me.altered.platformer.level.objects.MutableLevel
+import me.altered.platformer.level.objects.MutableObject
+import me.altered.platformer.level.objects.MutableRectangle
 
 @Composable
 fun WorldOverlay(
+    level: MutableLevel,
     toolState: ToolState,
-    selectionState: SelectionState,
-    worldToScreen: Offset.(size: Size) -> Offset,
-    screenToWorld: Offset.(size: Size) -> Offset,
+    selection: SelectionState,
+    transform: TransformState,
     modifier: Modifier,
-    onPan: (Offset) -> Unit = {},
-    onZoom: (delta: Offset, position: Offset, size: Size) -> Unit = { _, _, _ -> },
-    onHover: (position: Offset, size: Size) -> ObjectNode<*>? = { _, _ -> null },
-    onSelect: (rect: Rect, size: Size) -> List<ObjectNode<*>> = { _, _ -> emptyList() },
-    onDrag: (delta: Offset, size: Size) -> Unit = { _, _ -> },
-    placeNode: (ObjectNode<*>) -> Unit = {},
 ) {
+    val screenToWorld = remember(transform) { transform.screenToWorld }
+    val worldToScreen = remember(transform) { transform.worldToScreen }
+    val rectScreenToWorld = remember(transform) { transform.rectScreenToWorld }
+    val rectWorldToScreen = remember(transform) { transform.rectWorldToScreen }
+
     val canvasModifier = when (val tool = toolState.tool) {
-        Tool.Cursor -> Modifier
-            .hover { position, size -> selectionState.hovered = onHover(position, size) }
-            .selectionRect(
-                state = selectionState,
-                worldToScreen = worldToScreen,
-                onSelect = { rect, size -> selectionState.selectAll(onSelect(rect, size)) },
-                onDrag = onDrag,
-            )
-            .pointerInput(tool) {
-                detectTapGestures {
-                    if (!selectionState.selectHovered()) {
-                        onSelect(Rect(it, Size(1.0f, 1.0f)), size.toSize())
-                    }
-                }
-            }
-        Tool.Rectangle -> Modifier
-            .pointerHoverIcon(PointerIcon.Crosshair)
-            .createDefaultObject(screenToWorld) { pos ->
-                val node = RectangleNode(rectangle(pos))
-                placeNode(node)
-                selectionState.selectSingle(node)
-                toolState.reset()
-            }
-        Tool.Circle -> Modifier
-            .pointerHoverIcon(PointerIcon.Crosshair)
-            .createDefaultObject(screenToWorld) { pos ->
-                val node = EllipseNode(ellipse(pos))
-                placeNode(node)
-                selectionState.selectSingle(node)
-                toolState.reset()
-            }
+        Tool.Cursor -> Modifier.cursor(
+            level = level,
+            toolState = toolState,
+            selection = selection,
+            transform = transform,
+            screenToWorld = screenToWorld,
+            worldToScreen = worldToScreen,
+            rectScreenToWorld = rectScreenToWorld,
+        )
+        Tool.Rectangle -> Modifier.rectangle(
+            level = level,
+            toolState = toolState,
+            selection = selection,
+            screenToWorld = screenToWorld,
+        )
+        Tool.Circle -> Modifier.ellipse(
+            level = level,
+            toolState = toolState,
+            selection = selection,
+            screenToWorld = screenToWorld,
+        )
         else -> Modifier
     }
 
     Canvas(
-        modifier = Modifier
-            .pan(onPan, onZoom)
-            .then(canvasModifier)
-            .then(modifier),
+        modifier = modifier
+            .then(canvasModifier),
     ) {
-        drawHoveredRect(selectionState.hovered, worldToScreen)
-        drawSelectedRect(selectionState, worldToScreen)
-        drawSelectionRect(selectionState.rect)
+        drawHoveredRect(selection.hovered2, worldToScreen)
+        drawSelectedRect(selection, rectWorldToScreen)
+        drawSelectionRect(selection.rect)
     }
+}
+
+// tools
+
+private fun Modifier.cursor(
+    level: MutableLevel,
+    toolState: ToolState,
+    selection: SelectionState,
+    transform: TransformState,
+    screenToWorld: Offset.(Size) -> Offset,
+    worldToScreen: Offset.(Size) -> Offset,
+    rectScreenToWorld: Rect.(Size) -> Rect,
+) = this
+    .hover { position, size ->
+        selection.hovered2 = level.findHovered(position.screenToWorld(size))
+    }
+    .selectionRect(
+        state = selection,
+        worldToScreen = worldToScreen,
+        onSelect = { rect, size ->
+            selection.selectAll(level.findSelected(rect.rectScreenToWorld(size)))
+        },
+        onDrag = { delta, size ->
+            val delta = delta / transform.getScale(size)
+            selection.selection2.forEach { obj ->
+                obj.x.staticValue = (obj.x.staticValue + delta.x).round()
+                obj.y.staticValue = (obj.y.staticValue + delta.y).round()
+            }
+        }
+    )
+    .pointerInput(toolState.tool) {
+        detectTapGestures {
+            if (!selection.selectHovered()) {
+                selection.selectSingle(level.findHovered(it))
+            }
+        }
+    }
+
+private fun Modifier.rectangle(
+    level: MutableLevel,
+    toolState: ToolState,
+    selection: SelectionState,
+    screenToWorld: Offset.(Size) -> Offset
+) = this
+    .pointerHoverIcon(PointerIcon.Crosshair)
+    .createDefaultObject(screenToWorld) {
+        val obj = rectangle(it)
+        level.objects += obj
+        selection.selectSingle(obj)
+        toolState.reset()
+    }
+
+private fun Modifier.ellipse(
+    level: MutableLevel,
+    toolState: ToolState,
+    selection: SelectionState,
+    screenToWorld: Offset.(Size) -> Offset
+) = this
+    .pointerHoverIcon(PointerIcon.Crosshair)
+    .createDefaultObject(screenToWorld) {
+        val obj = ellipse(it)
+        level.objects += obj
+        selection.selectSingle(obj)
+        toolState.reset()
+    }
+
+// level utils
+
+fun MutableLevel.findHovered(position: Offset): MutableObject? {
+    return objects.findLast { obj -> position in obj.globalBounds }
+}
+
+fun MutableLevel.findSelected(rect: Rect): List<MutableObject> {
+    return objects.filter { it.globalBounds.overlaps(rect) }
+}
+
+// drawing
+
+private fun DrawScope.drawHoveredRect(
+    obj: MutableObject?,
+    worldToScreen: Offset.(Size) -> Offset,
+) {
+    if (obj == null) return
+    val bounds = obj.globalBounds
+    val topLeft = bounds.topLeft.worldToScreen(size)
+    val bottomRight = bounds.bottomRight.worldToScreen(size)
+    val size = Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
+    drawRect(Color(0xFF0D99FF), topLeft, size, style = Stroke())
 }
 
 private fun DrawScope.drawSelectionRect(rect: Rect?) {
@@ -91,47 +165,35 @@ private fun DrawScope.drawSelectionRect(rect: Rect?) {
     drawRect(Color(0xFF0D99FF), rect.topLeft, rect.size, 1.0f, Stroke(2.0f))
 }
 
-private fun DrawScope.drawHoveredRect(
-    node: ObjectNode<*>?,
-    worldToScreen: Offset.(size: Size) -> Offset,
-) {
-    if (node == null) return
-    val bounds = node.globalBounds
-    val topLeft = bounds.topLeft.worldToScreen(size)
-    val bottomRight = bounds.bottomRight.worldToScreen(size)
-    val size = Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
-    drawRect(Color(0xFF0D99FF), topLeft, size, style = Stroke())
-}
-
 private fun DrawScope.drawSelectedRect(
     state: SelectionState,
-    worldToScreen: Offset.(size: Size) -> Offset,
+    worldToScreen: Rect.(size: Size) -> Rect,
 ) {
-    val rect = state.getSelectionRect(size, worldToScreen) ?: return
+    val rect = state.getSelectionRect()?.worldToScreen(size) ?: return
     drawRect(Color.Blue, rect.topLeft, rect.size, style = Stroke())
 }
 
-private fun rectangle(position: Offset) = Rectangle(
+// object creation
+
+private fun rectangle(position: Offset) = MutableRectangle(
+    id = idCounter++,
     name = "rect",
-    x = AnimatedFloatState(const(position.x)),
-    y = AnimatedFloatState(const(position.y)),
-    rotation = AnimatedFloatState(const(0.0f)),
-    width = AnimatedFloatState(const(1.0f)),
-    height = AnimatedFloatState(const(1.0f)),
-    cornerRadius = AnimatedFloatState(const(0.0f)),
-    fill = AnimatedBrushState(const(solid(0xFFFCBFB8))),
-    stroke = const(solid(0x00000000)),
-    strokeWidth = AnimatedFloatState(const(0.0f)),
+    x = AnimatedFloatState(position.x),
+    y = AnimatedFloatState(position.y),
+    fill = mutableStateListOf(
+        AnimatedBrushState(solid(0xFFFCBFB8)),
+    ),
 )
 
-private fun ellipse(position: Offset) = Ellipse(
-    name = "circle",
-    x = AnimatedFloatState(const(position.x)),
-    y = AnimatedFloatState(const(position.y)),
-    rotation = AnimatedFloatState(const(0.0f)),
-    width = AnimatedFloatState(const(1.0f)),
-    height = AnimatedFloatState(const(1.0f)),
-    fill = AnimatedBrushState(const(solid(0xFFFCBFB8))),
-    stroke = const(solid(0x00000000)),
-    strokeWidth = AnimatedFloatState(const(0.0f)),
+private fun ellipse(position: Offset) = MutableEllipse(
+    id = idCounter++,
+    name = "ellipse",
+    x = AnimatedFloatState(position.x),
+    y = AnimatedFloatState(position.y),
+    fill = mutableStateListOf(
+        AnimatedBrushState(solid(0xFFFCBFB8)),
+    ),
 )
+
+// TODO: THIS IS VERY TEMPORARY (i hope at least)
+private var idCounter = 0L
