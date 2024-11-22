@@ -1,35 +1,143 @@
 package me.altered.platformer.scene.main
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
+import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.node.World
+import me.altered.platformer.expression.Easing
+import me.altered.platformer.expression.animated
+import me.altered.platformer.expression.at
+import me.altered.platformer.expression.const
+import me.altered.platformer.expression.with
+import me.altered.platformer.level.Level
+import me.altered.platformer.level.LevelImpl
+import me.altered.platformer.level.player.Player
+import me.altered.platformer.level.World
+import me.altered.platformer.level.data.linear
+import me.altered.platformer.level.data.solid
+import me.altered.platformer.level.objects.Rectangle
+import me.altered.platformer.scene.editor.state.rememberTimelineState
+import me.altered.platformer.scene.editor.state.rememberTransformState
+import me.altered.platformer.scene.editor.state.transform
 
 @Serializable
 data object MainScreen
 
 @Composable
 fun MainScreen(
+    level: Level = remember { sampleLevel() },
     navigateToEditor: () -> Unit = {},
 ) {
-    val textMeasurer = rememberTextMeasurer()
-    World(
-        root = remember { MainScene(textMeasurer) },
+    val transform = rememberTransformState()
+    val timelineState = rememberTimelineState()
+    var timeDirection by remember { mutableFloatStateOf(0.0f) }
+    val world = remember(level) {
+        World(
+            level = level,
+            player = Player(),
+        )
+    }
+
+    LaunchedEffect(level, timelineState) {
+        snapshotFlow { timelineState.time }
+            .collect { time -> level.eval(time) }
+    }
+
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .onKeyEvent {
-                if (it.type == KeyEventType.KeyDown && it.key == Key.E) {
-                    navigateToEditor()
-                    true
-                } else false
-            },
-    )
+            .fillMaxSize(),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            BasicText("time: ${timelineState.roundedTime}")
+        }
+        World(
+            root = world,
+            modifier = Modifier
+                .fillMaxSize()
+                .transform(transform)
+                .onKeyEvent { event ->
+                    when (event.type) {
+                        KeyEventType.KeyDown -> when (event.key) {
+                            Key.DirectionRight -> { timeDirection = 1.0f; true }
+                            Key.DirectionLeft -> { timeDirection = -1.0f; true }
+                            Key.E -> { navigateToEditor(); true }
+                            Key.T -> { world.player?.position = Offset.Zero; true }
+                            else -> false
+                        }
+                        KeyEventType.KeyUp -> when (event.key) {
+                            Key.DirectionRight -> { timeDirection = 0.0f; true }
+                            Key.DirectionLeft -> { timeDirection = 0.0f; true }
+                            else -> false
+                        }
+                        else -> false
+                    }
+                },
+            onUpdate = { delta -> timelineState.time = (timelineState.time + timeDirection * delta).coerceAtLeast(0.0f) }
+        )
+    }
 }
+
+private fun sampleLevel() = LevelImpl(
+    name = "My level",
+    objects = listOf(
+        Rectangle(
+            id = 0,
+            name = "floor",
+            x = const(0.0f),
+            y = const(5.0f),
+            width = const(50.0f),
+            height = const(1.0f),
+            fill = listOf(const(solid(0x80000000))),
+        ),
+        Rectangle(
+            id = 0,
+            x = animated(
+                -6.0f at 0.0f,
+                10.0f at 2.0f with Easing.BackOut,
+                -2.0f at 5.0f with Easing.ExpoOut,
+            ),
+            y = const(0.0f),
+            width = const(2.0f),
+            height = const(2.0f),
+            cornerRadius = animated(
+                0.0f at 0.0f,
+                2.0f at 1.0f with Easing.SineInOut,
+            ),
+            fill = listOf(
+                const(
+                    linear(
+                        x0 = -2.0f,
+                        y0 = 2.0f,
+                        x1 = 2.0f,
+                        y1 = -2.0f,
+                        colors = listOf(Color(0xFFFA8072), Color(0xFFFCBFB8)),
+                    ),
+                ),
+            ),
+        )
+    ),
+)

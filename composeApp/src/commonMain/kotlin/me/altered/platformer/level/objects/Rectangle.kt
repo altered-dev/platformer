@@ -4,12 +4,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import me.altered.platformer.engine.geometry.div
+import me.altered.platformer.engine.geometry.rotateAround
 import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.engine.geometry.scaleAround
 import me.altered.platformer.expression.Expression
 import me.altered.platformer.expression.const
 import me.altered.platformer.expression.toAnimatedBrushState
@@ -67,7 +71,31 @@ open class Rectangle(
     }
 
     override fun collide(position: Offset, radius: Float): List<CollisionInfo> {
-        TODO("Not yet implemented")
+        if (bounds.isEmpty) return emptyList()
+        rotated(position) { position ->
+            val bounds = bounds.translate(this.position)
+            val x = position.x.coerceIn(bounds.left, bounds.right)
+            val y = position.y.coerceIn(bounds.top, bounds.bottom)
+            val vec = Offset(x, y)
+            if ((position - vec).getDistanceSquared() > (radius * radius)) {
+                return emptyList()
+            }
+            vec
+        }.let { return listOf(CollisionInfo(it, Offset.Unspecified)) }
+    }
+
+    // TODO: uncopypaste
+    protected inline fun rotated(position: Offset, transform: (position: Offset) -> Offset): Offset {
+        if (_rotation == 0.0f) return transform(position)
+        val newPos = position.rotateAround(this.position, _rotation)
+        return transform(newPos).rotateAround(this.position, -_rotation)
+    }
+
+    protected inline fun scaled(position: Offset, transform: (position: Offset) -> Offset): Offset {
+        if (bounds.width == bounds.height) return transform(position)
+        val scale = Size(bounds.height / bounds.width, 1.0f)
+        val newPos = position.scaleAround(this.position, scale)
+        return transform(newPos).scaleAround(this.position, 1.0f / scale)
     }
 
     override fun eval(time: Float) {

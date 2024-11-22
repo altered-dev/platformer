@@ -32,7 +32,6 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.runtime)
             implementation(compose.ui)
             implementation(libs.androidx.navigation.compose)

@@ -17,14 +17,4 @@ sealed interface Object {
     val width: Expression<Float>
     val height: Expression<Float>
 
-    sealed interface Filled : Object {
-
-        val fill: Expression<Brush>
-    }
-
-    sealed interface Stroked : Object {
-
-        val stroke: Expression<Brush>
-        val strokeWidth: Expression<Float>
-    }
 }
