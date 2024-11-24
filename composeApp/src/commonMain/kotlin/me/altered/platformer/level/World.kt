@@ -8,6 +8,7 @@ import me.altered.platformer.engine.node.draw
 import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.objects.Object
 import me.altered.platformer.level.objects.draw
+import me.altered.platformer.level.objects.drawInEditor
 import me.altered.platformer.level.player.Player
 import me.altered.platformer.scene.editor.node.Grid
 
@@ -28,7 +29,8 @@ class World(
     override fun DrawScope.draw() {
         grid?.draw(this)
         if (grid != null) level?.objects?.forEach {
-            if (it is Object.EditorDrawable) it.draw(this)
+            if (it is Object.Drawable) it.draw(this)
+            if (it is Object.EditorDrawable) it.drawInEditor(this)
         }
         else level?.objects?.forEach {
             if (it is Object.Drawable) it.draw(this)

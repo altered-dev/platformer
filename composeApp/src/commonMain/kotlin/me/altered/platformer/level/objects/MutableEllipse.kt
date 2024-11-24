@@ -12,6 +12,7 @@ import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.toComposeBrush
 
+@Suppress("SuspiciousVarProperty")
 class MutableEllipse(
     id: Long,
     name: String = "Rectangle",

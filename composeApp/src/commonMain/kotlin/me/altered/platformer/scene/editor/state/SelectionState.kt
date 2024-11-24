@@ -76,6 +76,7 @@ class SelectionState {
     }
 
     fun deselect() {
+        if (hovered in selection) hovered = null
         selection.clear()
     }
 }

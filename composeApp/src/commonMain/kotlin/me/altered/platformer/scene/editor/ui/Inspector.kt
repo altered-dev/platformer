@@ -19,6 +19,7 @@ import me.altered.platformer.Res
 import me.altered.platformer.angle
 import me.altered.platformer.corner
 import me.altered.platformer.level.objects.MutableEllipse
+import me.altered.platformer.level.objects.MutableGroup
 import me.altered.platformer.level.objects.MutableObject
 import me.altered.platformer.level.objects.MutableRectangle
 import me.altered.platformer.scene.editor.state.SelectionState
@@ -43,6 +44,7 @@ fun Inspector(
             when (obj) {
                 is MutableRectangle -> RectangleInfo(obj, timelineState)
                 is MutableEllipse -> EllipseInfo(obj, timelineState)
+                is MutableGroup -> GroupInfo(obj, timelineState)
             }
         }
     }
@@ -119,6 +121,25 @@ private fun RectangleInfo(
 @Composable
 private fun EllipseInfo(
     obj: MutableEllipse,
+    timelineState: TimelineState,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        FloatTextField(
+            state = obj.rotation,
+            timelineState = timelineState,
+            modifier = Modifier.weight(1.0f),
+        ) {
+            Icon(painterResource(Res.drawable.angle), tint = Color(0xFFCCCCCC))
+        }
+        Spacer(modifier = Modifier.weight(1.0f))
+    }
+}
+
+@Composable
+private fun GroupInfo(
+    obj: MutableGroup,
     timelineState: TimelineState,
 ) {
     Row(

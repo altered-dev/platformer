@@ -19,6 +19,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -26,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
+import me.altered.platformer.engine.ui.onDistinctKeyEvent
 import me.altered.platformer.level.Level
 import me.altered.platformer.level.World
 import me.altered.platformer.level.MutableLevel
@@ -95,6 +101,20 @@ private fun EditorScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF333333))
+            .onDistinctKeyEvent { event ->
+                when {
+                    event.type == KeyEventType.KeyDown && event.key == Key.G && event.isCtrlPressed -> {
+                        level.createGroup(selectionState)
+                        true
+                    }
+                    event.type == KeyEventType.KeyDown && event.key == Key.Delete -> {
+                        level.objects.removeAll(selectionState.selection)
+                        selectionState.deselect()
+                        true
+                    }
+                    else -> false
+                }
+            }
     ) {
         Toolbar(
             levelName = level.name,

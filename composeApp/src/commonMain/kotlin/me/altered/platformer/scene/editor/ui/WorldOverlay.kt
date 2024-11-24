@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -15,13 +16,16 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import me.altered.platformer.engine.ui.onDistinctKeyEvent
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.objects.MutableEllipse
 import me.altered.platformer.level.MutableLevel
+import me.altered.platformer.level.objects.MutableGroup
 import me.altered.platformer.level.objects.MutableObject
 import me.altered.platformer.level.objects.MutableRectangle
+import me.altered.platformer.scene.editor.medianOf
 import me.altered.platformer.scene.editor.round
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.scene.editor.state.ToolState
@@ -160,6 +164,28 @@ fun MutableLevel.generateUniqueId(): Long {
         id = Random.nextLong()
     } while (objects.any { it.id == id })
     return id
+}
+
+fun MutableLevel.createGroup(selection: SelectionState) {
+    if (selection.selection.isEmpty()) return
+    // might need to deal with -1 but ok for now
+    val minIndex = selection.selection.minOf { objects.indexOf(it) }
+    val x = selection.selection.medianOf { it.x.staticValue }
+    val y = selection.selection.medianOf { it.y.staticValue }
+
+    val group = MutableGroup(
+        id = generateUniqueId(),
+        x = AnimatedFloatState(x),
+        y = AnimatedFloatState(y),
+        children = selection.selection.toMutableStateList(),
+    )
+    group.children.forEach { obj ->
+        obj.x.staticValue -= x
+        obj.y.staticValue -= y
+    }
+    objects.add(minIndex, group)
+    objects.removeAll(selection.selection)
+    selection.selectSingle(group)
 }
 
 // drawing

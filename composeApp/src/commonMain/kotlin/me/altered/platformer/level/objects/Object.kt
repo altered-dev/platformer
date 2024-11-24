@@ -67,10 +67,13 @@ sealed interface Object {
 
     sealed interface EditorDrawable : Object {
 
-        fun DrawScope.draw()
+        fun DrawScope.drawInEditor()
     }
 
-    sealed interface Drawable : EditorDrawable
+    sealed interface Drawable : Object {
+
+        fun DrawScope.draw()
+    }
 
     /**
      * Evaluates the expressions into the internal state of the object.
