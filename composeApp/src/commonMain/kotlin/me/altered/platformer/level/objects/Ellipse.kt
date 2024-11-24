@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import me.altered.platformer.engine.geometry.div
@@ -25,6 +26,7 @@ import me.altered.platformer.level.data.toComposeBrush
 import androidx.compose.ui.graphics.Brush as ComposeBrush
 
 @Serializable
+@SerialName("ellipse")
 open class Ellipse(
     override val id: Long,
     override val name: String = "Ellipse",

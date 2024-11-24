@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import me.altered.platformer.expression.Expression
@@ -17,6 +18,7 @@ import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.CollisionInfo
 
 @Serializable
+@SerialName("group")
 open class Group(
     override val id: Long,
     override val name: String = "Group",
