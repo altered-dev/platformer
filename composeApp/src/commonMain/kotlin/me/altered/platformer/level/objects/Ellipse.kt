@@ -19,6 +19,8 @@ import me.altered.platformer.expression.const
 import me.altered.platformer.expression.toAnimatedBrushState
 import me.altered.platformer.expression.toAnimatedFloatState
 import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.CollisionFlags
+import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.data.toComposeBrush
 import androidx.compose.ui.graphics.Brush as ComposeBrush
 

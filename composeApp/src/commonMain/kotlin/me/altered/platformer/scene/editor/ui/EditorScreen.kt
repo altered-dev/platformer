@@ -10,17 +10,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
+import me.altered.platformer.level.Level
 import me.altered.platformer.level.World
 import me.altered.platformer.level.MutableLevel
 import me.altered.platformer.level.MutableLevelImpl
+import me.altered.platformer.level.readFromFile
+import me.altered.platformer.level.saveToFile
 import me.altered.platformer.scene.editor.node.Grid
 import me.altered.platformer.scene.editor.state.rememberSelectionState
 import me.altered.platformer.scene.editor.state.rememberTimelineState
@@ -30,13 +41,38 @@ import me.altered.platformer.scene.editor.state.screenToWorld
 import me.altered.platformer.scene.editor.state.transform
 
 @Serializable
-data object EditorScreen
+data class EditorScreen(
+    val name: String,
+)
 
 @Composable
 fun EditorScreen(
+    name: String,
+    onBackClick: () -> Unit,
+    onPlayClick: () -> Unit,
+) {
+    var level by remember { mutableStateOf<MutableLevel?>(null) }
+    LaunchedEffect(name) {
+        withContext(Dispatchers.IO) {
+            level = Level.readFromFile(name).toMutableLevel()
+        }
+    }
+    level?.let { level ->
+        EditorScreen(
+            level = level,
+            onBackClick = onBackClick,
+            onPlayClick = onPlayClick,
+        )
+    }
+}
+
+@Composable
+private fun EditorScreen(
     level: MutableLevel = remember { MutableLevelImpl("My level") },
     onBackClick: () -> Unit = {},
+    onPlayClick: () -> Unit = {},
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val transform = rememberTransformState()
     val toolState = rememberToolState()
     val selectionState = rememberSelectionState()
@@ -63,6 +99,14 @@ fun EditorScreen(
         Toolbar(
             levelName = level.name,
             toolState = toolState,
+            onPlayClick = {
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        level.saveToFile()
+                    }
+                    onPlayClick()
+                }
+            },
         )
         Row {
             NodeTree(

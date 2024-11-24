@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -21,31 +22,46 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
-import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.node.World
-import me.altered.platformer.expression.Easing
-import me.altered.platformer.expression.animated
-import me.altered.platformer.expression.at
-import me.altered.platformer.expression.const
-import me.altered.platformer.expression.with
 import me.altered.platformer.level.Level
-import me.altered.platformer.level.LevelImpl
-import me.altered.platformer.level.player.Player
 import me.altered.platformer.level.World
-import me.altered.platformer.level.data.linear
-import me.altered.platformer.level.data.solid
-import me.altered.platformer.level.objects.Rectangle
+import me.altered.platformer.level.player.Player
+import me.altered.platformer.level.readFromFile
 import me.altered.platformer.scene.editor.state.rememberTimelineState
 import me.altered.platformer.scene.editor.state.rememberTransformState
 import me.altered.platformer.scene.editor.state.transform
 
 @Serializable
-data object MainScreen
+data class LevelScreen(
+    val name: String,
+)
 
 @Composable
-fun MainScreen(
-    level: Level = remember { sampleLevel() },
+fun LevelScreen(
+    name: String,
+    navigateToEditor: () -> Unit = {},
+) {
+    var level by remember { mutableStateOf<Level?>(null) }
+    LaunchedEffect(name) {
+        withContext(Dispatchers.IO) {
+            level = Level.readFromFile(name)
+        }
+    }
+    level?.let { level ->
+        LevelScreen(
+            level = level,
+            navigateToEditor = navigateToEditor,
+        )
+    }
+}
+
+@Composable
+private fun LevelScreen(
+    level: Level,
     navigateToEditor: () -> Unit = {},
 ) {
     val transform = rememberTransformState()
@@ -100,44 +116,3 @@ fun MainScreen(
         )
     }
 }
-
-private fun sampleLevel() = LevelImpl(
-    name = "My level",
-    objects = listOf(
-        Rectangle(
-            id = 0,
-            name = "floor",
-            x = const(0.0f),
-            y = const(5.0f),
-            width = const(50.0f),
-            height = const(1.0f),
-            fill = listOf(const(solid(0x80000000))),
-        ),
-        Rectangle(
-            id = 0,
-            x = animated(
-                -6.0f at 0.0f,
-                10.0f at 2.0f with Easing.BackOut,
-                -2.0f at 5.0f with Easing.ExpoOut,
-            ),
-            y = const(0.0f),
-            width = const(2.0f),
-            height = const(2.0f),
-            cornerRadius = animated(
-                0.0f at 0.0f,
-                2.0f at 1.0f with Easing.SineInOut,
-            ),
-            fill = listOf(
-                const(
-                    linear(
-                        x0 = -2.0f,
-                        y0 = 2.0f,
-                        x1 = 2.0f,
-                        y1 = -2.0f,
-                        colors = listOf(Color(0xFFFA8072), Color(0xFFFCBFB8)),
-                    ),
-                ),
-            ),
-        )
-    ),
-)

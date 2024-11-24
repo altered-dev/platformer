@@ -1,4 +1,4 @@
-package me.altered.platformer.level.objects
+package me.altered.platformer.level.data
 
 import androidx.compose.ui.geometry.Offset
 

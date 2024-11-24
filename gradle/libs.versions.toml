@@ -11,6 +11,7 @@ androidx-navigation = "2.8.0-alpha10"
 
 # KotlinX
 kotlinx-coroutines = "1.8.1"
+kotlinx-io = "0.6.0"
 kotlinx-serialization = "1.7.1"
 
 [libraries]
@@ -23,6 +24,7 @@ androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navi
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
 kotlinx-serialization-cbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 

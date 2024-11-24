@@ -30,6 +30,7 @@ import me.altered.platformer.scene.editor.state.rectScreenToWorld
 import me.altered.platformer.scene.editor.state.rectWorldToScreen
 import me.altered.platformer.scene.editor.state.screenToWorld
 import me.altered.platformer.scene.editor.state.worldToScreen
+import kotlin.random.Random
 
 @Composable
 fun WorldOverlay(
@@ -123,7 +124,7 @@ private fun Modifier.rectangle(
 ) = this
     .pointerHoverIcon(PointerIcon.Crosshair)
     .createDefaultObject(screenToWorld) {
-        val obj = rectangle(it)
+        val obj = level.rectangle(it)
         level.objects += obj
         selection.selectSingle(obj)
         toolState.reset()
@@ -137,7 +138,7 @@ private fun Modifier.ellipse(
 ) = this
     .pointerHoverIcon(PointerIcon.Crosshair)
     .createDefaultObject(screenToWorld) {
-        val obj = ellipse(it)
+        val obj = level.ellipse(it)
         level.objects += obj
         selection.selectSingle(obj)
         toolState.reset()
@@ -151,6 +152,14 @@ fun MutableLevel.findHovered(position: Offset): MutableObject? {
 
 fun MutableLevel.findSelected(rect: Rect): List<MutableObject> {
     return objects.filter { it.globalBounds.overlaps(rect) }
+}
+
+fun MutableLevel.generateUniqueId(): Long {
+    var id: Long
+    do {
+        id = Random.nextLong()
+    } while (objects.any { it.id == id })
+    return id
 }
 
 // drawing
@@ -183,8 +192,8 @@ private fun DrawScope.drawSelectedRect(
 
 // object creation
 
-private fun rectangle(position: Offset) = MutableRectangle(
-    id = idCounter++,
+private fun MutableLevel.rectangle(position: Offset) = MutableRectangle(
+    id = generateUniqueId(),
     name = "rect",
     x = AnimatedFloatState(position.x),
     y = AnimatedFloatState(position.y),
@@ -193,8 +202,8 @@ private fun rectangle(position: Offset) = MutableRectangle(
     ),
 )
 
-private fun ellipse(position: Offset) = MutableEllipse(
-    id = idCounter++,
+private fun MutableLevel.ellipse(position: Offset) = MutableEllipse(
+    id = generateUniqueId(),
     name = "ellipse",
     x = AnimatedFloatState(position.x),
     y = AnimatedFloatState(position.y),
@@ -202,6 +211,3 @@ private fun ellipse(position: Offset) = MutableEllipse(
         AnimatedBrushState(solid(0xFFFCBFB8)),
     ),
 )
-
-// TODO: THIS IS VERY TEMPORARY (i hope at least)
-private var idCounter = 0L

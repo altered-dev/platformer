@@ -35,6 +35,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.ui)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.kotlinx.io.core)
             implementation(projects.engine)
         }
         commonTest.dependencies {

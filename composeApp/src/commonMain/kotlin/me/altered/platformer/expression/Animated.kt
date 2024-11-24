@@ -1,5 +1,6 @@
 package me.altered.platformer.expression
 
+import androidx.compose.ui.util.lerp
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -7,7 +8,6 @@ import me.altered.platformer.level.data.Brush
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.engine.graphics.Color
 import me.altered.platformer.engine.math.alerp
-import me.altered.platformer.engine.math.lerp
 import kotlin.jvm.JvmName
 
 /**
@@ -43,14 +43,22 @@ sealed class Animated<T> : Expression<T> {
     }
 }
 
+// Concrete classes
+
 @Serializable
-@SerialName("animatedFloat")
+@SerialName("anim_float")
 class AnimatedFloat(override val keyframes: List<Keyframe<Float>>) : Animated<Float>() {
     override fun animate(from: Float, to: Float, t: Float): Float = lerp(from, to, t)
 }
 
 @Serializable
-@SerialName("animatedBrush")
+@SerialName("anim_int")
+class AnimatedInt(override val keyframes: List<Keyframe<Int>>) : Animated<Int>() {
+    override fun animate(from: Int, to: Int, t: Float): Int = lerp(from, to, t)
+}
+
+@Serializable
+@SerialName("anim_brush")
 class AnimatedBrush(override val keyframes: List<Keyframe<Brush>>) : Animated<Brush>() {
     override fun animate(from: Brush, to: Brush, t: Float): Brush {
         // TODO: support gradient animations
@@ -59,10 +67,17 @@ class AnimatedBrush(override val keyframes: List<Keyframe<Brush>>) : Animated<Br
     }
 }
 
+// Factories
+
 @JvmName("animatedFloat")
 fun animated(
     vararg keyframes: Keyframe<Float>,
 ): Expression<Float> = AnimatedFloat(keyframes.sortedBy { it.time })
+
+@JvmName("animatedInt")
+fun animated(
+    vararg keyframe: Keyframe<Int>,
+): Expression<Int> = AnimatedInt(keyframe.sortedBy { it.time })
 
 @JvmName("animatedBrush")
 fun animated(

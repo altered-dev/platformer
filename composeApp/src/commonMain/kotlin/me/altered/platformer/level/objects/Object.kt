@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlinx.serialization.Serializable
 import me.altered.platformer.expression.Expression
 import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.CollisionFlags
+import me.altered.platformer.level.data.CollisionInfo
 
 /**
  * An immutable representation of a level object.
@@ -86,5 +88,3 @@ sealed interface Object {
         val baseBounds = Rect(-0.5f, -0.5f, 0.5f, 0.5f)
     }
 }
-
-fun Object.EditorDrawable.draw(scope: DrawScope) = scope.draw()

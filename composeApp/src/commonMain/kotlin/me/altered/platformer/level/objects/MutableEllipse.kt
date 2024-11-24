@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Rect
 import me.altered.platformer.engine.geometry.scale
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.toComposeBrush
 
 class MutableEllipse(
@@ -50,7 +51,7 @@ class MutableEllipse(
     override var _strokeWidth = super._strokeWidth
         get() = strokeWidth.staticValue
 
-    override fun toObject() = Rectangle(
+    override fun toObject() = Ellipse(
         id = id,
         name = name,
         x = x.toExpression(),

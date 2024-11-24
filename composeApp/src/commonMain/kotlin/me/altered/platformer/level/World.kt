@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.draw
-import me.altered.platformer.level.objects.CollisionInfo
+import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.objects.Object
 import me.altered.platformer.level.objects.draw
 import me.altered.platformer.level.player.Player

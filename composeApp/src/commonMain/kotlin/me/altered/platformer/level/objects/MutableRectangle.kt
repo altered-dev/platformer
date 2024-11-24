@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Rect
 import me.altered.platformer.engine.geometry.scale
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.toComposeBrush
 
 class MutableRectangle(

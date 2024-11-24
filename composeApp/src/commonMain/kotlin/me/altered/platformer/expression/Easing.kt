@@ -72,37 +72,37 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("sine-in")
+    @SerialName("sine_in")
     data object SineIn : Easing {
         override fun ease(value: Float): Float = 1.0f - cos(value * PI * 0.5f)
     }
 
     @Serializable
-    @SerialName("sine-out")
+    @SerialName("sine_out")
     data object SineOut : Easing {
         override fun ease(value: Float): Float = sin(value * PI * 0.5f)
     }
 
     @Serializable
-    @SerialName("sine-inout")
+    @SerialName("sine_inout")
     data object SineInOut : Easing {
         override fun ease(value: Float): Float = -(cos(value * PI) - 1) * 0.5f
     }
 
     @Serializable
-    @SerialName("quad-in")
+    @SerialName("quad_in")
     data object QuadIn : Easing {
         override fun ease(value: Float): Float = value * value
     }
 
     @Serializable
-    @SerialName("quad-out")
+    @SerialName("quad_out")
     data object QuadOut : Easing {
         override fun ease(value: Float): Float = 1.0f - (1.0f - value) * (1.0f - value)
     }
 
     @Serializable
-    @SerialName("quad-inout")
+    @SerialName("quad_inout")
     data object QuadInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> 2.0f * value * value
@@ -111,19 +111,19 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("cubic-in")
+    @SerialName("cubic_in")
     data object CubicIn : Easing {
         override fun ease(value: Float): Float = value * value * value
     }
 
     @Serializable
-    @SerialName("cubic-out")
+    @SerialName("cubic_out")
     data object CubicOut : Easing {
         override fun ease(value: Float): Float = 1.0f - (1.0f - value) * (1.0f - value) * (1.0f - value)
     }
 
     @Serializable
-    @SerialName("cubic-inout")
+    @SerialName("cubic_inout")
     data object CubicInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> 4.0f * value * value * value
@@ -132,19 +132,19 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("quart-in")
+    @SerialName("quart_in")
     data object QuartIn : Easing {
         override fun ease(value: Float): Float = value * value * value * value
     }
 
     @Serializable
-    @SerialName("quart-out")
+    @SerialName("quart_out")
     data object QuartOut : Easing {
         override fun ease(value: Float): Float = 1.0f - (1.0f - value).pow(4)
     }
 
     @Serializable
-    @SerialName("quart-inout")
+    @SerialName("quart_inout")
     data object QuartInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> 8.0f * value * value * value * value
@@ -153,19 +153,19 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("quint-in")
+    @SerialName("quint_in")
     data object QuintIn : Easing {
         override fun ease(value: Float): Float = value * value * value * value * value
     }
 
     @Serializable
-    @SerialName("quint-out")
+    @SerialName("quint_out")
     data object QuintOut : Easing {
         override fun ease(value: Float): Float = 1.0f - (1.0f - value).pow(5)
     }
 
     @Serializable
-    @SerialName("quint-inout")
+    @SerialName("quint_inout")
     data object QuintInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> 16.0f * value * value * value * value * value
@@ -174,19 +174,19 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("expo-in")
+    @SerialName("expo_in")
     data object ExpoIn : Easing {
         override fun ease(value: Float): Float = if (value == 0.0f) 0.0f else 2.0f.pow(10.0f * value - 10.0f)
     }
 
     @Serializable
-    @SerialName("expo-out")
+    @SerialName("expo_out")
     data object ExpoOut : Easing {
         override fun ease(value: Float): Float = if (value == 1.0f) 1.0f else 1.0f - 2.0f.pow(-10.0f * value)
     }
 
     @Serializable
-    @SerialName("expo-inout")
+    @SerialName("expo_inout")
     data object ExpoInOut : Easing {
         override fun ease(value: Float): Float = when {
             value == 0.0f || value == 1.0f -> value
@@ -196,19 +196,19 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("circ-in")
+    @SerialName("circ_in")
     data object CircIn : Easing {
         override fun ease(value: Float): Float = 1.0f - sqrt(1 - value * value)
     }
 
     @Serializable
-    @SerialName("circ-out")
+    @SerialName("circ_out")
     data object CircOut : Easing {
         override fun ease(value: Float): Float = sqrt(1.0f - (1.0f - value) * (1.0f - value))
     }
 
     @Serializable
-    @SerialName("circ-inout")
+    @SerialName("circ_inout")
     data object CircInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> (1.0f - sqrt(1.0f - 4.0f * value * value)) * 0.5f
@@ -217,20 +217,20 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("back-in")
+    @SerialName("back_in")
     data object BackIn : Easing {
         override fun ease(value: Float): Float = C3 * value * value * value - C1 * value * value
     }
 
     @Serializable
-    @SerialName("back-out")
+    @SerialName("back_out")
     data object BackOut : Easing {
         override fun ease(value: Float): Float =
             1.0f + C3 * (value - 1.0f) * (value - 1.0f) * (value - 1.0f) + C1 * (value - 1.0f) * (value - 1.0f)
     }
 
     @Serializable
-    @SerialName("back-inout")
+    @SerialName("back_inout")
     data object BackInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> ((2.0f * value).pow(2) * ((C2 + 1.0f) * 2.0f * value - C2)) * 0.5f
@@ -239,7 +239,7 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("elastic-in")
+    @SerialName("elastic_in")
     data object ElasticIn : Easing {
         override fun ease(value: Float): Float = when (value) {
             0.0f, 1.0f -> value
@@ -248,7 +248,7 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("elastic-out")
+    @SerialName("elastic_out")
     data object ElasticOut : Easing {
         override fun ease(value: Float): Float = when (value) {
             0.0f, 1.0f -> value
@@ -257,7 +257,7 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("elastic-inout")
+    @SerialName("elastic_inout")
     data object ElasticInOut : Easing {
         override fun ease(value: Float): Float = when {
             value == 0.0f || value == 1.0f -> value
@@ -267,13 +267,13 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("bounce-in")
+    @SerialName("bounce_in")
     data object BounceIn : Easing {
         override fun ease(value: Float): Float = 1.0f - BounceOut.ease(1.0f - value)
     }
 
     @Serializable
-    @SerialName("bounce-out")
+    @SerialName("bounce_out")
     data object BounceOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 1.0f / D1 -> N1 * value * value
@@ -293,7 +293,7 @@ sealed interface Easing {
     }
 
     @Serializable
-    @SerialName("bounce-inout")
+    @SerialName("bounce_inout")
     data object BounceInOut : Easing {
         override fun ease(value: Float): Float = when {
             value < 0.5f -> (1.0f - BounceOut.ease(1.0f - 2.0f * value)) * 0.5f

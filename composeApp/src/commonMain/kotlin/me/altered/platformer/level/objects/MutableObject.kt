@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.ui.geometry.Rect
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.level.data.CollisionFlags
 
 /**
  * A mutable representation of a level object.
