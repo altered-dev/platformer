@@ -16,7 +16,7 @@ data object MenuScreen
 
 @Composable
 fun MenuScreen(
-    navigateToMain: () -> Unit,
+    navigateToLevel: () -> Unit,
     navigateToEditor: () -> Unit,
     navigateToSettings : () -> Unit,
     navigateToShop : () -> Unit,
@@ -31,7 +31,7 @@ fun MenuScreen(
     ) {
         CustomButton(
             text = "Main Scene",
-            onClick = navigateToMain,
+            onClick = navigateToLevel,
             modifier = Modifier.padding(8.dp)
         )
         CustomButton(

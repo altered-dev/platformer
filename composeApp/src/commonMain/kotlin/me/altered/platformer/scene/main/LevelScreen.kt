@@ -2,6 +2,7 @@ package me.altered.platformer.scene.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import me.altered.platformer.level.readFromFile
 import me.altered.platformer.scene.editor.state.rememberTimelineState
 import me.altered.platformer.scene.editor.state.rememberTransformState
 import me.altered.platformer.scene.editor.state.transform
+import me.altered.platformer.ui.BackButton
 
 @Serializable
 data class LevelScreen(
@@ -44,6 +46,7 @@ data class LevelScreen(
 fun LevelScreen(
     name: String,
     navigateToEditor: () -> Unit = {},
+    navigateBack: () -> Unit = {}
 ) {
     var level by remember { mutableStateOf<Level?>(null) }
     LaunchedEffect(name) {
@@ -55,6 +58,7 @@ fun LevelScreen(
         LevelScreen(
             level = level,
             navigateToEditor = navigateToEditor,
+            navigateBack = navigateBack
         )
     }
 }
@@ -63,6 +67,7 @@ fun LevelScreen(
 private fun LevelScreen(
     level: Level,
     navigateToEditor: () -> Unit = {},
+    navigateBack: () -> Unit = {}
 ) {
     val transform = rememberTransformState()
     val timelineState = rememberTimelineState()
@@ -77,6 +82,15 @@ private fun LevelScreen(
     LaunchedEffect(level, timelineState) {
         snapshotFlow { timelineState.time }
             .collect { time -> level.eval(time) }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        BackButton(
+            onClick = navigateBack,
+            modifier = Modifier.padding(16.dp, top = 40.dp)
+        )
     }
 
     Box(

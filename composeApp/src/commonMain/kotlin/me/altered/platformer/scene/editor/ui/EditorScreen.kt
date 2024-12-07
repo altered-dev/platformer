@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +46,7 @@ import me.altered.platformer.scene.editor.state.rememberToolState
 import me.altered.platformer.scene.editor.state.rememberTransformState
 import me.altered.platformer.scene.editor.state.screenToWorld
 import me.altered.platformer.scene.editor.state.transform
+import me.altered.platformer.ui.BackButton
 
 @Serializable
 data class EditorScreen(
@@ -127,6 +129,10 @@ private fun EditorScreen(
                     onPlayClick()
                 }
             },
+        )
+        BackButton(
+            onClick = onBackClick,
+            modifier = Modifier.padding(start = 16.dp)
         )
         Row {
             NodeTree(

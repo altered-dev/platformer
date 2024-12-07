@@ -1,8 +1,7 @@
-package me.altered.platformer.level
+package me.altered.platformer.level.player
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
@@ -14,6 +13,7 @@ import androidx.compose.ui.input.key.type
 import me.altered.platformer.engine.geometry.normalize
 import me.altered.platformer.engine.node.Node
 import me.altered.platformer.engine.node.Node2D
+import me.altered.platformer.level.World
 import kotlin.math.abs
 import kotlin.math.sign
 import kotlin.math.withSign
@@ -66,7 +66,7 @@ class Player(
             var leftCollision: Offset? = null
             var rightCollision: Offset? = null
 
-            world.collide(position, radius) { col ->
+            world.collide(position, radius).forEach { (col, normal) ->
                 lastCollisions += col
                 // TODO: better floor/wall detection
                 if (col.y - position.y > radius * 0.25f) isOnFloor = true
