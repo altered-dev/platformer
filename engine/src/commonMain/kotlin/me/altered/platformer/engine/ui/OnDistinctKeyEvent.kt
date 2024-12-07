@@ -25,8 +25,6 @@ fun Modifier.onDistinctKeyEvent(
     val lambda by rememberUpdatedState(onKeyEvent)
     val keySet = mutableSetOf<Key>()
     onKeyEvent { event ->
-        println("keySet = $keySet")
-        println("${event.key} in keySet == ${event.key in keySet}")
         if (event.type == KeyEventType.KeyDown && event.key in keySet) {
             return@onKeyEvent false
         }

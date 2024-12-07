@@ -4,15 +4,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.util.lerp
+import me.altered.platformer.engine.graphics.Color
+import me.altered.platformer.level.data.Brush
+import me.altered.platformer.level.data.solid
 
-abstract class AnimatedState<T>(
-    initial: Expression<T>,
-    keyframes: List<Keyframe<T>>,
+sealed class AnimatedState<T>(
+    initial: T,
+    keyframes: List<Keyframe<T>> = emptyList(),
 ) : Animated<T>() {
 
     private val _keyframes = keyframes.toMutableStateList()
     override val keyframes: List<Keyframe<T>> = _keyframes
 
+    /**
+     * The current value that is represented in the editor.
+     */
     var staticValue by mutableStateOf(initial)
 
     /**
@@ -24,11 +31,17 @@ abstract class AnimatedState<T>(
      * Creates an immutable expression from the animated state.
      * May mangle the state, but the overall expression value remains unchanged.
      */
-    fun toExpression(): Expression<T> = if (_keyframes.isEmpty()) staticValue else toAnimated()
+    fun toExpression(): Expression<T> = when (keyframes.size) {
+        0 -> const(staticValue)
+        1 -> keyframes.single().value
+        else -> toAnimated()
+    }
 
     override fun eval(time: Float): T {
-        return if (_keyframes.isEmpty()) staticValue.eval(time)
-        else super.eval(time)
+        return when (keyframes.size) {
+            0 -> staticValue
+            else -> super.eval(time).also { staticValue = it }
+        }
     }
 
     fun addFrame(keyframe: Keyframe<T>) {
@@ -45,4 +58,46 @@ abstract class AnimatedState<T>(
         _keyframes -= old
         addFrame(new)
     }
+}
+
+// Concrete classes
+
+class AnimatedFloatState(
+    initial: Float,
+    keyframes: List<Keyframe<Float>> = emptyList(),
+) : AnimatedState<Float>(initial, keyframes) {
+
+    override fun animate(from: Float, to: Float, t: Float): Float = lerp(from, to, t)
+
+    override fun toAnimated() = AnimatedFloat(keyframes)
+}
+
+class AnimatedBrushState(
+    initial: Brush,
+    keyframes: List<Keyframe<Brush>> = emptyList(),
+) : AnimatedState<Brush>(initial, keyframes) {
+    override fun animate(from: Brush, to: Brush, t: Float): Brush {
+        // TODO: support gradient animations
+        if (from !is Brush.Solid || to !is Brush.Solid) return solid(Color.Transparent)
+        return solid(from.color.lerp(to.color, t))
+    }
+
+    override fun toAnimated() = AnimatedBrush(keyframes)
+
+}
+
+// Factories
+
+fun Expression<Float>.toAnimatedFloatState() = when (this) {
+    is AnimatedFloatState -> this
+    is AnimatedFloat -> AnimatedFloatState(eval(0.0f), keyframes)
+    is FloatConstant -> AnimatedFloatState(eval(0.0f))
+    else -> AnimatedFloatState(eval(0.0f), listOf(Keyframe(0.0f, this)))
+}
+
+fun Expression<Brush>.toAnimatedBrushState() = when (this) {
+    is AnimatedBrushState -> this
+    is AnimatedBrush -> AnimatedBrushState(eval(0.0f), keyframes)
+    is BrushConstant -> AnimatedBrushState(eval(0.0f))
+    else -> AnimatedBrushState(eval(0.0f), listOf(Keyframe(0.0f, this)))
 }

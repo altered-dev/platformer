@@ -67,11 +67,9 @@ class SceneTree(
             }
         }) {
             if (node is CanvasNode) {
-                with(node) { draw() }
+                node.draw(this)
             }
-            node.children.forEach {
-                draw(it)
-            }
+            node.children.forEach { draw(it) }
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalInspectionMode
 import kotlinx.coroutines.isActive
@@ -45,6 +46,8 @@ fun World(
     modifier: Modifier,
     targetFps: Float = 0.0f,
     targetUps: Float = 60.0f,
+    onUpdate: (delta: Float) -> Unit = {},
+    onPhysicsUpdate: (delta: Float) -> Unit = {},
 ) {
     // do not render in preview mode
     if (LocalInspectionMode.current) {
@@ -70,13 +73,17 @@ fun World(
             deltaFps += (now - initialTime) / timeR
 
             if (deltaUpdate >= 1) {
-                tree.physicsUpdate((now - updateTime) * 0.001f)
+                val delta = (now - updateTime) * 0.001f
+                onPhysicsUpdate(delta)
+                tree.physicsUpdate(delta)
                 updateTime = now
                 deltaUpdate--
             }
 
             if (targetFps <= 0 || deltaFps >= 1) {
-                tree.update((now - frameTime) * 0.001f)
+                val delta = (now - frameTime) * 0.001f
+                onUpdate(delta)
+                tree.update(delta)
                 frameTime = now
                 // draw was here
                 deltaFps--
