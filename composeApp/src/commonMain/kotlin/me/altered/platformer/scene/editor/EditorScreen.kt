@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
 import me.altered.platformer.engine.ui.onDistinctKeyEvent
+import me.altered.platformer.ui.BackButton
 
 @Serializable
 data object EditorScreen
@@ -65,6 +67,10 @@ fun EditorScreen(
         Toolbar(
             levelName = level.name,
             toolState = toolState,
+        )
+        BackButton(
+            onClick = onBackClick,
+            modifier = Modifier.padding(16.dp)
         )
         Row {
             NodeTree(

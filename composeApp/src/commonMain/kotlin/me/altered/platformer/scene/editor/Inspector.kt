@@ -13,14 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.LocalTextStyle
+//import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +33,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -434,14 +438,20 @@ private fun IconText(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = text,
-        modifier = modifier,
-        color = Color(0xFFCCCCCC),
-        fontSize = 12.sp,
-        textAlign = TextAlign.Center,
-        lineHeight = 12.sp,
-    )
+    CompositionLocalProvider(
+        LocalTextStyle provides TextStyle(
+            color = Color(0xFFCCCCCC),
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            lineHeight = 12.sp
+        )
+    ) {
+        BasicText(
+            text = text,
+            modifier = modifier,
+            style = LocalTextStyle.current
+        )
+    }
 }
 
 @Composable
