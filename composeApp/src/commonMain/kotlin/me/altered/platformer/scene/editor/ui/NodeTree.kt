@@ -32,13 +32,12 @@ import androidx.compose.ui.unit.dp
 import me.altered.platformer.Res
 import me.altered.platformer.circle
 import me.altered.platformer.group
+import me.altered.platformer.level.node.MutableGroupNode
 import me.altered.platformer.level.objects.MutableEllipse
-import me.altered.platformer.level.MutableLevel
-import me.altered.platformer.level.objects.Group
+import me.altered.platformer.level.node.MutableLevelNode
+import me.altered.platformer.level.node.MutableObjectNode
 import me.altered.platformer.level.objects.MutableGroup
-import me.altered.platformer.level.objects.MutableObject
 import me.altered.platformer.level.objects.MutableRectangle
-import me.altered.platformer.level.objects.Object
 import me.altered.platformer.rectangle
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.ui.Icon
@@ -46,7 +45,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun NodeTree(
-    level: MutableLevel,
+    level: MutableLevelNode,
     selectionState: SelectionState,
 ) {
     val source = remember { MutableInteractionSource() }
@@ -64,9 +63,9 @@ fun NodeTree(
             },
         contentPadding = PaddingValues(8.dp),
     ) {
-        items(level.objects, key = { it.id }) {
+        items(level.objects, key = { it.obj.id }) {
             Object(
-                obj = it,
+                node = it,
                 selected = { it in selectionState.selection },
                 onHover = { selectionState.hovered = it },
                 onClick = { selectionState.selectSingle(it) },
@@ -77,16 +76,16 @@ fun NodeTree(
 
 @Composable
 private fun Object(
-    obj: MutableObject,
-    selected: (MutableObject) -> Boolean,
-    onHover: (MutableObject) -> Unit,
-    onClick: (MutableObject) -> Unit,
+    node: MutableObjectNode,
+    selected: (MutableObjectNode) -> Boolean,
+    onHover: (MutableObjectNode) -> Unit,
+    onClick: (MutableObjectNode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val source = remember { MutableInteractionSource() }
     val hovered by source.collectIsHoveredAsState()
     LaunchedEffect(hovered) {
-        if (hovered) onHover(obj)
+        if (hovered) onHover(node)
     }
     Column {
         Row(
@@ -94,16 +93,16 @@ private fun Object(
                 .fillMaxWidth()
                 .height(36.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(if (selected(obj)) Color(0xFF262626) else Color.Transparent)
+                .background(if (selected(node)) Color(0xFF262626) else Color.Transparent)
                 .border(1.dp, if (hovered) Color(0xFF262626) else Color.Transparent, RoundedCornerShape(4.dp))
                 .hoverable(source)
-                .clickable(onClick = { onClick(obj) })
+                .clickable(onClick = { onClick(node) })
                 .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(
-                painter = when (obj) {
+                painter = when (node.obj) {
                     is MutableRectangle -> painterResource(Res.drawable.rectangle)
                     is MutableEllipse -> painterResource(Res.drawable.circle)
                     is MutableGroup -> painterResource(Res.drawable.group)
@@ -111,16 +110,16 @@ private fun Object(
                 tint = Color(0xFFCCCCCC),
             )
             BasicText(
-                text = obj.name,
+                text = node.obj.name,
                 style = TextStyle(
                     color = Color.White,
                 ),
             )
         }
-        if (obj is MutableGroup) {
-            obj.children.forEach { obj ->
+        if (node is MutableGroupNode) {
+            node.children.forEach { obj ->
                 Object(
-                    obj = obj,
+                    node = obj,
                     selected = selected,
                     onHover = onHover,
                     onClick = onClick,

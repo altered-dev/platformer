@@ -18,10 +18,10 @@ import androidx.compose.ui.unit.sp
 import me.altered.platformer.Res
 import me.altered.platformer.angle
 import me.altered.platformer.corner
-import me.altered.platformer.level.objects.MutableEllipse
-import me.altered.platformer.level.objects.MutableGroup
-import me.altered.platformer.level.objects.MutableObject
-import me.altered.platformer.level.objects.MutableRectangle
+import me.altered.platformer.level.node.MutableEllipseNode
+import me.altered.platformer.level.node.MutableGroupNode
+import me.altered.platformer.level.node.MutableObjectNode
+import me.altered.platformer.level.node.MutableRectangleNode
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.scene.editor.state.TimelineState
 import me.altered.platformer.ui.Icon
@@ -42,9 +42,9 @@ fun Inspector(
         selectionState.selection.singleOrNull()?.let { obj ->
             CommonInfo(obj, timelineState)
             when (obj) {
-                is MutableRectangle -> RectangleInfo(obj, timelineState)
-                is MutableEllipse -> EllipseInfo(obj, timelineState)
-                is MutableGroup -> GroupInfo(obj, timelineState)
+                is MutableRectangleNode -> RectangleInfo(obj, timelineState)
+                is MutableEllipseNode -> EllipseInfo(obj, timelineState)
+                is MutableGroupNode -> GroupInfo(obj, timelineState)
             }
         }
     }
@@ -52,21 +52,21 @@ fun Inspector(
 
 @Composable
 private fun CommonInfo(
-    obj: MutableObject,
+    node: MutableObjectNode,
     timelineState: TimelineState,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FloatTextField(
-            state = obj.x,
+            state = node.obj.x,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
             IconText("X")
         }
         FloatTextField(
-            state = obj.y,
+            state = node.obj.y,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
@@ -77,14 +77,14 @@ private fun CommonInfo(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FloatTextField(
-            state = obj.width,
+            state = node.obj.width,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
             IconText("W")
         }
         FloatTextField(
-            state = obj.height,
+            state = node.obj.height,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
@@ -95,21 +95,21 @@ private fun CommonInfo(
 
 @Composable
 private fun RectangleInfo(
-    obj: MutableRectangle,
+    node: MutableRectangleNode,
     timelineState: TimelineState,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FloatTextField(
-            state = obj.rotation,
+            state = node.obj.rotation,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
             Icon(painterResource(Res.drawable.angle), tint = Color(0xFFCCCCCC))
         }
         FloatTextField(
-            state = obj.cornerRadius,
+            state = node.obj.cornerRadius,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
@@ -120,14 +120,14 @@ private fun RectangleInfo(
 
 @Composable
 private fun EllipseInfo(
-    obj: MutableEllipse,
+    node: MutableEllipseNode,
     timelineState: TimelineState,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FloatTextField(
-            state = obj.rotation,
+            state = node.obj.rotation,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {
@@ -139,14 +139,14 @@ private fun EllipseInfo(
 
 @Composable
 private fun GroupInfo(
-    obj: MutableGroup,
+    node: MutableGroupNode,
     timelineState: TimelineState,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FloatTextField(
-            state = obj.rotation,
+            state = node.obj.rotation,
             timelineState = timelineState,
             modifier = Modifier.weight(1.0f),
         ) {

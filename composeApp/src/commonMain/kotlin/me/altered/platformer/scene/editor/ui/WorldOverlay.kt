@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -16,14 +15,16 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
-import me.altered.platformer.engine.ui.onDistinctKeyEvent
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.level.data.solid
+import me.altered.platformer.level.node.MutableEllipseNode
+import me.altered.platformer.level.node.MutableGroupNode
+import me.altered.platformer.level.node.MutableLevelNode
+import me.altered.platformer.level.node.MutableObjectNode
+import me.altered.platformer.level.node.MutableRectangleNode
 import me.altered.platformer.level.objects.MutableEllipse
-import me.altered.platformer.level.MutableLevel
 import me.altered.platformer.level.objects.MutableGroup
-import me.altered.platformer.level.objects.MutableObject
 import me.altered.platformer.level.objects.MutableRectangle
 import me.altered.platformer.scene.editor.medianOf
 import me.altered.platformer.scene.editor.round
@@ -38,7 +39,7 @@ import kotlin.random.Random
 
 @Composable
 fun WorldOverlay(
-    level: MutableLevel,
+    level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
     transform: TransformState,
@@ -87,7 +88,7 @@ fun WorldOverlay(
 // tools
 
 private fun Modifier.cursor(
-    level: MutableLevel,
+    level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
     transform: TransformState,
@@ -106,9 +107,9 @@ private fun Modifier.cursor(
         },
         onDrag = { delta, size ->
             val delta = delta / transform.getScale(size)
-            selection.selection.forEach { obj ->
-                obj.x.staticValue = (obj.x.staticValue + delta.x).round()
-                obj.y.staticValue = (obj.y.staticValue + delta.y).round()
+            selection.selection.forEach { node ->
+                node.obj.x.staticValue = (node.obj.x.staticValue + delta.x).round()
+                node.obj.y.staticValue = (node.obj.y.staticValue + delta.y).round()
             }
         }
     )
@@ -121,77 +122,81 @@ private fun Modifier.cursor(
     }
 
 private fun Modifier.rectangle(
-    level: MutableLevel,
+    level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
     screenToWorld: Offset.(Size) -> Offset
 ) = this
     .pointerHoverIcon(PointerIcon.Crosshair)
     .createDefaultObject(screenToWorld) {
-        val obj = level.rectangle(it)
-        level.objects += obj
-        selection.selectSingle(obj)
+        val node = level.rectangle(it)
+        level.objects += node
+        selection.selectSingle(node)
         toolState.reset()
     }
 
 private fun Modifier.ellipse(
-    level: MutableLevel,
+    level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
     screenToWorld: Offset.(Size) -> Offset
 ) = this
     .pointerHoverIcon(PointerIcon.Crosshair)
     .createDefaultObject(screenToWorld) {
-        val obj = level.ellipse(it)
-        level.objects += obj
-        selection.selectSingle(obj)
+        val node = level.ellipse(it)
+        level.objects += node
+        selection.selectSingle(node)
         toolState.reset()
     }
 
 // level utils
 
-fun MutableLevel.findHovered(position: Offset): MutableObject? {
-    return objects.findLast { obj -> position in obj.globalBounds }
+fun MutableLevelNode.findHovered(position: Offset): MutableObjectNode? {
+    return objects.findLast { position in it.globalBounds }
 }
 
-fun MutableLevel.findSelected(rect: Rect): List<MutableObject> {
+fun MutableLevelNode.findSelected(rect: Rect): List<MutableObjectNode> {
     return objects.filter { it.globalBounds.overlaps(rect) }
 }
 
-fun MutableLevel.generateUniqueId(): Long {
+fun MutableLevelNode.generateUniqueId(): Long {
     var id: Long
     do {
         id = Random.nextLong()
-    } while (objects.any { it.id == id })
+    } while (objects.any { it.obj.id == id })
     return id
 }
 
-fun MutableLevel.createGroup(selection: SelectionState) {
+fun MutableLevelNode.createGroup(selection: SelectionState) {
     if (selection.selection.isEmpty()) return
     // might need to deal with -1 but ok for now
     val minIndex = selection.selection.minOf { objects.indexOf(it) }
-    val x = selection.selection.medianOf { it.x.staticValue }
-    val y = selection.selection.medianOf { it.y.staticValue }
+    val x = selection.selection.medianOf { it.obj.x.staticValue }
+    val y = selection.selection.medianOf { it.obj.y.staticValue }
 
-    val group = MutableGroup(
-        id = generateUniqueId(),
-        x = AnimatedFloatState(x),
-        y = AnimatedFloatState(y),
-        children = selection.selection.toMutableStateList(),
+    val node = MutableGroupNode(
+        obj = MutableGroup(
+            id = generateUniqueId(),
+            x = AnimatedFloatState(x),
+            y = AnimatedFloatState(y),
+            children = selection.selection.mapTo(mutableStateListOf()) { it.obj },
+        )
     )
-    group.children.forEach { obj ->
-        obj.x.staticValue -= x
-        obj.y.staticValue -= y
+
+    node.children.forEach { node ->
+        node.obj.x.staticValue -= x
+        node.obj.y.staticValue -= y
     }
-    objects.add(minIndex, group)
+
+    objects.add(minIndex, node)
     objects.removeAll(selection.selection)
-    selection.selectSingle(group)
+    selection.selectSingle(node)
 }
 
 // drawing
 
 private fun DrawScope.drawHoveredRect(
-    obj: MutableObject?,
+    obj: MutableObjectNode?,
     worldToScreen: Offset.(Size) -> Offset,
 ) {
     if (obj == null) return
@@ -218,22 +223,26 @@ private fun DrawScope.drawSelectedRect(
 
 // object creation
 
-private fun MutableLevel.rectangle(position: Offset) = MutableRectangle(
-    id = generateUniqueId(),
-    name = "rect",
-    x = AnimatedFloatState(position.x),
-    y = AnimatedFloatState(position.y),
-    fill = mutableStateListOf(
-        AnimatedBrushState(solid(0xFFFCBFB8)),
-    ),
+private fun MutableLevelNode.rectangle(position: Offset) = MutableRectangleNode(
+    MutableRectangle(
+        id = generateUniqueId(),
+        name = "rect",
+        x = AnimatedFloatState(position.x),
+        y = AnimatedFloatState(position.y),
+        fill = mutableStateListOf(
+            AnimatedBrushState(solid(0xFFFCBFB8)),
+        ),
+    )
 )
 
-private fun MutableLevel.ellipse(position: Offset) = MutableEllipse(
-    id = generateUniqueId(),
-    name = "ellipse",
-    x = AnimatedFloatState(position.x),
-    y = AnimatedFloatState(position.y),
-    fill = mutableStateListOf(
-        AnimatedBrushState(solid(0xFFFCBFB8)),
-    ),
+private fun MutableLevelNode.ellipse(position: Offset) = MutableEllipseNode(
+    MutableEllipse(
+        id = generateUniqueId(),
+        name = "ellipse",
+        x = AnimatedFloatState(position.x),
+        y = AnimatedFloatState(position.y),
+        fill = mutableStateListOf(
+            AnimatedBrushState(solid(0xFFFCBFB8)),
+        ),
+    )
 )

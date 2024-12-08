@@ -20,7 +20,6 @@ sealed interface MutableObject : Object {
     // Technical and editor-only properties
 
     override var name: String
-    val globalBounds: Rect
 
     // Animatable properties
 

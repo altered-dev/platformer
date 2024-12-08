@@ -1,13 +1,10 @@
 package me.altered.platformer.level.objects
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlinx.serialization.Serializable
 import me.altered.platformer.expression.Expression
 import me.altered.platformer.level.data.Brush
 import me.altered.platformer.level.data.CollisionFlags
-import me.altered.platformer.level.data.CollisionInfo
 
 /**
  * An immutable representation of a level object.
@@ -56,31 +53,7 @@ sealed interface Object {
 
         val collisionFlags: CollisionFlags
         val isDamaging: Boolean
-
-        /**
-         * Check for collisions with a circle shape (the player).
-         *
-         * @return points and normals of the collisions, empty if no collision happened.
-         */
-        fun collide(position: Offset, radius: Float): List<CollisionInfo>
     }
-
-    sealed interface EditorDrawable : Object {
-
-        fun DrawScope.drawInEditor()
-    }
-
-    sealed interface Drawable : Object {
-
-        fun DrawScope.draw()
-    }
-
-    /**
-     * Evaluates the expressions into the internal state of the object.
-     *
-     * NOTE: **DO NOT** optimize for time equality, as some expressions may rely not just on time.
-     */
-    fun eval(time: Float)
 
     // Conversions
 

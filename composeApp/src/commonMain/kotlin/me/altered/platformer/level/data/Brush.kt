@@ -86,45 +86,43 @@ fun sweep(
 ): Brush = Brush.Sweep(x, y, startAngle, endAngle, colors, positions)
 
 @Stable
-fun Brush.toComposeBrush(): ComposeBrush {
-    return when (this) {
-        is Brush.Linear -> if (positions != null) {
-            ComposeBrush.linearGradient(
-                colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
-                start = Offset(x0, y0),
-                end = Offset(x1, y1),
-            )
-        } else {
-            ComposeBrush.linearGradient(
-                colors = colors.map { ComposeColor(it.value) },
-                start = Offset(x0, y0),
-                end = Offset(x1, y1),
-            )
-        }
-        is Brush.Radial -> if (positions != null) {
-            ComposeBrush.radialGradient(
-                colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
-                center = Offset(x, y),
-                radius = r,
-            )
-        } else {
-            ComposeBrush.radialGradient(
-                colors = colors.map { ComposeColor(it.value) },
-                center = Offset(x, y),
-                radius = r,
-            )
-        }
-        is Brush.Solid -> SolidColor(ComposeColor(color.value))
-        is Brush.Sweep -> if (positions != null) {
-            ComposeBrush.sweepGradient(
-                colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
-                center = Offset(x, y),
-            )
-        } else {
-            ComposeBrush.sweepGradient(
-                colors = colors.map { ComposeColor(it.value) },
-                center = Offset(x, y),
-            )
-        }
+fun Brush.toComposeBrush() = when (this) {
+    is Brush.Solid -> SolidColor(ComposeColor(color.value))
+    is Brush.Linear -> if (positions != null) {
+        ComposeBrush.linearGradient(
+            colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
+            start = Offset(x0, y0),
+            end = Offset(x1, y1),
+        )
+    } else {
+        ComposeBrush.linearGradient(
+            colors = colors.map { ComposeColor(it.value) },
+            start = Offset(x0, y0),
+            end = Offset(x1, y1),
+        )
+    }
+    is Brush.Radial -> if (positions != null) {
+        ComposeBrush.radialGradient(
+            colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
+            center = Offset(x, y),
+            radius = r,
+        )
+    } else {
+        ComposeBrush.radialGradient(
+            colors = colors.map { ComposeColor(it.value) },
+            center = Offset(x, y),
+            radius = r,
+        )
+    }
+    is Brush.Sweep -> if (positions != null) {
+        ComposeBrush.sweepGradient(
+            colorStops = positions.zip(colors.map { ComposeColor(it.value) }).toTypedArray(),
+            center = Offset(x, y),
+        )
+    } else {
+        ComposeBrush.sweepGradient(
+            colors = colors.map { ComposeColor(it.value) },
+            center = Offset(x, y),
+        )
     }
 }

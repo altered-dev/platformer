@@ -9,15 +9,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import me.altered.platformer.level.objects.MutableObject
+import me.altered.platformer.level.node.MutableObjectNode
 import kotlin.math.max
 import kotlin.math.min
 
 class SelectionState {
 
     var rect by mutableStateOf<Rect?>(null)
-    val selection = mutableStateListOf<MutableObject>()
-    var hovered by mutableStateOf<MutableObject?>(null)
+    val selection = mutableStateListOf<MutableObjectNode>()
+    var hovered by mutableStateOf<MutableObjectNode?>(null)
 
     val isSelecting: Boolean
         get() = rect != null
@@ -58,13 +58,13 @@ class SelectionState {
         return Rect(topLeft, bottomRight)
     }
 
-    fun selectSingle(obj: MutableObject?) {
+    fun selectSingle(obj: MutableObjectNode?) {
         selection.clear()
         if (obj == null) return
         selection += obj
     }
 
-    fun selectAll(objs: Collection<MutableObject>) {
+    fun selectAll(objs: Collection<MutableObjectNode>) {
         selection.clear()
         selection.addAll(objs)
     }

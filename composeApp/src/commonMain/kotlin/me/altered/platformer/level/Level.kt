@@ -2,39 +2,40 @@
 
 package me.altered.platformer.level
 
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
+import me.altered.platformer.level.node.LevelNode
+import me.altered.platformer.level.node.MutableLevelNode
+import me.altered.platformer.level.node.toMutableObjectNode
+import me.altered.platformer.level.node.toObjectNode
+import me.altered.platformer.level.objects.MutableObject
 import me.altered.platformer.level.objects.Object
 
-/**
- * An immutable representation of a fully loaded level.
- *
- * @see MutableLevel
- */
-sealed interface Level {
+@Serializable
+data class Level(
+    val name: String,
+    val objects: List<Object> = emptyList(),
+)
 
-    val name: String
-    val objects: List<Object>
+fun Level.toLevelNode(): LevelNode {
+    return LevelNode(
+        name = name,
+        objects = objects.map { it.toObjectNode() },
+    )
+}
 
-    fun DrawScope.draw()
-
-    /**
-     * Evaluates all objects in the level.
-     *
-     * NOTE: **DO NOT** optimize for time equality, as some expressions may rely not just on time.
-     */
-    fun eval(time: Float)
-
-    fun toMutableLevel(): MutableLevel
-
-    companion object
+fun Level.toMutableLevelNode(): MutableLevelNode {
+    return MutableLevelNode(
+        name = name,
+        objects = objects.map { it.toMutableObjectNode() },
+    )
 }
 
 private val cbor = Cbor {
@@ -42,13 +43,19 @@ private val cbor = Cbor {
     ignoreUnknownKeys = true
 }
 
+fun LevelNode.saveToFile() {
+    val level = Level(name, objects.map {
+        when (val obj = it.obj) {
+            is MutableObject -> obj.toObject()
+            else -> obj
+        }
+    })
+    level.saveToFile()
+}
+
 fun Level.saveToFile() {
-    val level = when (this) {
-        is LevelImpl -> this
-        is MutableLevelImpl -> toLevel() as LevelImpl
-    }
-    val bytes = cbor.encodeToByteArray(level)
-    SystemFileSystem.sink(Path("levels", "${level.name}.level")).buffered().use { sink ->
+    val bytes = cbor.encodeToByteArray(this)
+    SystemFileSystem.sink(Path("levels", "$name.level")).buffered().use { sink ->
         sink.write(bytes)
     }
 }
@@ -56,6 +63,6 @@ fun Level.saveToFile() {
 fun Level.Companion.readFromFile(name: String): Level = runCatching {
     SystemFileSystem.source(Path("levels", "$name.level")).buffered().use { source ->
         val bytes = source.readByteArray()
-        cbor.decodeFromByteArray<LevelImpl>(bytes)
+        cbor.decodeFromByteArray<Level>(bytes)
     }
-}.getOrElse { LevelImpl(name, emptyList()) }
+}.getOrElse { Level(name, emptyList()) }

@@ -30,8 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.altered.platformer.expression.AnimatedState
+import me.altered.platformer.level.node.MutableRectangleNode
 import me.altered.platformer.level.objects.MutableObject
-import me.altered.platformer.level.objects.MutableRectangle
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.scene.editor.state.TimelineState
 import kotlin.math.roundToInt
@@ -103,16 +103,16 @@ fun Timeline(
         Canvas(
             modifier = Modifier.fillMaxSize(),
         ) {
-            selectionState.selection.forEach { obj ->
-                drawKeyframes(obj.x, offset, 10.0f, timePos, step)
-                drawKeyframes(obj.y, offset, 20.0f, timePos, step)
-                drawKeyframes(obj.width, offset, 30.0f, timePos, step)
-                drawKeyframes(obj.height, offset, 40.0f, timePos, step)
-                drawKeyframes(obj.rotation, offset, 50.0f, timePos, step)
-                if (obj is MutableRectangle) {
-                    drawKeyframes(obj.cornerRadius, offset, 60.0f, timePos, step)
+            selectionState.selection.forEach { node ->
+                drawKeyframes(node.obj.x, offset, 10.0f, timePos, step)
+                drawKeyframes(node.obj.y, offset, 20.0f, timePos, step)
+                drawKeyframes(node.obj.width, offset, 30.0f, timePos, step)
+                drawKeyframes(node.obj.height, offset, 40.0f, timePos, step)
+                drawKeyframes(node.obj.rotation, offset, 50.0f, timePos, step)
+                if (node is MutableRectangleNode) {
+                    drawKeyframes(node.obj.cornerRadius, offset, 60.0f, timePos, step)
                 }
-                if (obj is MutableObject.HasFill) {
+                (node.obj as? MutableObject.HasFill)?.let { obj ->
                     obj.fill.forEachIndexed { index, fill ->
                         drawKeyframes(fill, offset, 70.0f + index * 10.0f, timePos, step)
                     }

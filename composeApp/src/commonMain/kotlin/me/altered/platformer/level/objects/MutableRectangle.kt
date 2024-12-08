@@ -37,24 +37,6 @@ class MutableRectangle(
     override var collisionFlags by mutableStateOf(collisionFlags)
     override var isDamaging by mutableStateOf(isDamaging)
 
-    override val globalBounds: Rect
-        get() = bounds.translate(position)
-
-    override var position = super.position
-        get() = Offset(x.staticValue, y.staticValue)
-    override var _rotation = super._rotation
-        get() = rotation.staticValue
-    override var _cornerRadius = super._cornerRadius
-        get() = cornerRadius.staticValue
-    override var bounds = super.bounds
-        get() = Object.baseBounds.scale(width.staticValue, height.staticValue)
-    override var _fill = super._fill
-        get() = fill.map { it.staticValue.toComposeBrush() }
-    override var _stroke = super._stroke
-        get() = stroke.map { it.staticValue.toComposeBrush() }
-    override var _strokeWidth = super._strokeWidth
-        get() = strokeWidth.staticValue
-
     override fun toObject() = Rectangle(
         id = id,
         name = name,

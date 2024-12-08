@@ -35,10 +35,10 @@ import me.altered.platformer.engine.node.World
 import me.altered.platformer.engine.ui.onDistinctKeyEvent
 import me.altered.platformer.level.Level
 import me.altered.platformer.level.World
-import me.altered.platformer.level.MutableLevel
-import me.altered.platformer.level.MutableLevelImpl
+import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.readFromFile
 import me.altered.platformer.level.saveToFile
+import me.altered.platformer.level.toMutableLevelNode
 import me.altered.platformer.scene.editor.node.Grid
 import me.altered.platformer.scene.editor.state.rememberSelectionState
 import me.altered.platformer.scene.editor.state.rememberTimelineState
@@ -59,10 +59,10 @@ fun EditorScreen(
     onBackClick: () -> Unit,
     onPlayClick: () -> Unit,
 ) {
-    var level by remember { mutableStateOf<MutableLevel?>(null) }
+    var level by remember { mutableStateOf<MutableLevelNode?>(null) }
     LaunchedEffect(name) {
         withContext(Dispatchers.IO) {
-            level = Level.readFromFile(name).toMutableLevel()
+            level = Level.readFromFile(name).toMutableLevelNode()
         }
     }
     level?.let { level ->
@@ -76,7 +76,7 @@ fun EditorScreen(
 
 @Composable
 private fun EditorScreen(
-    level: MutableLevel = remember { MutableLevelImpl("My level") },
+    level: MutableLevelNode = remember { MutableLevelNode("My level") },
     onBackClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
 ) {

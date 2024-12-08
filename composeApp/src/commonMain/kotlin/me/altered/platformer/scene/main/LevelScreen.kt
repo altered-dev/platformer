@@ -30,8 +30,10 @@ import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
 import me.altered.platformer.level.Level
 import me.altered.platformer.level.World
+import me.altered.platformer.level.node.LevelNode
 import me.altered.platformer.level.player.Player
 import me.altered.platformer.level.readFromFile
+import me.altered.platformer.level.toLevelNode
 import me.altered.platformer.scene.editor.state.rememberTimelineState
 import me.altered.platformer.scene.editor.state.rememberTransformState
 import me.altered.platformer.scene.editor.state.transform
@@ -48,10 +50,10 @@ fun LevelScreen(
     navigateToEditor: () -> Unit = {},
     navigateBack: () -> Unit = {}
 ) {
-    var level by remember { mutableStateOf<Level?>(null) }
+    var level by remember { mutableStateOf<LevelNode?>(null) }
     LaunchedEffect(name) {
         withContext(Dispatchers.IO) {
-            level = Level.readFromFile(name)
+            level = Level.readFromFile(name).toLevelNode()
         }
     }
     level?.let { level ->
@@ -65,7 +67,7 @@ fun LevelScreen(
 
 @Composable
 private fun LevelScreen(
-    level: Level,
+    level: LevelNode,
     navigateToEditor: () -> Unit = {},
     navigateBack: () -> Unit = {}
 ) {
