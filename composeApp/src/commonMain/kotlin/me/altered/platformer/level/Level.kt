@@ -55,6 +55,8 @@ fun LevelNode.saveToFile() {
 
 fun Level.saveToFile() {
     val bytes = cbor.encodeToByteArray(this)
+    val directoryPath = Path("levels")
+    SystemFileSystem.createDirectories(directoryPath)
     SystemFileSystem.sink(Path("levels", "$name.level")).buffered().use { sink ->
         sink.write(bytes)
     }

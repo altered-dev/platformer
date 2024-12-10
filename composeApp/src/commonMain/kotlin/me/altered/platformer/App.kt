@@ -1,6 +1,7 @@
 package me.altered.platformer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -9,6 +10,7 @@ import me.altered.platformer.scene.editor.ui.EditorScreen
 import me.altered.platformer.scene.main.LevelScreen
 import me.altered.platformer.scene.menu.MenuScreen
 import me.altered.platformer.scene.myLevels.MyLevelsScreen
+import me.altered.platformer.scene.myLevels.getSavedLevels
 import me.altered.platformer.scene.settings.SettingsScreen
 import me.altered.platformer.scene.shop.ShopScreen
 
@@ -58,7 +60,15 @@ fun App() {
             )
         }
         composable<MyLevelsScreen> {
+            val levels = remember { getSavedLevels() }
             MyLevelsScreen(
+                levels = levels,
+                onLevelClick = { levelName ->
+                    navController.navigate(LevelScreen(levelName))
+                },
+                onAddNewLevelClick = { newLevelName ->
+                    navController.navigate(EditorScreen(newLevelName))
+                },
                 onBackClick = { navController.popBackStack() }
             )
         }
