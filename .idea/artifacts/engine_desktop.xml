@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="engine-desktop">
-    <output-path>$PROJECT_DIR$/engine/build/libs</output-path>
-    <root id="archive" name="engine-desktop.jar">
-      <element id="module-output" name="platformer.engine.desktopMain" />
-    </root>
-  </artifact>
-</component>

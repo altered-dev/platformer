@@ -1,5 +1,4 @@
-rootProject.name = "platformer"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+rootProject.name = "buildSrc"
 
 pluginManagement {
     repositories {
@@ -15,16 +14,9 @@ dependencyResolutionManagement {
         google()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
+    versionCatalogs {
+        register("libs") {
+            from(files("../gradle/libs.versions.toml"))
+        }
+    }
 }
-
-include(
-    ":engine",
-    ":composeApp",
-    ":common",
-    ":scene:editor",
-    ":scene:level",
-    ":scene:main",
-    ":scene:settings",
-    ":scene:shop",
-    ":scene:workshop",
-)

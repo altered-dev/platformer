@@ -7,10 +7,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import me.altered.platformer.scene.editor.ui.EditorScreen
-import me.altered.platformer.scene.main.LevelScreen
-import me.altered.platformer.scene.menu.MenuScreen
-import me.altered.platformer.scene.myLevels.MyLevelsScreen
-import me.altered.platformer.scene.myLevels.getSavedLevels
+import me.altered.platformer.scene.level.LevelScreen
+import me.altered.platformer.scene.main.MenuScreen
+import me.altered.platformer.scene.workshop.MyLevelsScreen
+import me.altered.platformer.scene.workshop.getSavedLevels
 import me.altered.platformer.scene.settings.SettingsScreen
 import me.altered.platformer.scene.shop.ShopScreen
 

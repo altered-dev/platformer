@@ -7,10 +7,10 @@ build/
 local.properties
 
 ### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
+.idea/**
+!.idea/codeStyles
+!.idea/inspectionProfiles
+!.idea/vcs.xml
 *.iws
 *.iml
 *.ipr

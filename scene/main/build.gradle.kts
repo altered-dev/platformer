@@ -3,19 +3,19 @@ plugins {
 }
 
 android {
-    namespace = "me.altered.platformer.engine"
+    namespace = "me.altered.platformer.scene.main"
 }
 
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(projects.common)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
             implementation(compose.runtime)
-            api(libs.androidx.annotation)
-            api(libs.kotlinx.coroutines.core)
-            api(libs.kotlinx.serialization.cbor)
-            api(libs.kotlinx.serialization.json)
-            api(libs.kotlinx.serialization.protobuf)
+            implementation(compose.ui)
+            implementation(libs.kotlinx.io.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

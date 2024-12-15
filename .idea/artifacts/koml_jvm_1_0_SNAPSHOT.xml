@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="koml-jvm-1.0-SNAPSHOT">
-    <output-path>$PROJECT_DIR$/koml/build/libs</output-path>
-    <root id="archive" name="koml-jvm-1.0-SNAPSHOT.jar">
-      <element id="module-output" name="platformer.koml.jvmMain" />
-    </root>
-  </artifact>
-</component>
