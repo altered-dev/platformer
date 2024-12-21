@@ -40,7 +40,6 @@ import me.altered.platformer.scene.editor.state.rememberSelectionState
 import me.altered.platformer.scene.editor.state.rememberToolState
 import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.state.rememberTransformState
-import me.altered.platformer.state.screenToWorld
 import me.altered.platformer.state.transform
 import me.altered.platformer.ui.CustomButton
 
@@ -133,6 +132,7 @@ private fun EditorScreen(
     val world = remember(level) {
         World(
             level = level,
+            screenToWorld = { size -> with(transform) { screenToWorld(size) } },
             grid = Grid(
                 screenToWorld = { size -> with(transform) { screenToWorld(size) } },
             ),
@@ -182,8 +182,7 @@ private fun EditorScreen(
                         .weight(1.0f)
                         .fillMaxWidth()
                         .border(1.dp, Color(0xFF262626), RoundedCornerShape(8.dp))
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF576647)),
+                        .clip(RoundedCornerShape(8.dp)),
                 ) {
                     World(
                         root = world,

@@ -1,6 +1,9 @@
 package me.altered.platformer.level.node
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
@@ -19,6 +22,9 @@ open class LevelNode(
     } else {
         level.objects.map { it.toObjectNode() }
     }
+
+    open var background: Brush = SolidColor(Color.White)
+        protected set
 
     override fun DrawScope.draw() {
         objects.forEach {

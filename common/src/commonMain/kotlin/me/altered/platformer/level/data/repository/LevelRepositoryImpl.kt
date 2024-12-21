@@ -23,6 +23,18 @@ class LevelRepositoryImpl(
     private val localLevelsDirectory: Path = Path("levels"),
 ) : LevelRepository {
 
+    override suspend fun list(): List<String> {
+        return withContext(Dispatchers.IO) {
+            if (SystemFileSystem.exists(localLevelsDirectory)) {
+                SystemFileSystem.list(localLevelsDirectory)
+                    .filter { it.name.endsWith(".level") }
+                    .map { it.name.removeSuffix(".level") }
+            } else {
+                emptyList()
+            }
+        }
+    }
+
     override suspend fun save(level: Level) = runCatching {
         withContext(Dispatchers.IO) {
             Logger.d(TAG) { "saving level ${level.name}" }

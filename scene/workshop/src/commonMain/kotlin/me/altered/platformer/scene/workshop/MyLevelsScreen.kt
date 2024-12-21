@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
 import kotlinx.serialization.Serializable
+import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.ui.CustomButton
 
 @Serializable
@@ -18,11 +20,17 @@ data object MyLevelsScreen
 
 @Composable
 fun MyLevelsScreen(
-    levels: List<String>,
+    repository: LevelRepository,
     onLevelClick: (String) -> Unit,
     onAddNewLevelClick: (String) -> Unit,
     onBackClick: () -> Unit = {}
 ) {
+    val levels = remember { mutableStateListOf<String>() }
+    LaunchedEffect(Unit) {
+        val newLevels = repository.list()
+        levels.clear()
+        levels.addAll(newLevels)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,18 +60,5 @@ fun MyLevelsScreen(
             onClick = onBackClick,
             modifier = Modifier.padding(8.dp)
         )
-    }
-}
-
-fun getSavedLevels(): List<String> {
-    val directoryPath = Path("levels")
-    val fileSystem = SystemFileSystem
-
-    return if (fileSystem.exists(directoryPath)) {
-        fileSystem.list(directoryPath)
-            .filter { it.name.endsWith(".level") }
-            .map { it.name.removeSuffix(".level") }
-    } else {
-        emptyList()
     }
 }

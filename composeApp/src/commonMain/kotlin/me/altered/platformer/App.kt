@@ -14,7 +14,6 @@ import me.altered.platformer.scene.editor.ui.EditorScreen
 import me.altered.platformer.scene.level.LevelScreen
 import me.altered.platformer.scene.main.MenuScreen
 import me.altered.platformer.scene.workshop.MyLevelsScreen
-import me.altered.platformer.scene.workshop.getSavedLevels
 import me.altered.platformer.scene.settings.SettingsScreen
 import me.altered.platformer.scene.shop.ShopScreen
 
@@ -69,9 +68,8 @@ fun App() {
             )
         }
         composable<MyLevelsScreen> {
-            val levels = remember { getSavedLevels() }
             MyLevelsScreen(
-                levels = levels,
+                repository = repository,
                 onLevelClick = { levelName ->
                     navController.navigate(LevelScreen(levelName))
                 },

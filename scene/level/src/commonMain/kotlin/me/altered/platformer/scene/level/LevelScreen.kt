@@ -128,6 +128,7 @@ private fun LevelScreen(
     val world = remember(level) {
         World(
             level = level,
+            screenToWorld = { size -> with(transform) { screenToWorld(size) } },
             player = Player(),
         )
     }
