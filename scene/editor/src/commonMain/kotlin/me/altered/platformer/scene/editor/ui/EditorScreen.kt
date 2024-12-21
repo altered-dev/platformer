@@ -79,7 +79,7 @@ fun EditorScreen(
             onBackClick = onBackClick,
             onPlayClick = {
                 coroutineScope.launch {
-                    repository.save(state.level.level.toLevel())
+                    repository.save(state.level.toLevel())
                     onPlayClick()
                 }
             },

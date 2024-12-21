@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.altered.platformer.engine.node.Node
+import me.altered.platformer.level.data.Level
 import me.altered.platformer.level.data.MutableLevel
 import me.altered.platformer.level.data.draw
 import me.altered.platformer.level.data.drawInEditor
@@ -26,4 +27,10 @@ class MutableLevelNode(
             if (it is ObjectNode.EditorDrawable) it.drawInEditor(this)
         }
     }
+
+    fun toLevel() = Level(
+        name = level.name,
+        background = level.background.toExpression(),
+        objects = objects.map { it.obj.toObject() },
+    )
 }

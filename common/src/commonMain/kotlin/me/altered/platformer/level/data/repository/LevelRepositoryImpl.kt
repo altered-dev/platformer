@@ -7,18 +7,18 @@ import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
-import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import me.altered.platformer.engine.logger.Logger
 import me.altered.platformer.engine.logger.d
 import me.altered.platformer.level.data.Level
 import me.altered.platformer.level.data.ensureImmutable
 
 class LevelRepositoryImpl(
-    private val cbor: Cbor = Cbor {
+    private val format: BinaryFormat = ProtoBuf {
         encodeDefaults = true
-        ignoreUnknownKeys = true
     },
     private val localLevelsDirectory: Path = Path("levels"),
 ) : LevelRepository {
@@ -52,7 +52,7 @@ class LevelRepositoryImpl(
         withContext(Dispatchers.IO) {
             Logger.d(TAG) { "saving level ${level.name}" }
             val level = level.ensureImmutable()
-            val bytes = cbor.encodeToByteArray(level)
+            val bytes = format.encodeToByteArray(level)
             SystemFileSystem.createDirectories(localLevelsDirectory)
             SystemFileSystem.sink(Path(localLevelsDirectory, path(level.name))).buffered().use { sink ->
                 sink.write(bytes)
@@ -65,7 +65,7 @@ class LevelRepositoryImpl(
             Logger.d(TAG) { "loading level $name" }
             SystemFileSystem.source(Path(localLevelsDirectory, path(name))).buffered().use { source ->
                 val bytes = source.readByteArray()
-                cbor.decodeFromByteArray<Level>(bytes)
+                format.decodeFromByteArray<Level>(bytes)
             }
         }
     }
