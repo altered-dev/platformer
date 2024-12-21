@@ -13,7 +13,7 @@ import kotlin.math.min
 class MutableGroupNode(
     override val obj: MutableGroup,
     override var parent: MutableGroupNode? = null,
-) : GroupNode(obj.also { println("passing to super: $obj") }, parent), MutableObjectNode {
+) : GroupNode(obj, parent), MutableObjectNode {
 
     override val children = obj.children.mapTo(mutableStateListOf()) { it.toMutableObjectNode(this) }
 

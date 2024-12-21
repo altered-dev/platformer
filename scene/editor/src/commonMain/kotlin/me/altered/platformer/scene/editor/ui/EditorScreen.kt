@@ -2,12 +2,14 @@ package me.altered.platformer.scene.editor.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,50 +28,95 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
 import me.altered.platformer.engine.ui.onDistinctKeyEvent
-import me.altered.platformer.level.data.Level
-import me.altered.platformer.level.node.World
-import me.altered.platformer.level.node.MutableLevelNode
-import me.altered.platformer.level.data.readFromFile
-import me.altered.platformer.level.data.saveToFile
-import me.altered.platformer.level.data.toMutableLevelNode
+import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.level.node.Grid
+import me.altered.platformer.level.node.MutableLevelNode
+import me.altered.platformer.level.node.World
 import me.altered.platformer.scene.editor.state.rememberSelectionState
-import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.scene.editor.state.rememberToolState
+import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.state.rememberTransformState
 import me.altered.platformer.state.screenToWorld
 import me.altered.platformer.state.transform
+import me.altered.platformer.ui.CustomButton
 
 @Serializable
 data class EditorScreen(
     val name: String,
 )
 
+private sealed interface State {
+
+    data object Loading : State
+
+    data class Content(val level: MutableLevelNode) : State
+
+    data class Error(val throwable: Throwable) : State
+}
+
 @Composable
 fun EditorScreen(
     name: String,
+    repository: LevelRepository,
     onBackClick: () -> Unit,
     onPlayClick: () -> Unit,
 ) {
-    var level by remember { mutableStateOf<MutableLevelNode?>(null) }
+    var state by remember { mutableStateOf<State>(State.Loading) }
+    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(name) {
-        withContext(Dispatchers.IO) {
-            level = Level.readFromFile(name).toMutableLevelNode()
-        }
-    }
-    level?.let { level ->
-        EditorScreen(
-            level = level,
-            onBackClick = onBackClick,
-            onPlayClick = onPlayClick,
+        state = repository.load(name).fold(
+            onSuccess = { State.Content(it.toMutableNode()) },
+            onFailure = { State.Error(it) },
         )
+    }
+    when (val state = state) {
+        State.Loading -> LoadingScreen()
+        is State.Content -> EditorScreen(
+            level = state.level,
+            onBackClick = onBackClick,
+            onPlayClick = {
+                coroutineScope.launch {
+                    repository.save(state.level.level.toLevel())
+                    onPlayClick()
+                }
+            },
+        )
+        is State.Error -> ErrorScreen(
+            throwable = state.throwable,
+            onBackClick = onBackClick,
+        )
+    }
+}
+
+// TODO: to common
+@Composable
+private fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        BasicText("Loading")
+    }
+}
+
+@Composable
+private fun ErrorScreen(
+    throwable: Throwable,
+    onBackClick: () -> Unit,
+) {
+    LaunchedEffect(throwable) {
+        throwable.printStackTrace()
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        BasicText("Error while loading level:\n$throwable")
+        CustomButton("Back", onBackClick)
     }
 }
 
@@ -78,7 +126,6 @@ private fun EditorScreen(
     onBackClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val transform = rememberTransformState()
     val toolState = rememberToolState()
     val selectionState = rememberSelectionState()
@@ -120,14 +167,7 @@ private fun EditorScreen(
             levelName = level.name,
             toolState = toolState,
             onBackClick = onBackClick,
-            onPlayClick = {
-                coroutineScope.launch {
-                    withContext(Dispatchers.IO) {
-                        level.saveToFile()
-                    }
-                    onPlayClick()
-                }
-            },
+            onPlayClick = onPlayClick,
         )
         Row {
             NodeTree(

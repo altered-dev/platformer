@@ -1,11 +1,15 @@
 package me.altered.platformer
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import me.altered.platformer.level.data.repository.LevelRepositoryImpl
 import me.altered.platformer.scene.editor.ui.EditorScreen
 import me.altered.platformer.scene.level.LevelScreen
 import me.altered.platformer.scene.main.MenuScreen
@@ -17,9 +21,12 @@ import me.altered.platformer.scene.shop.ShopScreen
 @Composable
 fun App() {
     val navController = rememberNavController()
+    val repository = remember { LevelRepositoryImpl() }
     NavHost(
         navController = navController,
         startDestination = MenuScreen,
+        enterTransition = { fadeIn(tween(300)) },
+        exitTransition = { fadeOut(tween(300)) },
     ) {
         composable<MenuScreen> {
             MenuScreen(
@@ -34,6 +41,7 @@ fun App() {
             val name = it.toRoute<LevelScreen>().name
             LevelScreen(
                 name = name,
+                repository = repository,
                 navigateToEditor = { navController.navigate(EditorScreen(name)) },
                 navigateBack = { navController.popBackStack()}
             )
@@ -42,6 +50,7 @@ fun App() {
             val name = it.toRoute<EditorScreen>().name
             EditorScreen(
                 name = name,
+                repository = repository,
                 onBackClick = { navController.popBackStack() },
                 onPlayClick = { navController.navigate(LevelScreen(name)) {
                     launchSingleTop = true

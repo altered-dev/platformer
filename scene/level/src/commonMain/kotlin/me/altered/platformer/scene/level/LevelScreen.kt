@@ -2,6 +2,7 @@ package me.altered.platformer.scene.level
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -28,17 +30,16 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import me.altered.platformer.engine.node.World
-import me.altered.platformer.level.data.Level
-import me.altered.platformer.level.node.World
+import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.level.node.LevelNode
+import me.altered.platformer.level.node.World
 import me.altered.platformer.level.player.Player
-import me.altered.platformer.level.data.readFromFile
-import me.altered.platformer.level.data.toLevelNode
 import me.altered.platformer.resources.Res
 import me.altered.platformer.resources.back
 import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.state.rememberTransformState
 import me.altered.platformer.state.transform
+import me.altered.platformer.ui.CustomButton
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
 import org.jetbrains.compose.resources.painterResource
@@ -48,24 +49,70 @@ data class LevelScreen(
     val name: String,
 )
 
+private sealed interface State {
+
+    data object Loading : State
+
+    data class Content(val level: LevelNode) : State
+
+    data class Error(val throwable: Throwable) : State
+}
+
 @Composable
 fun LevelScreen(
     name: String,
+    repository: LevelRepository,
     navigateToEditor: () -> Unit = {},
     navigateBack: () -> Unit = {}
 ) {
-    var level by remember { mutableStateOf<LevelNode?>(null) }
+    var state by remember { mutableStateOf<State>(State.Loading) }
     LaunchedEffect(name) {
         withContext(Dispatchers.IO) {
-            level = Level.readFromFile(name).toLevelNode()
+            state = repository.load(name).fold(
+                onSuccess = { State.Content(it.toNode()) },
+                onFailure = { State.Error(it) },
+            )
         }
     }
-    level?.let { level ->
-        LevelScreen(
-            level = level,
+    when (val state = state) {
+        State.Loading -> LoadingScreen()
+        is State.Content -> LevelScreen(
+            level = state.level,
             navigateToEditor = navigateToEditor,
-            navigateBack = navigateBack
+            navigateBack = navigateBack,
         )
+        is State.Error -> ErrorScreen(
+            throwable = state.throwable,
+            onBackClick = navigateBack,
+        )
+    }
+}
+
+// TODO: to common
+@Composable
+private fun LoadingScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        BasicText("Loading")
+    }
+}
+
+@Composable
+private fun ErrorScreen(
+    throwable: Throwable,
+    onBackClick: () -> Unit,
+) {
+    LaunchedEffect(throwable) {
+        throwable.printStackTrace()
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        BasicText("Error while loading level:\n$throwable")
+        CustomButton("Back", onBackClick)
     }
 }
 
