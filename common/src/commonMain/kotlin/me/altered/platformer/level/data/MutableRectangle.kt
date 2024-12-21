@@ -6,16 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.expression.InspectorInfo
 
 class MutableRectangle(
     id: Long,
     name: String = "Rectangle",
-    override val x: AnimatedFloatState = AnimatedFloatState(0.0f),
-    override val y: AnimatedFloatState = AnimatedFloatState(0.0f),
-    override val rotation: AnimatedFloatState = AnimatedFloatState(0.0f),
-    override val cornerRadius: AnimatedFloatState = AnimatedFloatState(0.0f),
-    override val width: AnimatedFloatState = AnimatedFloatState(1.0f),
-    override val height: AnimatedFloatState = AnimatedFloatState(1.0f),
+    override val x: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.X),
+    override val y: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.Y),
+    override val rotation: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.Rotation),
+    override val cornerRadius: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.CornerRadius),
+    override val width: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Width),
+    override val height: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Height),
     override val fill: MutableList<AnimatedBrushState> = mutableStateListOf(),
     override val stroke: MutableList<AnimatedBrushState> = mutableStateListOf(),
     override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f),
@@ -23,6 +24,7 @@ class MutableRectangle(
     isDamaging: Boolean = false,
 ) : Rectangle(id, name, x, y, rotation, cornerRadius, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging),
     MutableObject,
+    MutableObject.HasCornerRadius,
     MutableObject.HasFill,
     MutableObject.HasStroke,
     MutableObject.HasCollision

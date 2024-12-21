@@ -22,6 +22,7 @@ open class RectangleNode(
     override val obj: Rectangle,
     override val parent: GroupNode? = null,
 ) : ObjectNode,
+    ObjectNode.HasCornerRadius,
     ObjectNode.HasFill,
     ObjectNode.HasStroke,
     ObjectNode.HasCollision,
@@ -43,7 +44,7 @@ open class RectangleNode(
         protected set
     override var isDamaging = false
         protected set
-    open var cornerRadius = 0.0f
+    override var cornerRadius = 0.0f
         protected set
 
     override fun eval(time: Float) {

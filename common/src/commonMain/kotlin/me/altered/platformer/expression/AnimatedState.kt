@@ -12,6 +12,7 @@ import me.altered.platformer.level.data.solid
 sealed class AnimatedState<T>(
     initial: T,
     keyframes: List<Keyframe<T>> = emptyList(),
+    val inspectorInfo: InspectorInfo,
 ) : Animated<T>() {
 
     private val _keyframes = keyframes.toMutableStateList()
@@ -65,7 +66,10 @@ sealed class AnimatedState<T>(
 class AnimatedFloatState(
     initial: Float,
     keyframes: List<Keyframe<Float>> = emptyList(),
-) : AnimatedState<Float>(initial, keyframes) {
+    inspectorInfo: InspectorInfo = InspectorInfo.Unspecified,
+) : AnimatedState<Float>(initial, keyframes, inspectorInfo) {
+
+    constructor(initial: Float, inspectorInfo: InspectorInfo) : this(initial, emptyList(), inspectorInfo)
 
     override fun animate(from: Float, to: Float, t: Float): Float = lerp(from, to, t)
 
@@ -75,7 +79,11 @@ class AnimatedFloatState(
 class AnimatedBrushState(
     initial: Brush,
     keyframes: List<Keyframe<Brush>> = emptyList(),
-) : AnimatedState<Brush>(initial, keyframes) {
+    inspectorInfo: InspectorInfo = InspectorInfo.Unspecified,
+) : AnimatedState<Brush>(initial, keyframes, inspectorInfo) {
+
+    constructor(initial: Brush, inspectorInfo: InspectorInfo) : this(initial, emptyList(), inspectorInfo)
+
     override fun animate(from: Brush, to: Brush, t: Float): Brush {
         // TODO: support gradient animations
         if (from !is Brush.Solid || to !is Brush.Solid) return solid(Color.Transparent)
@@ -83,21 +91,20 @@ class AnimatedBrushState(
     }
 
     override fun toAnimated() = AnimatedBrush(keyframes)
-
 }
 
 // Factories
 
-fun Expression<Float>.toAnimatedFloatState() = when (this) {
+fun Expression<Float>.toAnimatedFloatState(inspectorInfo: InspectorInfo = InspectorInfo.Unspecified) = when (this) {
     is AnimatedFloatState -> this
-    is AnimatedFloat -> AnimatedFloatState(eval(0.0f), keyframes)
-    is FloatConstant -> AnimatedFloatState(eval(0.0f))
-    else -> AnimatedFloatState(eval(0.0f), listOf(Keyframe(0.0f, this)))
+    is AnimatedFloat -> AnimatedFloatState(eval(0.0f), keyframes, inspectorInfo)
+    is FloatConstant -> AnimatedFloatState(eval(0.0f), inspectorInfo = inspectorInfo)
+    else -> AnimatedFloatState(eval(0.0f), listOf(Keyframe(0.0f, this)), inspectorInfo)
 }
 
-fun Expression<Brush>.toAnimatedBrushState() = when (this) {
+fun Expression<Brush>.toAnimatedBrushState(inspectorInfo: InspectorInfo = InspectorInfo.Unspecified) = when (this) {
     is AnimatedBrushState -> this
-    is AnimatedBrush -> AnimatedBrushState(eval(0.0f), keyframes)
-    is BrushConstant -> AnimatedBrushState(eval(0.0f))
-    else -> AnimatedBrushState(eval(0.0f), listOf(Keyframe(0.0f, this)))
+    is AnimatedBrush -> AnimatedBrushState(eval(0.0f), keyframes, inspectorInfo)
+    is BrushConstant -> AnimatedBrushState(eval(0.0f), inspectorInfo = inspectorInfo)
+    else -> AnimatedBrushState(eval(0.0f), listOf(Keyframe(0.0f, this)), inspectorInfo)
 }

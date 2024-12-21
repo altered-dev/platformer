@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.level.data.toComposeBrush
 import me.altered.platformer.level.data.MutableEllipse
 import me.altered.platformer.level.data.Object
@@ -12,6 +13,9 @@ class MutableEllipseNode(
     override val obj: MutableEllipse,
     override var parent: MutableGroupNode? = null,
 ) : EllipseNode(obj, parent), MutableObjectNode {
+
+    override val inspectorInfo: InspectorInfo
+        get() = InspectorInfo.Ellipse
 
     override var position: Offset
         get() = Offset(obj.x.staticValue, obj.y.staticValue)

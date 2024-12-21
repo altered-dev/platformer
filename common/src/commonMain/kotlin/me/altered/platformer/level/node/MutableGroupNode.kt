@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import me.altered.platformer.engine.geometry.scale
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.level.data.MutableGroup
 import me.altered.platformer.level.data.Object
 import kotlin.math.max
@@ -14,6 +15,9 @@ class MutableGroupNode(
     override val obj: MutableGroup,
     override var parent: MutableGroupNode? = null,
 ) : GroupNode(obj, parent), MutableObjectNode {
+
+    override val inspectorInfo: InspectorInfo
+        get() = InspectorInfo.Group
 
     override val children = obj.children.mapTo(mutableStateListOf()) { it.toMutableObjectNode(this) }
 

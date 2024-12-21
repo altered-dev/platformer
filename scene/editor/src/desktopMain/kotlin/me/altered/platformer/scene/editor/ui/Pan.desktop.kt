@@ -20,9 +20,11 @@ actual fun Modifier.pan(
 ): Modifier = onPointerEvent(PointerEventType.Scroll) {
     if (it.keyboardModifiers.isCtrlPressed) {
         val change = it.changes.first()
+        change.consume()
         onZoom(change.scrollDelta, change.position, size.toSize())
     } else {
         val change = it.changes.first()
+        change.consume()
         onPan(change.scrollDelta)
     }
 }.onDrag(

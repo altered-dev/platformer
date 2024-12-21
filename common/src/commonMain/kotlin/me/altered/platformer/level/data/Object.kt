@@ -38,6 +38,11 @@ sealed interface Object {
     val width: Expression<Float>
     val height: Expression<Float>
 
+    sealed interface HasCornerRadius : Object {
+
+        val cornerRadius: Expression<Float>
+    }
+
     sealed interface HasFill : Object {
 
         val fill: List<Expression<Brush>>

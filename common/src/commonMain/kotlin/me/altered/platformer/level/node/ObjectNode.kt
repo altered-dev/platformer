@@ -26,6 +26,11 @@ sealed interface ObjectNode {
 
     fun toMutableObjectNode(): MutableObjectNode
 
+    sealed interface HasCornerRadius {
+
+        val cornerRadius: Float
+    }
+
     sealed interface HasFill {
 
         val fill: List<Brush>

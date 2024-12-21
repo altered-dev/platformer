@@ -7,6 +7,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import me.altered.platformer.expression.Expression
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.expression.const
 import me.altered.platformer.expression.toAnimatedFloatState
 
@@ -37,11 +38,11 @@ open class Group(
     override fun toMutableObject() = MutableGroup(
         id = id,
         name = name,
-        x = x.toAnimatedFloatState(),
-        y = y.toAnimatedFloatState(),
-        rotation = rotation.toAnimatedFloatState(),
-        width = width.toAnimatedFloatState(),
-        height = height.toAnimatedFloatState(),
+        x = x.toAnimatedFloatState(InspectorInfo.X),
+        y = y.toAnimatedFloatState(InspectorInfo.Y),
+        rotation = rotation.toAnimatedFloatState(InspectorInfo.Rotation),
+        width = width.toAnimatedFloatState(InspectorInfo.Width),
+        height = height.toAnimatedFloatState(InspectorInfo.Height),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
         children = children.mapTo(mutableStateListOf()) { it.toMutableObject() },

@@ -27,6 +27,11 @@ sealed interface MutableObject : Object {
     override val width: AnimatedFloatState
     override val height: AnimatedFloatState
 
+    sealed interface HasCornerRadius : Object.HasCornerRadius {
+
+        override val cornerRadius: AnimatedFloatState
+    }
+
     sealed interface HasFill : Object.HasFill {
 
         override val fill: MutableList<AnimatedBrushState>

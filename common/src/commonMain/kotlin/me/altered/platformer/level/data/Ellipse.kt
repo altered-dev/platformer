@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.altered.platformer.expression.Expression
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.expression.const
 import me.altered.platformer.expression.toAnimatedBrushState
 import me.altered.platformer.expression.toAnimatedFloatState
@@ -32,11 +33,11 @@ open class Ellipse(
     override fun toMutableObject() = MutableEllipse(
         id = id,
         name = name,
-        x = x.toAnimatedFloatState(),
-        y = y.toAnimatedFloatState(),
-        rotation = rotation.toAnimatedFloatState(),
-        width = width.toAnimatedFloatState(),
-        height = height.toAnimatedFloatState(),
+        x = x.toAnimatedFloatState(InspectorInfo.X),
+        y = y.toAnimatedFloatState(InspectorInfo.Y),
+        rotation = rotation.toAnimatedFloatState(InspectorInfo.Rotation),
+        width = width.toAnimatedFloatState(InspectorInfo.Width),
+        height = height.toAnimatedFloatState(InspectorInfo.Height),
         fill = fill.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
         stroke = stroke.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
         strokeWidth = strokeWidth.toAnimatedFloatState(),

@@ -101,14 +101,7 @@ private fun Object(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
-                painter = when (node.obj) {
-                    is MutableRectangle -> painterResource(Res.drawable.rectangle)
-                    is MutableEllipse -> painterResource(Res.drawable.circle)
-                    is MutableGroup -> painterResource(Res.drawable.group)
-                },
-                tint = Color(0xFFCCCCCC),
-            )
+            InspectorIcon(node.inspectorInfo)
             BasicText(
                 text = node.obj.name,
                 style = TextStyle(

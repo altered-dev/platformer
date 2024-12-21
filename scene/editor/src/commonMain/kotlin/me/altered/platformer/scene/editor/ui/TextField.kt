@@ -3,8 +3,8 @@ package me.altered.platformer.scene.editor.ui
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -20,22 +20,23 @@ import androidx.compose.ui.text.input.ImeAction
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.Keyframe
 import me.altered.platformer.expression.const
-import me.altered.platformer.util.round
 import me.altered.platformer.state.TimelineState
 import me.altered.platformer.ui.TextField
+import me.altered.platformer.util.round
 
 @Composable
 fun FloatTextField(
     state: AnimatedFloatState,
     timelineState: TimelineState,
     modifier: Modifier = Modifier,
-    icon: @Composable BoxScope.() -> Unit = {},
 ) {
     var floatState by remember(state.staticValue) { mutableFloatStateOf(state.staticValue.round()) }
     TextField(
         value = floatState.toString(),
         onValueChange = { value -> value.toFloatOrNull()?.let { floatState = it } },
-        modifier = modifier,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(
             onDone = {
@@ -63,7 +64,7 @@ fun FloatTextField(
                     )
                 }
         ) {
-            icon()
+            InspectorIcon(state.inspectorInfo)
         }
     }
 }
