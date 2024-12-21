@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +40,8 @@ import me.altered.platformer.scene.editor.state.rememberToolState
 import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.state.rememberTransformState
 import me.altered.platformer.state.transform
-import me.altered.platformer.ui.CustomButton
+import me.altered.platformer.ui.OutlinedButton
+import me.altered.platformer.ui.Text
 
 @Serializable
 data class EditorScreen(
@@ -97,7 +97,7 @@ private fun LoadingScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        BasicText("Loading")
+        Text("Loading")
     }
 }
 
@@ -114,8 +114,12 @@ private fun ErrorScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        BasicText("Error while loading level:\n$throwable")
-        CustomButton("Back", onBackClick)
+        Text("Error while loading level:\n$throwable")
+        OutlinedButton(
+            onClick = onBackClick,
+        ) {
+            Text("Back")
+        }
     }
 }
 

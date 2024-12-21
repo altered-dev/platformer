@@ -35,6 +35,19 @@ class LevelRepositoryImpl(
         }
     }
 
+    override suspend fun create(name: String): String {
+        return withContext(Dispatchers.IO) {
+            val levels = list()
+            var counter = 0
+            var actualName = name
+            while (actualName in levels) {
+                actualName = "$name ${++counter}"
+            }
+            save(Level(actualName))
+            actualName
+        }
+    }
+
     override suspend fun save(level: Level) = runCatching {
         withContext(Dispatchers.IO) {
             Logger.d(TAG) { "saving level ${level.name}" }

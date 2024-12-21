@@ -3,8 +3,13 @@ package me.altered.platformer
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,7 +23,10 @@ import me.altered.platformer.scene.settings.SettingsScreen
 import me.altered.platformer.scene.shop.ShopScreen
 
 @Composable
-fun App() {
+fun App(
+    exit: () -> Unit = {},
+) {
+    Spacer(modifier = Modifier.fillMaxSize().background(Color.Black))
     val navController = rememberNavController()
     val repository = remember { LevelRepositoryImpl() }
     NavHost(
@@ -29,11 +37,9 @@ fun App() {
     ) {
         composable<MenuScreen> {
             MenuScreen(
-                navigateToEditor = { navController.navigate(EditorScreen("test_level")) },
-                navigateToLevel = { navController.navigate(LevelScreen("test_level")) },
-                navigateToSettings = { navController.navigate(SettingsScreen) },
-                navigateToShop = { navController.navigate(ShopScreen) },
-                navigateToMyLevels = { navController.navigate(MyLevelsScreen) }
+                onWorkshopClick = { navController.navigate(MyLevelsScreen) },
+                onSettingsClick = { navController.navigate(SettingsScreen) },
+                onExitClick = exit,
             )
         }
         composable<LevelScreen> {
@@ -42,7 +48,7 @@ fun App() {
                 name = name,
                 repository = repository,
                 navigateToEditor = { navController.navigate(EditorScreen(name)) },
-                navigateBack = { navController.popBackStack()}
+                navigateBack = { navController.popBackStack() },
             )
         }
         composable<EditorScreen> {
@@ -70,13 +76,10 @@ fun App() {
         composable<MyLevelsScreen> {
             MyLevelsScreen(
                 repository = repository,
-                onLevelClick = { levelName ->
-                    navController.navigate(LevelScreen(levelName))
-                },
-                onAddNewLevelClick = { newLevelName ->
-                    navController.navigate(EditorScreen(newLevelName))
-                },
-                onBackClick = { navController.popBackStack() }
+                onPlayClick = { name -> navController.navigate(LevelScreen(name)) },
+                onEditClick = { name -> navController.navigate(EditorScreen(name)) },
+                onNewLevelClick = { name -> navController.navigate(EditorScreen(name)) },
+                onBackClick = { navController.popBackStack() },
             )
         }
     }

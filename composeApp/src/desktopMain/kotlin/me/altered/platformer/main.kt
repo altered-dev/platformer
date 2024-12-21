@@ -15,6 +15,8 @@ fun main() = application {
         state = state,
         title = "very platformer game indeed",
     ) {
-        App()
+        App(
+            exit = ::exitApplication,
+        )
     }
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,9 +38,10 @@ import me.altered.platformer.resources.back
 import me.altered.platformer.state.rememberTimelineState
 import me.altered.platformer.state.rememberTransformState
 import me.altered.platformer.state.transform
-import me.altered.platformer.ui.CustomButton
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
+import me.altered.platformer.ui.OutlinedButton
+import me.altered.platformer.ui.Text
 import org.jetbrains.compose.resources.painterResource
 
 @Serializable
@@ -94,7 +94,7 @@ private fun LoadingScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        BasicText("Loading")
+        Text("Loading")
     }
 }
 
@@ -111,8 +111,12 @@ private fun ErrorScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        BasicText("Error while loading level:\n$throwable")
-        CustomButton("Back", onBackClick)
+        Text("Error while loading level:\n$throwable")
+        OutlinedButton(
+            onClick = onBackClick,
+        ) {
+            Text("Back")
+        }
     }
 }
 
@@ -150,7 +154,7 @@ private fun LevelScreen(
             IconButton(onClick = navigateBack, tint = Color(0xFF262626)) {
                 Icon(painterResource(Res.drawable.back))
             }
-            BasicText("time: ${timelineState.roundedTime}")
+            Text("time: ${timelineState.roundedTime}")
         }
         World(
             root = world,
