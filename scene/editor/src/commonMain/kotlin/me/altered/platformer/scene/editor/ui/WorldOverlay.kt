@@ -18,17 +18,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.InspectorInfo
+import me.altered.platformer.level.data.MutableEllipse
+import me.altered.platformer.level.data.MutableGroup
+import me.altered.platformer.level.data.MutableRectangle
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.MutableEllipseNode
 import me.altered.platformer.level.node.MutableGroupNode
 import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.node.MutableObjectNode
 import me.altered.platformer.level.node.MutableRectangleNode
-import me.altered.platformer.level.data.MutableEllipse
-import me.altered.platformer.level.data.MutableGroup
-import me.altered.platformer.level.data.MutableRectangle
-import me.altered.platformer.util.medianOf
-import me.altered.platformer.util.round
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.scene.editor.state.ToolState
 import me.altered.platformer.state.TransformState
@@ -36,6 +34,8 @@ import me.altered.platformer.state.rectScreenToWorld
 import me.altered.platformer.state.rectWorldToScreen
 import me.altered.platformer.state.screenToWorld
 import me.altered.platformer.state.worldToScreen
+import me.altered.platformer.util.medianOf
+import me.altered.platformer.util.round
 import kotlin.random.Random
 
 @Composable
@@ -77,8 +77,7 @@ fun WorldOverlay(
     }
 
     Canvas(
-        modifier = modifier
-            .then(canvasModifier),
+        modifier = canvasModifier.then(modifier),
     ) {
         drawHoveredRect(selection.hovered, worldToScreen)
         drawSelectedRect(selection, rectWorldToScreen)

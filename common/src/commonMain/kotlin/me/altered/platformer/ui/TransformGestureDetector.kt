@@ -68,11 +68,12 @@ suspend fun PointerInputScope.detectTransformGestures(
                     ) {
                         onGesture(centroid, panChange, zoomChange, effectiveRotation, event.changes)
                     }
-                    event.changes.fastForEach {
-                        if (it.positionChanged()) {
-                            it.consume()
-                        }
-                    }
+                    // this made pan and selectionRect clash
+//                    event.changes.fastForEach {
+//                        if (it.positionChanged()) {
+//                            it.consume()
+//                        }
+//                    }
                 }
             }
         } while (!canceled && event.changes.fastAny { it.pressed })
