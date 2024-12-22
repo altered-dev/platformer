@@ -11,6 +11,7 @@ import me.altered.platformer.level.data.Camera
 import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.data.Level
 import me.altered.platformer.level.data.draw
+import me.altered.platformer.level.data.toComposeBrush
 
 open class LevelNode(
     open val level: Level,
@@ -41,6 +42,7 @@ open class LevelNode(
 
     fun eval(time: Float) {
         camera.eval(time)
+        background = level.background.eval(time).toComposeBrush()
         objects.forEach { it.eval(time) }
     }
 

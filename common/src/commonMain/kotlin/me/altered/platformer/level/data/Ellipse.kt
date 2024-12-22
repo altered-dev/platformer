@@ -38,9 +38,9 @@ open class Ellipse(
         rotation = rotation.toAnimatedFloatState(InspectorInfo.Rotation),
         width = width.toAnimatedFloatState(InspectorInfo.Width),
         height = height.toAnimatedFloatState(InspectorInfo.Height),
-        fill = fill.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
-        stroke = stroke.mapTo(mutableStateListOf()) { it.toAnimatedBrushState() },
-        strokeWidth = strokeWidth.toAnimatedFloatState(),
+        fill = fill.mapTo(mutableStateListOf()) { it.toAnimatedBrushState(InspectorInfo.Fill) },
+        stroke = stroke.mapTo(mutableStateListOf()) { it.toAnimatedBrushState(InspectorInfo.Outline) },
+        strokeWidth = strokeWidth.toAnimatedFloatState(InspectorInfo.OutlineWidth),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
     )

@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.resources.Res
+import me.altered.platformer.resources.add
 import me.altered.platformer.resources.back
-import me.altered.platformer.resources.copy
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
 import me.altered.platformer.ui.OutlinedButton
@@ -80,8 +80,7 @@ fun MyLevelsScreen(
                     }
                 },
             ) {
-                // TODO: to add icon
-                Icon(painterResource(Res.drawable.copy))
+                Icon(painterResource(Res.drawable.add))
                 Text("New level")
             }
         }

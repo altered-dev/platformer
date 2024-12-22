@@ -19,7 +19,7 @@ class MutableRectangle(
     override val height: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Height),
     override val fill: MutableList<AnimatedBrushState> = mutableStateListOf(),
     override val stroke: MutableList<AnimatedBrushState> = mutableStateListOf(),
-    override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f),
+    override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.OutlineWidth),
     collisionFlags: CollisionFlags = CollisionFlags(false),
     isDamaging: Boolean = false,
 ) : Rectangle(id, name, x, y, rotation, cornerRadius, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging),

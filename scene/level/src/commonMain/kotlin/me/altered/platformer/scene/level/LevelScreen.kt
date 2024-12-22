@@ -200,7 +200,7 @@ private fun LevelScreen(
             onUp = { world.player?.dirUp() },
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(16.dp),
+                .padding(32.dp),
         ) {
             Icon(painterResource(Res.drawable.back))
         }
@@ -210,7 +210,7 @@ private fun LevelScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .rotate(180.0f) // no forward icon yet
-                .padding(top = 16.dp, end = 80.dp),
+                .padding(top = 32.dp, end = 96.dp),
         ) {
             Icon(painterResource(Res.drawable.back))
         }
@@ -220,7 +220,7 @@ private fun LevelScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .rotate(90.0f) // no up icon yet
-                .padding(16.dp),
+                .padding(32.dp),
         ) {
             Icon(painterResource(Res.drawable.back))
         }

@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.level.node.MutableEllipseNode
 import me.altered.platformer.level.node.MutableGroupNode
@@ -227,10 +228,10 @@ private fun MutableLevelNode.rectangle(position: Offset) = MutableRectangleNode(
     MutableRectangle(
         id = generateUniqueId(),
         name = "rect",
-        x = AnimatedFloatState(position.x),
-        y = AnimatedFloatState(position.y),
+        x = AnimatedFloatState(position.x, InspectorInfo.X),
+        y = AnimatedFloatState(position.y, InspectorInfo.Y),
         fill = mutableStateListOf(
-            AnimatedBrushState(solid(0xFFFCBFB8)),
+            AnimatedBrushState(solid(0xFFCCCCCC), InspectorInfo.Fill),
         ),
     )
 )
@@ -239,10 +240,10 @@ private fun MutableLevelNode.ellipse(position: Offset) = MutableEllipseNode(
     MutableEllipse(
         id = generateUniqueId(),
         name = "ellipse",
-        x = AnimatedFloatState(position.x),
-        y = AnimatedFloatState(position.y),
+        x = AnimatedFloatState(position.x, InspectorInfo.X),
+        y = AnimatedFloatState(position.y, InspectorInfo.Y),
         fill = mutableStateListOf(
-            AnimatedBrushState(solid(0xFFFCBFB8)),
+            AnimatedBrushState(solid(0xFFCCCCCC), InspectorInfo.Fill),
         ),
     )
 )

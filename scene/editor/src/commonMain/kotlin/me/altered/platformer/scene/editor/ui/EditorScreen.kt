@@ -205,11 +205,13 @@ private fun EditorScreen(
                     )
                 }
                 Timeline(
+                    level = level,
                     state = timelineState,
                     selectionState = selectionState,
                 )
             }
             Inspector(
+                level = level,
                 selectionState = selectionState,
                 timelineState = timelineState,
             )

@@ -4,7 +4,9 @@ import me.altered.platformer.resources.Res
 import me.altered.platformer.resources.angle
 import me.altered.platformer.resources.circle
 import me.altered.platformer.resources.corner
+import me.altered.platformer.resources.fill
 import me.altered.platformer.resources.group
+import me.altered.platformer.resources.outline
 import me.altered.platformer.resources.rectangle
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -46,6 +48,14 @@ data class InspectorInfo(
         val Rotation = InspectorInfo("Rotation", Icon.Drawable(Res.drawable.angle))
 
         val CornerRadius = InspectorInfo("Corner radius", Icon.Drawable(Res.drawable.corner))
+
+        val Fill = InspectorInfo("Fill", Icon.Drawable(Res.drawable.fill))
+
+        val Outline = InspectorInfo("Outline", Icon.Drawable(Res.drawable.outline))
+
+        val OutlineWidth = InspectorInfo("Outline width", Icon.Drawable(Res.drawable.outline))
+
+        val Background = InspectorInfo("Background", Icon.Drawable(Res.drawable.fill))
 
         val Unspecified = InspectorInfo("", Icon.Text(""))
     }

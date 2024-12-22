@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import me.altered.platformer.expression.AnimatedState
 import me.altered.platformer.expression.Keyframe
 import me.altered.platformer.level.data.MutableObject
+import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.node.MutableObjectNode
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.state.TimelineState
@@ -53,6 +54,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun Timeline(
+    level: MutableLevelNode,
     state: TimelineState,
     selectionState: SelectionState,
 ) {
@@ -75,8 +77,13 @@ fun Timeline(
                 .fillMaxHeight(),
             state = lazyListState,
         ) {
-            items(selectionState.selection, key = { it.obj.id }) { node ->
-                ObjectItem(node)
+            when (selectionState.selection.size) {
+                0 -> item {
+                    LevelItem(level)
+                }
+                else -> items(selectionState.selection, key = { it.obj.id }) { node ->
+                    ObjectItem(node)
+                }
             }
         }
         Box(
@@ -140,17 +147,30 @@ fun Timeline(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                items(selectionState.selection, key = { it.obj.id }) { node ->
-                    ObjectKeyframesItem(
-                        node = node,
-                        state = state,
-                        offset = { offset },
-                        step = { step },
-                    )
+                when (selectionState.selection.size) {
+                    0 -> item {
+                        LevelKeyframesItem(level, state, { offset }, { step })
+                    }
+                    else -> items(selectionState.selection, key = { it.obj.id }) { node ->
+                        ObjectKeyframesItem(
+                            node = node,
+                            state = state,
+                            offset = { offset },
+                            step = { step },
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun LevelItem(
+    level: MutableLevelNode,
+    modifier: Modifier = Modifier,
+) {
+    ExpressionItem(level.level.background)
 }
 
 @Composable
@@ -178,6 +198,15 @@ private fun ObjectItem(
     (node.obj as? MutableObject.HasCornerRadius)?.let { obj ->
         ExpressionItem(obj.cornerRadius)
     }
+    (node.obj as? MutableObject.HasFill)?.fill?.forEach { fill ->
+        ExpressionItem(fill)
+    }
+    (node.obj as? MutableObject.HasStroke)?.let { obj ->
+        obj.stroke.forEach { stroke ->
+            ExpressionItem(stroke)
+        }
+        ExpressionItem(obj.strokeWidth)
+    }
 }
 
 @Composable
@@ -201,6 +230,17 @@ private fun ExpressionItem(
 }
 
 @Composable
+private fun LevelKeyframesItem(
+    level: MutableLevelNode,
+    state: TimelineState,
+    offset: () -> Float,
+    step: () -> Float,
+    modifier: Modifier = Modifier,
+) {
+    KeyframesItem(level.level.background, state, offset, step)
+}
+
+@Composable
 private fun ObjectKeyframesItem(
     node: MutableObjectNode,
     state: TimelineState,
@@ -216,6 +256,15 @@ private fun ObjectKeyframesItem(
     KeyframesItem(node.obj.rotation, state, offset, step)
     (node.obj as? MutableObject.HasCornerRadius)?.let { obj ->
         KeyframesItem(obj.cornerRadius, state, offset, step)
+    }
+    (node.obj as? MutableObject.HasFill)?.fill?.forEach { fill ->
+        KeyframesItem(fill, state, offset, step)
+    }
+    (node.obj as? MutableObject.HasStroke)?.let { obj ->
+        obj.stroke.forEach { stroke ->
+            KeyframesItem(stroke, state, offset, step)
+        }
+        KeyframesItem(obj.strokeWidth, state, offset, step)
     }
 }
 
