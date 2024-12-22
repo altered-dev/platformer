@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.level.data.repository.LevelRepositoryImpl
 import me.altered.platformer.scene.editor.ui.EditorScreen
 import me.altered.platformer.scene.level.LevelScreen
@@ -24,11 +25,11 @@ import me.altered.platformer.scene.shop.ShopScreen
 
 @Composable
 fun App(
+    repository: LevelRepository = remember { LevelRepositoryImpl() },
     exit: () -> Unit = {},
 ) {
     Spacer(modifier = Modifier.fillMaxSize().background(Color.Black))
     val navController = rememberNavController()
-    val repository = remember { LevelRepositoryImpl() }
     NavHost(
         navController = navController,
         startDestination = MenuScreen,

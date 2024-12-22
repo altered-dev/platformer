@@ -116,19 +116,39 @@ class Player(
     override fun onKeyEvent(event: KeyEvent): Boolean {
         return when (event.type) {
             KeyEventType.KeyDown -> when (event.key) {
-                Key.A -> { input = input.copy(x = -1f); true }
-                Key.D -> { input = input.copy(x = 1f); true }
-                Key.Spacebar -> { input = input.copy(y = -1f); true }
+                Key.A -> { leftDown(); true }
+                Key.D -> { rightDown(); true }
+                Key.Spacebar -> { jumpDown(); true }
                 else -> false
             }
             KeyEventType.KeyUp -> when (event.key) {
-                Key.A -> { if (input.x < 0) input = input.copy(x = 0f); true }
-                Key.D -> { if (input.x > 0) input = input.copy(x = 0f); true }
-                Key.Spacebar -> { if (input.y < 0) input = input.copy(y = 0f); true }
+                Key.A -> { if (input.x < 0) dirUp(); true }
+                Key.D -> { if (input.x > 0) dirUp(); true }
+                Key.Spacebar -> { if (input.y < 0) jumpUp(); true }
                 else -> false
             }
             else -> false
         }
+    }
+
+    fun leftDown() {
+        input = input.copy(x = -1.0f)
+    }
+
+    fun dirUp() {
+        input = input.copy(x = 0.0f)
+    }
+
+    fun rightDown() {
+        input = input.copy(x = 1.0f)
+    }
+
+    fun jumpDown() {
+        input = input.copy(y = -1.0f)
+    }
+
+    fun jumpUp() {
+        input = input.copy(y = 0.0f)
     }
 
     companion object {
