@@ -8,17 +8,18 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readByteArray
 import kotlinx.serialization.BinaryFormat
+import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
-import kotlinx.serialization.protobuf.ProtoBuf
 import me.altered.platformer.engine.logger.Logger
 import me.altered.platformer.engine.logger.d
 import me.altered.platformer.level.data.Level
 import me.altered.platformer.level.data.ensureImmutable
 
 class LevelRepositoryImpl(
-    private val format: BinaryFormat = ProtoBuf {
+    private val format: BinaryFormat = Cbor {
         encodeDefaults = true
+        ignoreUnknownKeys = true
     },
     private val localLevelsDirectory: Path = Path("levels"),
 ) : LevelRepository {
