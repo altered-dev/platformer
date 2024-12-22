@@ -1,5 +1,8 @@
 package me.altered.platformer.level.player
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -23,6 +26,8 @@ class Player(
     position: Offset = Offset.Zero,
     rotation: Float = 0f,
 ) : Node2D("player", parent, position, rotation) {
+
+    override var position: Offset by mutableStateOf(position)
 
     private var acceleration = Offset(0.0f, Gravity)
     private var velocity = Offset.Zero

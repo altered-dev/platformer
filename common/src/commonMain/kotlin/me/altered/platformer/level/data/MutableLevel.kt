@@ -12,14 +12,16 @@ import me.altered.platformer.level.node.MutableLevelNode
 class MutableLevel(
     name: String,
     override val background: AnimatedBrushState = AnimatedBrushState(solid(Color.White)),
+    override val camera: MutableCamera = MutableCamera(),
     override val objects: MutableList<MutableObject> = mutableStateListOf(),
-) : Level(name, background, objects) {
+) : Level(name, background, camera, objects) {
 
     override var name by mutableStateOf(name)
 
     fun toLevel() = Level(
         name = name,
         background = background.toExpression(),
+        camera = camera.toObject(),
         objects = objects.map { it.toObject() },
     )
 

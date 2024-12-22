@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import me.altered.platformer.engine.node.CanvasNode
 import me.altered.platformer.engine.node.Node
+import me.altered.platformer.level.data.Camera
 import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.data.Level
 import me.altered.platformer.level.data.draw
@@ -15,6 +16,12 @@ open class LevelNode(
     open val level: Level,
     parent: Node? = null,
 ) : CanvasNode(level.name, parent) {
+
+    open val camera = if (this is MutableLevelNode) {
+        CameraNode(Camera())
+    } else {
+        CameraNode(level.camera)
+    }
 
     open val objects = if (this is MutableLevelNode) {
         // for some reason level is null here
@@ -33,6 +40,7 @@ open class LevelNode(
     }
 
     fun eval(time: Float) {
+        camera.eval(time)
         objects.forEach { it.eval(time) }
     }
 

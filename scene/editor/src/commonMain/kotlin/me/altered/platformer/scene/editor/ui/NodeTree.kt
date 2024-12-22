@@ -30,18 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import me.altered.platformer.level.node.MutableGroupNode
-import me.altered.platformer.level.data.MutableEllipse
 import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.node.MutableObjectNode
-import me.altered.platformer.level.data.MutableGroup
-import me.altered.platformer.level.data.MutableRectangle
-import me.altered.platformer.resources.Res
-import me.altered.platformer.resources.circle
-import me.altered.platformer.resources.group
-import me.altered.platformer.resources.rectangle
 import me.altered.platformer.scene.editor.state.SelectionState
-import me.altered.platformer.ui.Icon
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun NodeTree(

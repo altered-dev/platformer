@@ -15,12 +15,14 @@ import me.altered.platformer.level.node.MutableLevelNode
 open class Level(
     open val name: String,
     open val background: Expression<Brush> = const(solid(Color.White)),
+    open val camera: Camera = Camera(),
     open val objects: List<Object> = emptyList(),
 ) {
 
     open fun toMutableLevel() = MutableLevel(
         name = name,
         background = background.toAnimatedBrushState(),
+        camera = camera.toMutableObject(),
         objects = objects.mapTo(mutableStateListOf()) { it.toMutableObject() },
     )
 

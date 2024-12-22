@@ -13,6 +13,7 @@ actual fun Modifier.pan(
 ): Modifier = pointerInput(Unit) {
     detectTransformGestures { centroid, pan, zoom, _, changes ->
         if (changes.size < 2) return@detectTransformGestures
+        changes.forEach { it.consume() }
         onPan(pan)
         onZoom(Offset(zoom, 0.0f), centroid, size.toSize())
     }

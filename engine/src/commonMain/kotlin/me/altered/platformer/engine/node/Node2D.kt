@@ -10,9 +10,9 @@ open class Node2D(
     name: String = "Node2D",
     parent: Node? = null,
     // TODO: probably move to mutable state
-    var position: Offset = Offset.Zero,
-    var rotation: Float = 0.0f,
-    var scale: Size = Size(1.0f, 1.0f),
+    open var position: Offset = Offset.Zero,
+    open var rotation: Float = 0.0f,
+    open var scale: Size = Size(1.0f, 1.0f),
 ) : CanvasNode(name, parent), CanvasTransformer {
 
     // TODO: rotation radians

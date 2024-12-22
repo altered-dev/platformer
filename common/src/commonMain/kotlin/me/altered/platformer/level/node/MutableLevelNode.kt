@@ -15,6 +15,8 @@ class MutableLevelNode(
     parent: Node? = null,
 ) : LevelNode(level, parent) {
 
+    override val camera = MutableCameraNode(level.camera)
+
     override val objects = level.objects.mapTo(mutableStateListOf()) { it.toMutableObjectNode() }
 
     override var background: Brush
