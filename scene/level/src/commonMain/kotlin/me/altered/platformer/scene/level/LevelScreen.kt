@@ -3,11 +3,9 @@ package me.altered.platformer.scene.level
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -29,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -172,7 +169,11 @@ private fun LevelScreen(
                             Key.DirectionRight -> { timeDirection = 1.0f; true }
                             Key.DirectionLeft -> { timeDirection = -1.0f; true }
                             Key.E -> { navigateToEditor(); true }
-                            Key.T -> { world.player?.position = Offset.Zero; true }
+                            Key.T -> {
+                                world.player?.position = Player.StartPosition
+                                timelineState.time = 0.0f
+                                true
+                            }
                             else -> false
                         }
                         KeyEventType.KeyUp -> when (event.key) {
@@ -242,10 +243,9 @@ private fun ControlButton(
             .padding(horizontal = 16.dp)
             .pointerInput(onDown, onUp) {
                 awaitEachGesture {
-                    val down = awaitFirstDown().also { it.consume() }
+                    awaitFirstDown().also { it.consume() }
                     onDown()
-                    val up = waitForUpOrCancellation()
-                        ?.also { it.consume() }
+                    waitForUpOrCancellation()?.also { it.consume() }
                     onUp()
                 }
             },

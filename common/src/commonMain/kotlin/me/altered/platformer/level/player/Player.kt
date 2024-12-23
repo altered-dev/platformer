@@ -23,7 +23,7 @@ import kotlin.math.withSign
 
 class Player(
     parent: Node? = null,
-    position: Offset = Offset.Zero,
+    position: Offset = StartPosition,
     rotation: Float = 0f,
 ) : Node2D("player", parent, position, rotation) {
 
@@ -157,6 +157,9 @@ class Player(
     }
 
     companion object {
+
+        // TODO: replace with start pos object
+        val StartPosition = Offset(0.5f, -2.5f)
 
         private fun Float.copySign(num: Float): Float {
             return if (abs(num) < Epsilon) 0.0f else withSign(num)
