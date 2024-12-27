@@ -56,7 +56,7 @@ fun App(
         }
         composable<TestLevelScreen> {
             LevelScreen(
-                level = TestLevel,
+                level = remember { TestLevel.toNode() },
                 navigateBack = { navController.popBackStack() },
             )
         }
