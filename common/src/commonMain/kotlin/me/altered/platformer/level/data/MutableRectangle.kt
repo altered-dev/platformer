@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import me.altered.platformer.action.Action
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.InspectorInfo
@@ -22,12 +23,14 @@ class MutableRectangle(
     override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.OutlineWidth),
     collisionFlags: CollisionFlags = CollisionFlags(false),
     isDamaging: Boolean = false,
+    override val actions: MutableList<Action> = mutableStateListOf(),
 ) : Rectangle(id, name, x, y, rotation, cornerRadius, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging),
     MutableObject,
     MutableObject.HasCornerRadius,
     MutableObject.HasFill,
     MutableObject.HasStroke,
-    MutableObject.HasCollision
+    MutableObject.HasCollision,
+    MutableObject.HasActions
 {
     override var name by mutableStateOf(name)
     override var collisionFlags by mutableStateOf(collisionFlags)

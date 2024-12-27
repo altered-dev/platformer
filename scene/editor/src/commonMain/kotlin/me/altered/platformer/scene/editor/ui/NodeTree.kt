@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.serializer
 import me.altered.platformer.level.node.MutableGroupNode
 import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.node.MutableObjectNode
@@ -47,7 +48,7 @@ fun NodeTree(
     LazyColumn(
         modifier = Modifier
             .width(256.dp)
-            .fillMaxHeight()
+            .fillMaxHeight() 
             .hoverable(source)
             .clickable(source, null) {
                 selectionState.deselect()
@@ -62,6 +63,7 @@ fun NodeTree(
                 onClick = { selectionState.selectSingle(it) },
             )
         }
+        val a = serializer<Int>()
     }
 }
 

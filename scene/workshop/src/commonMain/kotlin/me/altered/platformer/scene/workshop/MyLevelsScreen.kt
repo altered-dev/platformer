@@ -28,6 +28,7 @@ import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.resources.Res
 import me.altered.platformer.resources.add
 import me.altered.platformer.resources.back
+import me.altered.platformer.resources.paste
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
 import me.altered.platformer.ui.OutlinedButton
@@ -43,6 +44,7 @@ fun MyLevelsScreen(
     onPlayClick: (String) -> Unit = {},
     onEditClick: (String) -> Unit = {},
     onNewLevelClick: (String) -> Unit = {},
+    onTestLevelClick: () -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -72,6 +74,12 @@ fun MyLevelsScreen(
             }
             Text("My levels")
             Spacer(modifier = Modifier.weight(1.0f))
+            OutlinedButton(
+                onClick = onTestLevelClick,
+            ) {
+                Icon(painterResource(Res.drawable.paste))
+                Text("Test level")
+            }
             OutlinedButton(
                 onClick = {
                     coroutineScope.launch {

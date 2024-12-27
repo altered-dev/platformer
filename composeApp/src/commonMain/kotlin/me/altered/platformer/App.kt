@@ -14,10 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import me.altered.platformer.level.TestLevel
 import me.altered.platformer.level.data.repository.LevelRepository
 import me.altered.platformer.level.data.repository.LevelRepositoryImpl
 import me.altered.platformer.scene.editor.ui.EditorScreen
 import me.altered.platformer.scene.level.LevelScreen
+import me.altered.platformer.scene.level.TestLevelScreen
 import me.altered.platformer.scene.main.MenuScreen
 import me.altered.platformer.scene.workshop.MyLevelsScreen
 import me.altered.platformer.scene.settings.SettingsScreen
@@ -52,6 +54,12 @@ fun App(
                 navigateBack = { navController.popBackStack() },
             )
         }
+        composable<TestLevelScreen> {
+            LevelScreen(
+                level = TestLevel,
+                navigateBack = { navController.popBackStack() },
+            )
+        }
         composable<EditorScreen> {
             val name = it.toRoute<EditorScreen>().name
             EditorScreen(
@@ -80,6 +88,7 @@ fun App(
                 onPlayClick = { name -> navController.navigate(LevelScreen(name)) },
                 onEditClick = { name -> navController.navigate(EditorScreen(name)) },
                 onNewLevelClick = { name -> navController.navigate(EditorScreen(name)) },
+                onTestLevelClick = { navController.navigate(TestLevelScreen) },
                 onBackClick = { navController.popBackStack() },
             )
         }

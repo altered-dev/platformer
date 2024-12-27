@@ -61,6 +61,9 @@ data class LevelScreen(
     val name: String,
 )
 
+@Serializable
+data object TestLevelScreen
+
 private sealed interface State {
 
     data object Loading : State
@@ -133,7 +136,7 @@ private fun ErrorScreen(
 }
 
 @Composable
-private fun LevelScreen(
+fun LevelScreen(
     level: LevelNode,
     navigateToEditor: () -> Unit = {},
     navigateBack: () -> Unit = {}

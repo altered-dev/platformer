@@ -1,6 +1,7 @@
 package me.altered.platformer.level.data
 
 import androidx.compose.runtime.State
+import me.altered.platformer.action.Action
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 
@@ -47,6 +48,11 @@ sealed interface MutableObject : Object {
 
         override var collisionFlags: CollisionFlags
         override var isDamaging: Boolean
+    }
+
+    sealed interface HasActions : Object.HasActions {
+
+        override val actions: MutableList<Action>
     }
 
     // Conversions

@@ -3,6 +3,7 @@ package me.altered.platformer.level.data
 import androidx.compose.ui.geometry.Rect
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.altered.platformer.action.Action
 import me.altered.platformer.expression.Expression
 
 /**
@@ -58,6 +59,11 @@ sealed interface Object {
 
         val collisionFlags: CollisionFlags
         val isDamaging: Boolean
+    }
+
+    sealed interface HasActions : Object {
+
+        val actions: List<Action>
     }
 
     // Conversions

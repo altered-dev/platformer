@@ -4,6 +4,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import me.altered.platformer.action.Action
+import me.altered.platformer.action.FireTrigger
 import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.data.Object
@@ -58,5 +60,12 @@ sealed interface ObjectNode {
     sealed interface Drawable {
 
         fun DrawScope.draw()
+    }
+
+    sealed interface HasActions {
+
+        val actions: List<Action>
+
+        fun fireAction(trigger: FireTrigger)
     }
 }
