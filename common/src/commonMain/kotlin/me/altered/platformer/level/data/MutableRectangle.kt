@@ -4,7 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import me.altered.platformer.action.Action
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import me.altered.platformer.action.MutableAction
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.InspectorInfo
@@ -18,12 +19,12 @@ class MutableRectangle(
     override val cornerRadius: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.CornerRadius),
     override val width: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Width),
     override val height: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Height),
-    override val fill: MutableList<AnimatedBrushState> = mutableStateListOf(),
-    override val stroke: MutableList<AnimatedBrushState> = mutableStateListOf(),
+    override val fill: SnapshotStateList<AnimatedBrushState> = mutableStateListOf(),
+    override val stroke: SnapshotStateList<AnimatedBrushState> = mutableStateListOf(),
     override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.OutlineWidth),
     collisionFlags: CollisionFlags = CollisionFlags(false),
     isDamaging: Boolean = false,
-    override val actions: MutableList<Action> = mutableStateListOf(),
+    override val actions: SnapshotStateList<MutableAction> = mutableStateListOf(),
 ) : Rectangle(id, name, x, y, rotation, cornerRadius, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging),
     MutableObject,
     MutableObject.HasCornerRadius,
@@ -50,6 +51,7 @@ class MutableRectangle(
         strokeWidth = strokeWidth.toExpression(),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.map { it.toAction() },
     )
 
     override fun toMutableObject() = this

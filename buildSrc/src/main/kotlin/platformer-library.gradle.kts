@@ -23,6 +23,10 @@ kotlin {
         optIn.addAll(
             "kotlinx.serialization.ExperimentalSerializationApi"
         )
+        freeCompilerArgs.addAll(
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=compose_metrics",
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=compose_reports",
+        )
     }
 }
 

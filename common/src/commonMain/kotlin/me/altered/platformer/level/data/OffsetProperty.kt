@@ -1,28 +1,24 @@
 package me.altered.platformer.level.data
 
 import androidx.compose.ui.geometry.Offset
-import me.altered.platformer.action.Effect
+import me.altered.platformer.action.effect.Effect
 import me.altered.platformer.expression.Expression
-import me.altered.platformer.level.node.ObjectNode
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 /**
  * A property of an object node.
  */
-sealed class Property<T : Any> : ReadOnlyProperty<ObjectNode, T> {
-
-    private lateinit var value: T
+sealed class Property<T : Any> {
 
     // this might result in a memory leak
     // a possible optimization is an accumulator value for completed effects
     private val effects = mutableListOf<Pair<Float, Effect<T>>>()
 
-    fun eval(time: Float) {
-        value = compute(time)
+    fun eval(time: Float): T {
+        var value = compute(time)
         effects.forEach { (start, effect) ->
             value += effect.produce(time - start)
         }
+        return value
     }
 
     fun inject(effect: Effect<T>, time: Float) {
@@ -35,10 +31,6 @@ sealed class Property<T : Any> : ReadOnlyProperty<ObjectNode, T> {
     protected abstract fun compute(time: Float): T
 
     protected abstract operator fun T.plus(other: T): T
-
-    final override fun getValue(thisRef: ObjectNode, property: KProperty<*>): T {
-        return value
-    }
 }
 
 class FloatProperty(

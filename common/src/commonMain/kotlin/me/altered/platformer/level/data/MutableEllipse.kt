@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import me.altered.platformer.action.MutableAction
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.InspectorInfo
@@ -16,16 +18,18 @@ class MutableEllipse(
     override val rotation: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.Rotation),
     override val width: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Width),
     override val height: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Height),
-    override val fill: MutableList<AnimatedBrushState> = mutableStateListOf(),
-    override val stroke: MutableList<AnimatedBrushState> = mutableStateListOf(),
+    override val fill: SnapshotStateList<AnimatedBrushState> = mutableStateListOf(),
+    override val stroke: SnapshotStateList<AnimatedBrushState> = mutableStateListOf(),
     override val strokeWidth: AnimatedFloatState = AnimatedFloatState(0.0f, InspectorInfo.OutlineWidth),
     collisionFlags: CollisionFlags = CollisionFlags(false),
     isDamaging: Boolean = false,
-) : Ellipse(id, name, x, y, rotation, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging),
+    override val actions: SnapshotStateList<MutableAction> = mutableStateListOf(),
+) : Ellipse(id, name, x, y, rotation, width, height, fill, stroke, strokeWidth, collisionFlags, isDamaging, actions),
     MutableObject,
     MutableObject.HasFill,
     MutableObject.HasStroke,
-    MutableObject.HasCollision
+    MutableObject.HasCollision,
+    MutableObject.HasActions
 {
     override var name by mutableStateOf(name)
     override var collisionFlags by mutableStateOf(collisionFlags)
@@ -44,6 +48,7 @@ class MutableEllipse(
         strokeWidth = strokeWidth.toExpression(),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.map { it.toAction() },
     )
 
     override fun toMutableObject() = this

@@ -34,7 +34,7 @@ fun App(
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = MenuScreen,
+        startDestination = EditorScreen("New Level"),
         enterTransition = { fadeIn(tween(300)) },
         exitTransition = { fadeOut(tween(300)) },
     ) {

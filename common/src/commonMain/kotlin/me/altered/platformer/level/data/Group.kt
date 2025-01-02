@@ -1,11 +1,9 @@
 package me.altered.platformer.level.data
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+import me.altered.platformer.action.Action
 import me.altered.platformer.expression.Expression
 import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.expression.const
@@ -23,17 +21,12 @@ open class Group(
     override val height: Expression<Float> = const(1.0f),
     override val collisionFlags: CollisionFlags = CollisionFlags(false),
     override val isDamaging: Boolean = false,
+    override val actions: List<Action> = emptyList(),
     open val children: List<Object> = emptyList(),
 ) : Object,
-    Object.HasCollision
+    Object.HasCollision,
+    Object.HasActions
 {
-    @Transient
-    protected open var position = Offset.Zero
-    @Transient
-    protected open var _rotation = 0.0f
-    @Transient
-    protected open var scale = Size.Zero
-
 
     override fun toMutableObject() = MutableGroup(
         id = id,
@@ -45,6 +38,7 @@ open class Group(
         height = height.toAnimatedFloatState(InspectorInfo.Height),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.mapTo(mutableStateListOf()) { it.toMutableAction() },
         children = children.mapTo(mutableStateListOf()) { it.toMutableObject() },
     )
 }

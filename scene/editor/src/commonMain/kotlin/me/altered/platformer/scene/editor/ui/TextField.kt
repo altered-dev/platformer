@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -29,11 +30,13 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
+import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.expression.Keyframe
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Brush
 import me.altered.platformer.level.data.solid
 import me.altered.platformer.state.TimelineState
+import me.altered.platformer.ui.Text
 import me.altered.platformer.ui.TextField
 import me.altered.platformer.util.round
 
@@ -80,6 +83,35 @@ fun FloatTextField(
                 }
         ) {
             InspectorIcon(state.inspectorInfo)
+        }
+    }
+}
+
+@Composable
+fun FloatTextField(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    inspectorInfo: InspectorInfo,
+    modifier: Modifier = Modifier,
+) {
+    TextField(
+        value = value.toString(),
+        onValueChange = { value -> value.toFloatOrNull()?.let { onValueChange(it) } },
+        modifier = modifier,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerHoverIcon(PointerIcon.Hand)
+                .pointerInput(onValueChange) {
+                    detectHorizontalDragGestures e@{ _, delta ->
+                        onValueChange((value + delta / 100.0f).round())
+                    }
+                },
+        ) {
+            InspectorIcon(inspectorInfo)
         }
     }
 }

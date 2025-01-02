@@ -8,13 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.graphicsLayer
-import me.altered.platformer.engine.geometry.scale
-
-private const val WorldScale = 0.05f
 
 class TransformState(
     zoom: Float,
@@ -23,31 +18,7 @@ class TransformState(
 
     var zoom by mutableFloatStateOf(zoom)
     var offset by mutableStateOf(offset)
-
-    fun getOffset(size: Size) = offset + size.center
-
-    fun getScale(size: Size) = zoom * size.height * WorldScale
-
-    fun Offset.screenToWorld(size: Size) = (this - getOffset(size)) / getScale(size)
-
-    fun Offset.worldToScreen(size: Size) = this * getScale(size) + getOffset(size)
-
-    fun Rect.screenToWorld(size: Size) = translate(-getOffset(size)).scale(1.0f / getScale(size))
-
-    fun Rect.worldToScreen(size: Size) = scale(getScale(size)).translate(getOffset(size))
 }
-
-val TransformState.screenToWorld: Offset.(Size) -> Offset
-    get() = { screenToWorld(it) }
-
-val TransformState.worldToScreen: Offset.(Size) -> Offset
-    get() = { worldToScreen(it) }
-
-val TransformState.rectScreenToWorld: Rect.(Size) -> Rect
-    get() = { screenToWorld(it) }
-
-val TransformState.rectWorldToScreen: Rect.(Size) -> Rect
-    get() = { worldToScreen(it) }
 
 @Composable
 fun rememberTransformState(
@@ -58,10 +29,9 @@ fun rememberTransformState(
 fun Modifier.transform(
     state: TransformState
 ) = graphicsLayer {
-    val scale = state.getScale(size)
     val center = size.center
-    translationX = state.offset.x + center.x * scale
-    translationY = state.offset.y + center.y * scale
-    scaleX = scale
-    scaleY = scale
+    translationX = state.offset.x + center.x * state.zoom
+    translationY = state.offset.y + center.y * state.zoom
+    scaleX = state.zoom
+    scaleY = state.zoom
 }

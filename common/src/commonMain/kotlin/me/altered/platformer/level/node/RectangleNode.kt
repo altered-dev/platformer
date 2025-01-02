@@ -8,11 +8,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
-import me.altered.platformer.action.Effect
 import me.altered.platformer.action.FireTrigger
-import me.altered.platformer.action.MoveBy
+import me.altered.platformer.action.effect.MoveBy
 import me.altered.platformer.action.PlayerCollided
-import me.altered.platformer.action.RotateBy
+import me.altered.platformer.action.effect.MutableMoveBy
+import me.altered.platformer.action.effect.MutableRotateBy
+import me.altered.platformer.action.effect.RotateBy
 import me.altered.platformer.engine.geometry.div
 import me.altered.platformer.engine.geometry.rotateAround
 import me.altered.platformer.engine.geometry.scale
@@ -24,9 +25,10 @@ import me.altered.platformer.level.data.Object
 import me.altered.platformer.level.data.OffsetProperty
 import me.altered.platformer.level.data.Rectangle
 
+@Suppress("CanBePrimaryConstructorProperty")
 open class RectangleNode(
-    override val obj: Rectangle,
-    override val parent: GroupNode? = null,
+    obj: Rectangle,
+    parent: GroupNode? = null,
 ) : ObjectNode,
     ObjectNode.HasCornerRadius,
     ObjectNode.HasFill,
@@ -35,14 +37,19 @@ open class RectangleNode(
     ObjectNode.Drawable,
     ObjectNode.HasActions
 {
+    override val obj = obj
+    override val parent = parent
+
     // TODO: remove
     private var time = 0.0f
 
     private val _position = OffsetProperty(obj.x, obj.y)
     private val _rotation = FloatProperty(obj.rotation)
 
-    override val position by _position
-    override val rotation by _rotation
+    override var position = Offset.Zero
+        protected set
+    override var rotation = 0.0f
+        protected set
     override var bounds = Rect.Zero
         protected set
     override var cornerRadius = 0.0f
@@ -59,8 +66,8 @@ open class RectangleNode(
 
     override fun eval(time: Float) {
         this.time = time
-        _position.eval(time)
-        _rotation.eval(time)
+        position = _position.eval(time)
+        rotation = _rotation.eval(time)
         cornerRadius = obj.cornerRadius.eval(time)
         bounds = Object.baseBounds.scale(obj.width.eval(time), obj.height.eval(time))
         fill = obj.fill.map { it.eval(time).toComposeBrush() }
@@ -87,6 +94,8 @@ open class RectangleNode(
             when (effect) {
                 is MoveBy -> _position.inject(effect, time)
                 is RotateBy -> _rotation.inject(effect, time)
+                is MutableMoveBy -> _position.inject(effect, time)
+                is MutableRotateBy -> _rotation.inject(effect, time)
             }
         }
     }

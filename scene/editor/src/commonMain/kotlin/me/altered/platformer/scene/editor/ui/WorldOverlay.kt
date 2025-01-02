@@ -4,7 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -29,11 +28,7 @@ import me.altered.platformer.level.node.MutableObjectNode
 import me.altered.platformer.level.node.MutableRectangleNode
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.scene.editor.state.ToolState
-import me.altered.platformer.state.TransformState
-import me.altered.platformer.state.rectScreenToWorld
-import me.altered.platformer.state.rectWorldToScreen
-import me.altered.platformer.state.screenToWorld
-import me.altered.platformer.state.worldToScreen
+import me.altered.platformer.state.WorldTransformState
 import me.altered.platformer.util.medianOf
 import me.altered.platformer.util.round
 import kotlin.random.Random
@@ -43,35 +38,27 @@ fun WorldOverlay(
     level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
-    transform: TransformState,
+    transform: WorldTransformState,
     modifier: Modifier,
 ) {
-    val screenToWorld = remember(transform) { transform.screenToWorld }
-    val worldToScreen = remember(transform) { transform.worldToScreen }
-    val rectScreenToWorld = remember(transform) { transform.rectScreenToWorld }
-    val rectWorldToScreen = remember(transform) { transform.rectWorldToScreen }
-
-    val canvasModifier = when (val tool = toolState.tool) {
+    val canvasModifier = when (toolState.tool) {
         Tool.Cursor -> Modifier.cursor(
             level = level,
             toolState = toolState,
             selection = selection,
             transform = transform,
-            screenToWorld = screenToWorld,
-            worldToScreen = worldToScreen,
-            rectScreenToWorld = rectScreenToWorld,
         )
         Tool.Rectangle -> Modifier.rectangle(
             level = level,
             toolState = toolState,
             selection = selection,
-            screenToWorld = screenToWorld,
+            screenToWorld = { transform.screenToWorld(this, it) },
         )
         Tool.Circle -> Modifier.ellipse(
             level = level,
             toolState = toolState,
             selection = selection,
-            screenToWorld = screenToWorld,
+            screenToWorld = { transform.screenToWorld(this, it) },
         )
         else -> Modifier
     }
@@ -79,8 +66,8 @@ fun WorldOverlay(
     Canvas(
         modifier = canvasModifier.then(modifier),
     ) {
-        drawHoveredRect(selection.hovered, worldToScreen)
-        drawSelectedRect(selection, rectWorldToScreen)
+        drawHoveredRect(selection.hovered) { transform.worldToScreen(this, it) }
+        drawSelectedRect(selection) { transform.worldToScreen(this, it) }
         drawSelectionRect(selection.rect)
     }
 }
@@ -91,19 +78,16 @@ private fun Modifier.cursor(
     level: MutableLevelNode,
     toolState: ToolState,
     selection: SelectionState,
-    transform: TransformState,
-    screenToWorld: Offset.(Size) -> Offset,
-    worldToScreen: Offset.(Size) -> Offset,
-    rectScreenToWorld: Rect.(Size) -> Rect,
+    transform: WorldTransformState,
 ) = this
     .hover { position, size ->
-        selection.hovered = level.findHovered(position.screenToWorld(size))
+        selection.hovered = level.findHovered(transform.screenToWorld(position, size))
     }
     .selectionRect(
         state = selection,
-        worldToScreen = worldToScreen,
+        worldToScreen = { transform.worldToScreen(this, it) },
         onSelect = { rect, size ->
-            selection.selectAll(level.findSelected(rect.rectScreenToWorld(size)))
+            selection.selectAll(level.findSelected(transform.screenToWorld(rect, size)))
         },
         onDrag = { delta, size ->
             val delta = delta / transform.getScale(size)
@@ -177,8 +161,8 @@ fun MutableLevelNode.createGroup(selection: SelectionState) {
     val node = MutableGroupNode(
         obj = MutableGroup(
             id = generateUniqueId(),
-            x = AnimatedFloatState(x),
-            y = AnimatedFloatState(y),
+            x = AnimatedFloatState(x, InspectorInfo.X),
+            y = AnimatedFloatState(y, InspectorInfo.Y),
             children = selection.selection.mapTo(mutableStateListOf()) { it.obj },
         )
     )

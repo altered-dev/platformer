@@ -1,7 +1,8 @@
 package me.altered.platformer.level.data
 
 import androidx.compose.runtime.State
-import me.altered.platformer.action.Action
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import me.altered.platformer.action.MutableAction
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.AnimatedFloatState
 
@@ -35,12 +36,12 @@ sealed interface MutableObject : Object {
 
     sealed interface HasFill : Object.HasFill {
 
-        override val fill: MutableList<AnimatedBrushState>
+        override val fill: SnapshotStateList<AnimatedBrushState>
     }
 
     sealed interface HasStroke : Object.HasStroke {
 
-        override val stroke: MutableList<AnimatedBrushState>
+        override val stroke: SnapshotStateList<AnimatedBrushState>
         override val strokeWidth: AnimatedFloatState
     }
 
@@ -52,7 +53,7 @@ sealed interface MutableObject : Object {
 
     sealed interface HasActions : Object.HasActions {
 
-        override val actions: MutableList<Action>
+        override val actions: SnapshotStateList<MutableAction>
     }
 
     // Conversions

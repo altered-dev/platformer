@@ -1,10 +1,10 @@
 package me.altered.platformer.level
 
 import me.altered.platformer.action.Action
-import me.altered.platformer.action.Effect
-import me.altered.platformer.action.MoveBy
+import me.altered.platformer.action.effect.Effect
+import me.altered.platformer.action.effect.MoveBy
 import me.altered.platformer.action.PlayerCollided
-import me.altered.platformer.action.RotateBy
+import me.altered.platformer.action.effect.RotateBy
 import me.altered.platformer.expression.Easing
 import me.altered.platformer.expression.const
 import me.altered.platformer.level.data.Level

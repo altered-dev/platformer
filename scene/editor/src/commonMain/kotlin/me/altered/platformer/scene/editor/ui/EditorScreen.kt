@@ -29,6 +29,7 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import me.altered.platformer.action.Action
 import me.altered.platformer.engine.node.World
 import me.altered.platformer.engine.ui.onDistinctKeyEvent
 import me.altered.platformer.level.data.repository.LevelRepository
@@ -38,7 +39,7 @@ import me.altered.platformer.level.node.World
 import me.altered.platformer.scene.editor.state.rememberSelectionState
 import me.altered.platformer.scene.editor.state.rememberToolState
 import me.altered.platformer.state.rememberTimelineState
-import me.altered.platformer.state.rememberTransformState
+import me.altered.platformer.state.rememberWorldTransformState
 import me.altered.platformer.state.transform
 import me.altered.platformer.ui.OutlinedButton
 import me.altered.platformer.ui.Text
@@ -129,16 +130,17 @@ private fun EditorScreen(
     onBackClick: () -> Unit = {},
     onPlayClick: () -> Unit = {},
 ) {
-    val transform = rememberTransformState()
+    val transform = rememberWorldTransformState()
     val toolState = rememberToolState()
     val selectionState = rememberSelectionState()
     val timelineState = rememberTimelineState()
+    val actionEditorState = rememberActionEditorState()
     val world = remember(level) {
         World(
             level = level,
-            screenToWorld = { size -> with(transform) { screenToWorld(size) } },
+            screenToWorld = { size -> transform.screenToWorld(this, size) },
             grid = Grid(
-                screenToWorld = { size -> with(transform) { screenToWorld(size) } },
+                screenToWorld = { size -> transform.screenToWorld(this, size) },
             ),
         )
     }
@@ -170,14 +172,19 @@ private fun EditorScreen(
         Toolbar(
             levelName = level.name,
             toolState = toolState,
+            actionEditorState = actionEditorState,
             onBackClick = onBackClick,
             onPlayClick = onPlayClick,
         )
         Row {
-            NodeTree(
-                level = level,
-                selectionState = selectionState,
-            )
+            actionEditorState.action?.let { action ->
+                ActionNodeList(actionEditorState)
+            } ?: run {
+                NodeTree(
+                    level = level,
+                    selectionState = selectionState,
+                )
+            }
             Column(
                 modifier = Modifier.weight(1.0f),
             ) {
@@ -188,21 +195,29 @@ private fun EditorScreen(
                         .border(1.dp, Color(0xFF262626), RoundedCornerShape(8.dp))
                         .clip(RoundedCornerShape(8.dp)),
                 ) {
-                    World(
-                        root = world,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .transform(transform),
-                    )
-                    WorldOverlay(
-                        level = level,
-                        toolState = toolState,
-                        selection = selectionState,
-                        transform = transform,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .pan(transform),
-                    )
+                    actionEditorState.action?.let { action ->
+                        ActionEditor(
+                            state = actionEditorState,
+                            modifier = Modifier
+                                .fillMaxSize(),
+                        )
+                    } ?: run {
+                        World(
+                            root = world,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .transform(transform),
+                        )
+                        WorldOverlay(
+                            level = level,
+                            toolState = toolState,
+                            selection = selectionState,
+                            transform = transform,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .pan(transform),
+                        )
+                    }
                 }
                 Timeline(
                     level = level,
@@ -214,6 +229,7 @@ private fun EditorScreen(
                 level = level,
                 selectionState = selectionState,
                 timelineState = timelineState,
+                actionEditorState = actionEditorState,
             )
         }
     }

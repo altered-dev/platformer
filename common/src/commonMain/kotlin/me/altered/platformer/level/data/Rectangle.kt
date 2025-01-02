@@ -49,5 +49,6 @@ open class Rectangle(
         strokeWidth = strokeWidth.toAnimatedFloatState(InspectorInfo.OutlineWidth),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.mapTo(mutableStateListOf()) { it.toMutableAction() },
     )
 }

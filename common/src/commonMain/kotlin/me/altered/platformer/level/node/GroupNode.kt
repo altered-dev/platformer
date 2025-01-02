@@ -8,26 +8,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
-import me.altered.platformer.level.data.CollisionFlags
+import me.altered.platformer.action.FireTrigger
+import me.altered.platformer.action.PlayerCollided
+import me.altered.platformer.action.effect.MoveBy
+import me.altered.platformer.action.effect.MutableMoveBy
+import me.altered.platformer.action.effect.MutableRotateBy
+import me.altered.platformer.action.effect.RotateBy
 import me.altered.platformer.level.data.CollisionInfo
+import me.altered.platformer.level.data.FloatProperty
 import me.altered.platformer.level.data.Group
+import me.altered.platformer.level.data.OffsetProperty
 import me.altered.platformer.level.data.draw
 import me.altered.platformer.level.data.drawInEditor
 
 open class GroupNode(
-    override val obj: Group,
-    override val parent: GroupNode? = null,
+    obj: Group,
+    parent: GroupNode? = null,
 ) : ObjectNode,
     ObjectNode.HasCollision,
     ObjectNode.EditorDrawable,
-    ObjectNode.Drawable
+    ObjectNode.Drawable,
+    ObjectNode.HasActions
 {
-    open val children: List<ObjectNode> = if (this is MutableGroupNode) {
-        // for some reason obj is null here
-        emptyList()
-    } else {
-        obj.children.map { it.toObjectNode(this) }
-    }
+    override val obj = obj
+    override val parent = parent
+
+    // TODO: remove
+    private var time = 0.0f
+
+    open val children: List<ObjectNode> = obj.children.map { it.toObjectNode(this) }
+
+    private val _position = OffsetProperty(obj.x, obj.y)
+    private val _rotation = FloatProperty(obj.rotation)
 
     override var position = Offset.Zero
         protected set
@@ -39,17 +51,28 @@ open class GroupNode(
     open var scale = Size.Zero
         protected set
 
-    override val collisionFlags: CollisionFlags
-        get() = obj.collisionFlags
-
-    override val isDamaging: Boolean
-        get() = obj.isDamaging
+    override val collisionFlags get() = obj.collisionFlags
+    override val isDamaging get() = obj.isDamaging
+    override val actions get() = obj.actions
 
     override fun eval(time: Float) {
-        position = Offset(obj.x.eval(time), obj.y.eval(time))
-        rotation = obj.rotation.eval(time)
+        position = _position.eval(time)
+        rotation = _rotation.eval(time)
         scale = Size(obj.width.eval(time), obj.height.eval(time))
         children.forEach { it.eval(time) }
+    }
+
+    override fun fireAction(trigger: FireTrigger) {
+        val action = actions.find { it.trigger matches trigger }
+            ?: return
+        action.effects.forEach { effect ->
+            when (effect) {
+                is MoveBy -> _position.inject(effect, time)
+                is RotateBy -> _rotation.inject(effect, time)
+                is MutableMoveBy -> _position.inject(effect, time)
+                is MutableRotateBy -> _rotation.inject(effect, time)
+            }
+        }
     }
 
     override fun DrawScope.draw() {
@@ -82,6 +105,8 @@ open class GroupNode(
         }
     }
 
+    private var isColliding = false
+
     override fun collide(position: Offset, radius: Float): List<CollisionInfo> {
         // FIXME: does not account for rotation and scale yet
         return children.flatMap {
@@ -90,6 +115,14 @@ open class GroupNode(
                     info.copy(point = info.point + this.position)
                 }
             } else emptyList()
+        }.let {
+            if (it.isNotEmpty() && !isColliding) {
+                isColliding = true
+                fireAction(PlayerCollided)
+            } else if (it.isEmpty()) {
+                isColliding = false
+            }
+            it
         }
     }
 

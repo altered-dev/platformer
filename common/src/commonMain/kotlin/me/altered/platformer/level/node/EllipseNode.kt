@@ -7,6 +7,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import me.altered.platformer.action.Action
+import me.altered.platformer.action.FireTrigger
+import me.altered.platformer.action.PlayerCollided
+import me.altered.platformer.action.effect.MoveBy
+import me.altered.platformer.action.effect.MutableMoveBy
+import me.altered.platformer.action.effect.MutableRotateBy
+import me.altered.platformer.action.effect.RotateBy
 import me.altered.platformer.engine.geometry.div
 import me.altered.platformer.engine.geometry.normalize
 import me.altered.platformer.engine.geometry.rotateAround
@@ -16,17 +23,30 @@ import me.altered.platformer.level.data.CollisionFlags
 import me.altered.platformer.level.data.CollisionInfo
 import me.altered.platformer.level.data.toComposeBrush
 import me.altered.platformer.level.data.Ellipse
+import me.altered.platformer.level.data.FloatProperty
 import me.altered.platformer.level.data.Object
+import me.altered.platformer.level.data.OffsetProperty
 
+@Suppress("CanBePrimaryConstructorProperty")
 open class EllipseNode(
-    override val obj: Ellipse,
-    override val parent: GroupNode? = null,
+    obj: Ellipse,
+    parent: GroupNode? = null,
 ) : ObjectNode,
     ObjectNode.HasFill,
     ObjectNode.HasStroke,
     ObjectNode.HasCollision,
-    ObjectNode.Drawable
+    ObjectNode.Drawable,
+    ObjectNode.HasActions
 {
+    override val obj = obj
+    override val parent = parent
+
+    // TODO: remove
+    private var time = 0.0f
+
+    private val _position = OffsetProperty(obj.x, obj.y)
+    private val _rotation = FloatProperty(obj.rotation)
+
     override var position = Offset.Zero
         protected set
     override var rotation = 0.0f
@@ -43,10 +63,13 @@ open class EllipseNode(
         get() = obj.collisionFlags
     override val isDamaging: Boolean
         get() = obj.isDamaging
+    override val actions: List<Action>
+        get() = obj.actions
 
     override fun eval(time: Float) {
-        position = Offset(obj.x.eval(time), obj.y.eval(time))
-        rotation = obj.rotation.eval(time)
+        this.time = time
+        position = _position.eval(time)
+        rotation = _rotation.eval(time)
         bounds = Object.baseBounds.scale(obj.width.eval(time), obj.height.eval(time))
         fill = obj.fill.map { it.eval(time).toComposeBrush() }
         stroke = obj.stroke.map { it.eval(time).toComposeBrush() }
@@ -65,18 +88,43 @@ open class EllipseNode(
         }
     }
 
+    override fun fireAction(trigger: FireTrigger) {
+        val action = actions.find { it.trigger matches trigger }
+            ?: return
+        action.effects.forEach { effect ->
+            when (effect) {
+                is MoveBy -> _position.inject(effect, time)
+                is RotateBy -> _rotation.inject(effect, time)
+                is MutableMoveBy -> _position.inject(effect, time)
+                is MutableRotateBy -> _rotation.inject(effect, time)
+            }
+        }
+    }
+
+    private var isColliding = false
+
     override fun collide(position: Offset, radius: Float): List<CollisionInfo> {
-        if (bounds.isEmpty) return emptyList()
+        if (bounds.isEmpty) {
+            isColliding = false
+            return emptyList()
+        }
         rotated(position) {
             scaled(it) { position ->
                 val rad = bounds.height * 0.5f
                 val collision = position - this.position
                 if (collision.getDistanceSquared() > (rad + radius) * (rad + radius)) {
+                    isColliding = false
                     return emptyList()
                 }
                 this.position + collision.normalize(rad)
             }
-        }.let { return listOf(CollisionInfo(it, Offset.Unspecified)) }
+        }.let {
+            if (!isColliding) {
+                isColliding = true
+                fireAction(PlayerCollided)
+            }
+            return listOf(CollisionInfo(it, Offset.Unspecified))
+        }
     }
 
     // TODO: uncopypaste

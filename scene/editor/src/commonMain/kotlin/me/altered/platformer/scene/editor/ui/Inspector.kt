@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import me.altered.platformer.action.MutableAction
+import me.altered.platformer.action.PlayerCollided
 import me.altered.platformer.expression.AnimatedBrushState
 import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.level.data.MutableObject
@@ -24,12 +27,14 @@ import me.altered.platformer.level.node.MutableLevelNode
 import me.altered.platformer.level.node.MutableObjectNode
 import me.altered.platformer.level.node.ObjectNode
 import me.altered.platformer.resources.Res
+import me.altered.platformer.resources.actions
 import me.altered.platformer.resources.add
 import me.altered.platformer.resources.remove
 import me.altered.platformer.scene.editor.state.SelectionState
 import me.altered.platformer.state.TimelineState
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
+import me.altered.platformer.ui.OutlinedButton
 import me.altered.platformer.ui.Text
 import org.jetbrains.compose.resources.painterResource
 
@@ -38,6 +43,7 @@ fun Inspector(
     level: MutableLevelNode,
     selectionState: SelectionState,
     timelineState: TimelineState,
+    actionEditorState: ActionEditorState,
 ) {
     Column(
         modifier = Modifier
@@ -50,7 +56,7 @@ fun Inspector(
             0 -> LevelInfo(level, timelineState)
             1 -> {
                 val node = selectionState.selection.single()
-                CommonInfo(node, timelineState)
+                ObjectInfo(node, timelineState, actionEditorState)
             }
             else -> Unit // TODO: multiselection
         }
@@ -71,13 +77,38 @@ private fun LevelInfo(
 }
 
 @Composable
+private fun ObjectInfo(
+    node: MutableObjectNode,
+    timelineState: TimelineState,
+    actionEditorState: ActionEditorState,
+) {
+    CommonInfo(node, timelineState)
+    if (node is ObjectNode.HasFill) {
+        Separator()
+        FillInfo(node, timelineState)
+    }
+    if (node is ObjectNode.HasStroke) {
+        Separator()
+        StrokeInfo(node, timelineState)
+        val obj = node.obj as MutableObject.HasStroke
+        FloatTextField(
+            state = obj.strokeWidth,
+            timelineState = timelineState,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    if (node is ObjectNode.HasActions) {
+        Separator()
+        ActionsInfo(node, timelineState, actionEditorState)
+    }
+}
+
+@Composable
 private fun CommonInfo(
     node: MutableObjectNode,
     timelineState: TimelineState,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    InspectorRow {
         FloatTextField(
             state = node.obj.x,
             timelineState = timelineState,
@@ -89,9 +120,7 @@ private fun CommonInfo(
             modifier = Modifier.weight(1.0f),
         )
     }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    InspectorRow {
         FloatTextField(
             state = node.obj.width,
             timelineState = timelineState,
@@ -103,9 +132,7 @@ private fun CommonInfo(
             modifier = Modifier.weight(1.0f),
         )
     }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
+    InspectorRow {
         FloatTextField(
             state = node.obj.rotation,
             timelineState = timelineState,
@@ -122,20 +149,6 @@ private fun CommonInfo(
             else -> Spacer(modifier = Modifier.weight(1.0f))
         }
     }
-    if (node is ObjectNode.HasFill) {
-        Separator()
-        FillInfo(node, timelineState)
-    }
-    if (node is ObjectNode.HasStroke) {
-        Separator()
-        StrokeInfo(node, timelineState)
-        val obj = node.obj as MutableObject.HasStroke
-        FloatTextField(
-            state = obj.strokeWidth,
-            timelineState = timelineState,
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
 }
 
 @Composable
@@ -151,9 +164,7 @@ private fun FillInfo(
         info = InspectorInfo.Fill,
     )
     obj.fill.forEach { fill ->
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        InspectorRow {
             BrushTextField(
                 state = fill,
                 timelineState = timelineState,
@@ -181,9 +192,7 @@ private fun StrokeInfo(
         info = InspectorInfo.Outline,
     )
     obj.stroke.forEach { stroke ->
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        InspectorRow {
             BrushTextField(
                 state = stroke,
                 timelineState = timelineState,
@@ -191,6 +200,37 @@ private fun StrokeInfo(
             )
             IconButton(
                 onClick = { obj.stroke -= stroke },
+            ) {
+                Icon(painterResource(Res.drawable.remove))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActionsInfo(
+    node: MutableObjectNode,
+    timelineState: TimelineState,
+    actionEditorState: ActionEditorState,
+) {
+    // no union types :(
+    require(node is ObjectNode.HasActions)
+    val obj = node.obj as MutableObject.HasActions
+    Section(
+        onAddClick = { obj.actions += MutableAction(trigger = PlayerCollided) },
+        info = InspectorInfo.Actions,
+    )
+    obj.actions.forEach { action ->
+        InspectorRow {
+            OutlinedButton(
+                onClick = { actionEditorState.action = action },
+            ) {
+                Icon(painterResource(Res.drawable.actions))
+                Text("Edit action")
+            }
+            Spacer(modifier = Modifier.weight(1.0f))
+            IconButton(
+                onClick = { obj.actions -= action },
             ) {
                 Icon(painterResource(Res.drawable.remove))
             }
@@ -228,4 +268,14 @@ private fun Section(
             Icon(painterResource(Res.drawable.add))
         }
     }
+}
+
+@Composable
+private fun InspectorRow(
+    content: @Composable RowScope.() -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        content = content,
+    )
 }

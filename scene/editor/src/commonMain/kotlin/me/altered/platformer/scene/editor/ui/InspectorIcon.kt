@@ -22,7 +22,7 @@ fun InspectorIcon(
 }
 
 @Composable
-private fun IconText(
+fun IconText(
     text: String,
     modifier: Modifier = Modifier,
 ) {

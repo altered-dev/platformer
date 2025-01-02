@@ -3,6 +3,7 @@ package me.altered.platformer.level.node
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
+import me.altered.platformer.action.Action
 import me.altered.platformer.engine.geometry.scale
 import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.level.data.toComposeBrush
@@ -37,6 +38,9 @@ class MutableRectangleNode(
         set(_) = Unit
     override var strokeWidth: Float
         get() = obj.strokeWidth.staticValue
+        set(_) = Unit
+    override var actions: List<Action>
+        get() = obj.actions
         set(_) = Unit
 
     override fun toMutableObjectNode() = this

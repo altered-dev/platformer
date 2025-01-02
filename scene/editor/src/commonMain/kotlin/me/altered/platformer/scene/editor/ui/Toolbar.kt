@@ -1,6 +1,7 @@
 package me.altered.platformer.scene.editor.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,9 +33,11 @@ import me.altered.platformer.resources.triangle
 import me.altered.platformer.resources.undo
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
+import me.altered.platformer.ui.OutlinedButton
 import me.altered.platformer.ui.SelectorButton
 import me.altered.platformer.ui.SelectorRow
 import me.altered.platformer.ui.Separator
+import me.altered.platformer.ui.Text
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -42,6 +45,7 @@ import org.jetbrains.compose.resources.painterResource
 fun Toolbar(
     levelName: String,
     toolState: ToolState,
+    actionEditorState: ActionEditorState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onUndoClick: () -> Unit = {},
@@ -52,58 +56,70 @@ fun Toolbar(
     onPlayClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
+        contentAlignment = Alignment.Center,
     ) {
-        IconButton(onClick = onBackClick) {
-            Icon(painterResource(Res.drawable.back))
-        }
-        SelectorRow {
-            Tool.entries.forEach { tool ->
-                SelectorButton(
-                    selected = tool == toolState.tool,
-                    onClick = { toolState.tool = tool },
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            actionEditorState.action?.let {
+                OutlinedButton(
+                    onClick = { actionEditorState.action = null },
                 ) {
-                    Icon(painterResource(tool.icon))
+                    Icon(painterResource(Res.drawable.back))
+                    Text("Back to editor")
+                }
+            } ?: run {
+                IconButton(onClick = onBackClick) {
+                    Icon(painterResource(Res.drawable.back))
+                }
+                SelectorRow {
+                    Tool.entries.forEach { tool ->
+                        SelectorButton(
+                            selected = tool == toolState.tool,
+                            onClick = { toolState.tool = tool },
+                        ) {
+                            Icon(painterResource(tool.icon))
+                        }
+                    }
                 }
             }
+            Spacer(modifier = Modifier.weight(1.0f))
+            IconButton(onClick = onUndoClick) {
+                Icon(painterResource(Res.drawable.undo))
+            }
+            IconButton(onClick = onRedoClick) {
+                Icon(painterResource(Res.drawable.redo))
+            }
+            Separator()
+            IconButton(onClick = onCopyClick) {
+                Icon(painterResource(Res.drawable.copy))
+            }
+            IconButton(onClick = onCutClick) {
+                Icon(painterResource(Res.drawable.cut))
+            }
+            IconButton(onClick = onPasteClick) {
+                Icon(painterResource(Res.drawable.paste))
+            }
+            Separator()
+            IconButton(onClick = onPlayClick) {
+                Icon(painterResource(Res.drawable.play))
+            }
+            IconButton(onClick = onMenuClick) {
+                Icon(painterResource(Res.drawable.menu))
+            }
         }
-        Spacer(modifier = Modifier.weight(1.0f))
         BasicText(
             text = levelName,
             style = TextStyle(
                 color = Color(0xFF999999), // TODO: to style
             ),
         )
-        Spacer(modifier = Modifier.weight(1.0f))
-        IconButton(onClick = onUndoClick) {
-            Icon(painterResource(Res.drawable.undo))
-        }
-        IconButton(onClick = onRedoClick) {
-            Icon(painterResource(Res.drawable.redo))
-        }
-        Separator()
-        IconButton(onClick = onCopyClick) {
-            Icon(painterResource(Res.drawable.copy))
-        }
-        IconButton(onClick = onCutClick) {
-            Icon(painterResource(Res.drawable.cut))
-        }
-        IconButton(onClick = onPasteClick) {
-            Icon(painterResource(Res.drawable.paste))
-        }
-        Separator()
-        IconButton(onClick = onPlayClick) {
-            Icon(painterResource(Res.drawable.play))
-        }
-        IconButton(onClick = onMenuClick) {
-            Icon(painterResource(Res.drawable.menu))
-        }
     }
 }
 

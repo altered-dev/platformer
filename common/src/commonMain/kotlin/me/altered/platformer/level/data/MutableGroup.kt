@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import me.altered.platformer.action.MutableAction
 import me.altered.platformer.expression.AnimatedFloatState
 import me.altered.platformer.expression.InspectorInfo
 
@@ -17,10 +19,12 @@ class MutableGroup(
     override val height: AnimatedFloatState = AnimatedFloatState(1.0f, InspectorInfo.Height),
     collisionFlags: CollisionFlags = CollisionFlags(false),
     isDamaging: Boolean = false,
-    override val children: MutableList<MutableObject> = mutableStateListOf(),
+    override val actions: SnapshotStateList<MutableAction> = mutableStateListOf(),
+    override val children: SnapshotStateList<MutableObject> = mutableStateListOf(),
 ) : Group(id, name, x, y, rotation, width, height, collisionFlags, isDamaging),
     MutableObject,
-    MutableObject.HasCollision
+    MutableObject.HasCollision,
+    MutableObject.HasActions
 {
     override var name by mutableStateOf(name)
     override var collisionFlags by mutableStateOf(collisionFlags)
@@ -36,6 +40,7 @@ class MutableGroup(
         height = height.toExpression(),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.map { it.toAction() },
         children = children.map { it.toObject() },
     )
 

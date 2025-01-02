@@ -2,6 +2,10 @@ package me.altered.platformer.action
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.altered.platformer.expression.InspectorInfo
+import me.altered.platformer.resources.Res
+import me.altered.platformer.resources.circle
+import me.altered.platformer.resources.collision
 
 /**
  * An event that kicks off the action.
@@ -9,6 +13,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("trigger")
 sealed interface Trigger {
+
+    val inspectorInfo: InspectorInfo
 
     /**
      * Checks if the specified trigger can be used to start the action
@@ -31,11 +37,17 @@ sealed interface FireTrigger : Trigger
  */
 @Serializable
 @SerialName("test")
-data object TestTrigger : FireTrigger
+data object TestTrigger : FireTrigger {
+
+    override val inspectorInfo = InspectorInfo("Test", InspectorInfo.Icon.Drawable(Res.drawable.circle))
+}
 
 /**
  * A trigger that fires when player starts colliding with the object.
  */
 @Serializable
 @SerialName("player_collided")
-data object PlayerCollided : FireTrigger
+data object PlayerCollided : FireTrigger {
+
+    override val inspectorInfo = InspectorInfo("Player collided", InspectorInfo.Icon.Drawable(Res.drawable.collision))
+}

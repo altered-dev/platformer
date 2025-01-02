@@ -3,6 +3,7 @@ package me.altered.platformer.level.data
 import androidx.compose.runtime.mutableStateListOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.altered.platformer.action.Action
 import me.altered.platformer.expression.Expression
 import me.altered.platformer.expression.InspectorInfo
 import me.altered.platformer.expression.const
@@ -24,10 +25,12 @@ open class Ellipse(
     override val strokeWidth: Expression<Float> = const(0.0f),
     override val collisionFlags: CollisionFlags = CollisionFlags(false),
     override val isDamaging: Boolean = false,
+    override val actions: List<Action> = emptyList(),
 ) : Object,
     Object.HasFill,
     Object.HasStroke,
-    Object.HasCollision
+    Object.HasCollision,
+    Object.HasActions
 {
 
     override fun toMutableObject() = MutableEllipse(
@@ -43,5 +46,6 @@ open class Ellipse(
         strokeWidth = strokeWidth.toAnimatedFloatState(InspectorInfo.OutlineWidth),
         collisionFlags = collisionFlags,
         isDamaging = isDamaging,
+        actions = actions.mapTo(mutableStateListOf()) { it.toMutableAction() },
     )
 }

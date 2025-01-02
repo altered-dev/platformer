@@ -47,7 +47,7 @@ import me.altered.platformer.level.player.Player
 import me.altered.platformer.resources.Res
 import me.altered.platformer.resources.back
 import me.altered.platformer.state.rememberTimelineState
-import me.altered.platformer.state.rememberTransformState
+import me.altered.platformer.state.rememberWorldTransformState
 import me.altered.platformer.state.transform
 import me.altered.platformer.ui.Icon
 import me.altered.platformer.ui.IconButton
@@ -141,13 +141,13 @@ fun LevelScreen(
     navigateToEditor: () -> Unit = {},
     navigateBack: () -> Unit = {}
 ) {
-    val transform = rememberTransformState()
+    val transform = rememberWorldTransformState()
     val timelineState = rememberTimelineState()
     var timeDirection by remember { mutableFloatStateOf(1.0f) }
     val world = remember(level) {
         World(
             level = level,
-            screenToWorld = { size -> with(transform) { screenToWorld(size) } },
+            screenToWorld = { size -> transform.screenToWorld(this, size) },
             player = Player(),
         )
     }
